@@ -46,9 +46,11 @@ summary{cursor:pointer;font-weight:600}
 .nom{font-weight:700;font-size:1.05rem}
 .star{position:absolute;top:8px;right:8px;background:none;border:0;font-size:1.4rem;cursor:pointer;color:var(--or)}
 .av{position:relative;flex:0 0 auto;width:54px;height:54px;border-radius:50%;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;border:2px solid rgba(255,255,255,.25);vertical-align:middle}
-.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%}
 .av.big{width:96px;height:96px;font-size:2.4rem}
+.av.moy{width:44px;height:44px;font-size:1.1rem}
 .av.mini{width:28px;height:28px;font-size:.8rem;border-width:1px}
+.drap{height:.85em;width:auto;border-radius:2px;vertical-align:-1px;margin-left:4px;box-shadow:0 0 0 1px rgba(255,255,255,.2)}
 .badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:700;width:max-content;max-width:100%}
 .b-ok{background:#1f4d3c;color:#7ff0c0}.b-nom{background:#5a2626;color:#ffb0b0}.b-imm{background:#1d3f5c;color:#9fdcff}.b-elim{background:#3a3a3a;color:#ccc}.b-win{background:var(--or);color:#1a0b2e}.b-fin{background:#5b3d0f;color:#ffd98a}.b-sauve{background:#244a1f;color:#b5f59f}
 .chs{font-size:.86rem}
@@ -66,7 +68,7 @@ summary{cursor:pointer;font-weight:600}
 .row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
 .faits{margin:12px 0 0;padding-left:20px;color:var(--mut)}
 .fsec{border-top:1px solid var(--bord);margin-top:14px;padding-top:12px}
-.fsec h3{margin:0 0 10px;font-size:1.05rem}
+.fsec h3{margin:0 0 10px;font-size:1.05rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .addcom{display:grid;gap:8px;background:var(--card);border:1px dashed var(--or);border-radius:12px;padding:10px;margin-bottom:14px}
 .addcom label{display:grid;gap:4px}
 .tlbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -200,6 +202,13 @@ function numJ(n){return n===1?"1er":String(n);}
 function dCourte(c){const d=dateP(c);return numJ(d.getDate())+" "+MOISC[d.getMonth()]+(d.getFullYear()!==2026?" "+d.getFullYear():"");}
 function dLongue(c){const d=dateP(c);return JOURS[d.getDay()]+" "+numJ(d.getDate())+" "+MOIS[d.getMonth()]+(d.getFullYear()!==2026?" "+d.getFullYear():"");}
 function couleur(n){let h=0;for(const ch of String(n))h=(h*31+ch.codePointAt(0))%360;return "linear-gradient(135deg,hsl("+h+",70%,55%),hsl("+((h+50)%360)+",65%,38%))";}
+/* 🏳️ Drapeaux en image (Windows affiche sinon "FR") */
+function drap(f){
+  const cp=Array.from(String(f||"")).map(c=>c.codePointAt(0)).filter(x=>x>=0x1F1E6&&x<=0x1F1FF);
+  let h="";
+  for(let i=0;i+1<cp.length;i+=2){const cc=String.fromCharCode(cp[i]-0x1F1E6+97,cp[i+1]-0x1F1E6+97);h+=`<img class="drap" src="https://flagcdn.com/w40/${cc}.png" alt="${cc.toUpperCase()}" title="${cc.toUpperCase()}">`;}
+  return h;
+}
 
 /* ===================== 📚 DONNÉES DE BASE ===================== */
 const ELEVES=["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
@@ -278,6 +287,7 @@ const PROFS=[
 let S=null,SEL=1,SEL_MANUEL=false,FILTRE="tous",FICHE=null,FICHE_P=null,ORDRE_COMS="asc",ETAT_MAJ="";
 let ONGLET=["eleves","primes","classement","profs"].includes(location.hash.slice(1))?location.hash.slice(1):"eleves";
 const OPEN={},PHOTO_KO={},PHOTO_OK={};
+const EXTS=["jpg","jpeg","png","webp","JPG","JPEG","PNG","WEBP"];
 
 /* ===================== 📅 CALENDRIER & PRIMES ===================== */
 function CALv(){
@@ -372,7 +382,6 @@ function migrer(){
   S.primes=obj(S.primes);
   S.eleves=obj(S.eleves);
   if(!Array.isArray(S.ordre)) S.ordre=[];
-  /* 📺 primes : notes + commentaires par prime */
   Object.keys(S.primes).forEach(k=>{
     const num=parseInt(String(k).replace(/\D+/g,""),10);
     if(!(num>=1)) return;
@@ -389,7 +398,6 @@ function migrer(){
     });
     if(String(num)!==String(k)&&!S.primes[num]){delete S.primes[k];S.primes[num]=p;}else S.primes[k]=p;
   });
-  /* 👥 élèves : les anciens commentaires reçoivent leur numéro de prime */
   ELEVES.forEach(n=>{
     const e=obj(S.eleves[n]);
     e.fav=!!e.fav; e.note=+e.note||0; e.statut=typeof e.statut==="string"?e.statut:"";
@@ -399,7 +407,6 @@ function migrer(){
     e.coms.forEach(c=>{if(!(c.prime>=1)) c.prime=c.d?primeDeDate(c.d):1;});
     S.eleves[n]=e;
   });
-  /* 🎓 profs */
   Object.keys(S.profs).forEach(k=>{
     let v=S.profs[k];
     if(typeof v==="number") v={note:v,avis:""}; else if(typeof v==="string") v={note:0,avis:v};
@@ -423,7 +430,6 @@ function moyenne(nom){const ns=Object.keys(S.primes).filter(k=>/^\d+$/.test(k)).
 function fmtMoy(m){return m.nb?`⭐ ${m.moy.toFixed(1).replace(".",",")}/5 sur ${m.nb} prime${m.nb>1?"s":""}`:"Pas encore noté";}
 
 /* ===================== 💬 COMMENTAIRES ===================== */
-/* clés : "e:Nom" (anciens commentaires généraux) et "p:num:Nom" (commentaires d'un prime) */
 function getComs(key){
   const parts=key.split(":");
   if(parts[0]==="e") return S.eleves[parts[1]].coms;
@@ -502,13 +508,18 @@ function timeline(nom){
 }
 
 /* ===================== 🖼️ PETITS MORCEAUX D'AFFICHAGE ===================== */
+/* 📸 Photo : d'abord celle choisie sur l'appareil, sinon photos/<prenom>.jpg (ou .jpeg, .png, .webp) sur GitHub, sinon la lettre */
 function avatar(nom,cl){
   cl=cl||"";const s=slug(nom);
   if(S.photos[nom]) return `<span class="av ${cl}"><img src="${S.photos[nom]}" alt="${esc(nom)}"></span>`;
   const img=PHOTO_KO[s]?"":`<img src="${PHOTO_OK[s]||"photos/"+s+".jpg"}" alt="" onload="PHOTO_OK['${s}']=this.getAttribute('src')" onerror="photoErr(this,'${s}')">`;
   return `<span class="av ${cl}" style="background:${couleur(nom)}"><b>${nom[0]}</b>${img}</span>`;
 }
-function photoErr(img,s){if(!img.dataset.png){img.dataset.png="1";img.src="photos/"+s+".png";}else{PHOTO_KO[s]=1;img.remove();}}
+function photoErr(img,s){
+  const i=(+img.dataset.i||0)+1;
+  if(i<EXTS.length){img.dataset.i=i;img.src="photos/"+s+"."+EXTS[i];}
+  else{PHOTO_KO[s]=1;img.remove();}
+}
 function etoiles(v,tpl){let h=`<span class="etoiles">`;for(let i=1;i<=5;i++)h+=`<button type="button" class="${i<=v?"on":""}" aria-label="${i} étoile${i>1?"s":""}" onclick="${tpl.replace("#",i)}">★</button>`;return h+`</span>`;}
 
 /* ===================== 👥 PAGE ÉLÈVES ===================== */
@@ -537,7 +548,7 @@ function carte(nom){
   const ch=chansonsDe(nom,SEL),n=tousComs(nom).length;
   return `<div class="carte${cs==="elim"?" dehors":""}${e.fav?" fav":""}">
     <button class="star" title="Préféré" onclick="toggleFav('${nom}')">${e.fav?"⭐":"☆"}</button>
-    <div class="cl" onclick="openFiche('${nom}')">${avatar(nom)}<div><div class="nom">${nom} ${b.drapeau||""}</div><div class="mut sm">${b.age?b.age+" ans · ":""}${esc(b.ville||"")}</div></div></div>
+    <div class="cl" onclick="openFiche('${nom}')">${avatar(nom)}<div><div class="nom">${nom}${drap(b.drapeau)}</div><div class="mut sm">${b.age?b.age+" ans · ":""}${esc(b.ville||"")}</div></div></div>
     ${badge(st)}
     <div class="chs">${ch.length?ch.map(x=>`🎵 <b>${esc(x.titre)}</b> <span class="mut">– ${esc(x.artiste)}${x.avec.length?" · avec "+esc(x.avec.join(", ")):""}</span>`).join("<br>"):`<span class="mut">🎵 Chanson du prime ${SEL} : pas encore connue</span>`}</div>
     <div class="pnote"><span class="mut sm">Ma note · Prime ${SEL}</span>${etoiles(noteP(SEL,nom),`setPNote(${SEL},'${nom}',#)`)}</div>
@@ -603,7 +614,7 @@ function pageClassement(){
   h+=`<div class="podium">`;
   [1,0,2].forEach(i=>{const n=L[i];if(!n)return;h+=`<div class="pod p${i+1}" onclick="openFiche('${n}')">${avatar(n,"big")}<div class="nom">${["🥇","🥈","🥉"][i]} ${n}</div><div class="mut sm">${fmtMoy(moyenne(n))}</div><div class="marche">${i+1}</div></div>`;});
   h+=`</div><div class="ctrl"><span class="mut sm">⬆️⬇️ Range tes préférés comme tu veux</span><button class="btn sec" onclick="trierMoy()">📊 Trier par moyenne</button></div><div class="liste">`;
-  L.forEach((n,i)=>{const b=BIOS[n]||{};h+=`<div class="row"><span class="rang">${i+1}</span><span class="lien" onclick="openFiche('${n}')">${avatar(n)}</span><div class="fl"><div class="nom lien" onclick="openFiche('${n}')">${n} ${b.drapeau||""}</div><div class="mut sm">${fmtMoy(moyenne(n))} · 💬 ${tousComs(n).length}</div>${badge(statut(n))}</div><div class="fleches"><button ${i===0?"disabled":""} onclick="bouger(${i},-1)" aria-label="Monter">⬆️</button><button ${i===L.length-1?"disabled":""} onclick="bouger(${i},1)" aria-label="Descendre">⬇️</button></div></div>`;});
+  L.forEach((n,i)=>{const b=BIOS[n]||{};h+=`<div class="row"><span class="rang">${i+1}</span><span class="lien" onclick="openFiche('${n}')">${avatar(n)}</span><div class="fl"><div class="nom lien" onclick="openFiche('${n}')">${n}${drap(b.drapeau)}</div><div class="mut sm">${fmtMoy(moyenne(n))} · 💬 ${tousComs(n).length}</div>${badge(statut(n))}</div><div class="fleches"><button ${i===0?"disabled":""} onclick="bouger(${i},-1)" aria-label="Monter">⬆️</button><button ${i===L.length-1?"disabled":""} onclick="bouger(${i},1)" aria-label="Descendre">⬇️</button></div></div>`;});
   return h+`</div>`;
 }
 
@@ -643,14 +654,13 @@ function renderFiche(){
   const opts=["","En compétition","Nominé(e)","Immunisé(e)","Sauvé(e)","Éliminé(e)","Abandon","Finaliste","Gagnant(e)"];
   if(e.statut&&!opts.includes(e.statut)) opts.push(e.statut);
   let h=`<div class="fhead">${avatar(nom,"big")}<div class="fl">
-      <h2>${nom} ${b.drapeau||""}</h2>
+      <h2>${nom}${drap(b.drapeau)}</h2>
       <div class="mut">${esc(b.nom||"")}</div>
       <div>🎂 ${b.age||"?"} ans · 📍 ${esc(b.ville||"")}${b.region?" ("+esc(b.region)+")":""}</div>
       <div class="row2">${badge(st)}<button class="chip${e.fav?" on":""}" onclick="toggleFav('${nom}')">${e.fav?"⭐ Dans mes préférés":"☆ Ajouter à mes préférés"}</button></div>
     </div></div>`;
   if(b.faits&&b.faits.length) h+=`<ul class="faits">${b.faits.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>`;
-  /* 💬 écrire + historique complet */
-  h+=`<section class="fsec" id="secComs"><h3>💬 Mes commentaires sur ${nom}</h3>
+  h+=`<section class="fsec" id="secComs"><h3>${avatar(nom,"moy")}<span>💬 Mes commentaires sur ${nom}</span></h3>
     <div class="addcom">
       <label class="sm">Ce commentaire concerne :
         <select id="fcPrime" data-keep>${CALv().map(c=>`<option value="${c.num}" ${c.num===defP?"selected":""}>Prime ${c.num} · ${dCourte(c)}${c.num===V?" (en ce moment)":""}</option>`).join("")}</select></label>
