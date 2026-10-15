@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⭐ Star Academy 2026 – Mon Suivi Fan</title>
+<style>
+  :root{--bg:#0b0820;--card:#1a1440;--gold:#ffcc33;--pink:#ff3d9a;--txt:#f3efff;--muted:#a49cc9;--red:#ff4d5e;--green:#3ddc84;--blue:#4da3ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#2a1a6e,var(--bg) 60%);color:var(--txt);min-height:100vh}
+  header{text-align:center;padding:30px 15px 10px}
+  header h1{font-size:2.2rem;background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;color:transparent}
+  header p{color:var(--muted);margin-top:6px}
+  .infos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+  .chip{background:var(--card);border:1px solid #3a2f7a;padding:6px 12px;border-radius:20px;font-size:.85rem}
+  nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:15px;position:sticky;top:0;background:rgba(11,8,32,.92);backdrop-filter:blur(6px);z-index:10}
+  nav button{background:var(--card);color:var(--txt);border:1px solid #3a2f7a;padding:10px 18px;border-radius:25px;cursor:pointer;font-weight:600}
+  nav button.active{background:linear-gradient(90deg,var(--gold),var(--pink));color:#1a0b2e;border:none}
+  main{max-width:1150px;margin:auto;padding:15px}
+  section{display:none}section.active{display:block}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;align-items:center}
+  .toolbar input,.toolbar select{background:var(--card);border:1px solid #3a2f7a;color:var(--txt);padding:9px 12px;border-radius:10px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+  .stat{flex:1;min-width:110px;background:var(--card);border-radius:14px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:1.6rem;color:var(--gold)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
+  .card{background:var(--card);border-radius:18px;padding:16px;border:2px solid transparent;transition:.2s;position:relative}
+  .card:hover{transform:translateY(-3px)}
+  .card.fav{border-color:var(--gold);box-shadow:0 0 18px rgba(255,204,51,.25)}
+  .card.elimine{opacity:.45;filter:grayscale(.7)}
+  .top{display:flex;align-items:center;gap:12px}
+  .avatar{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#1a0b2e;flex-shrink:0}
+  .name{font-size:1.25rem;font-weight:700}
+  .heart{position:absolute;top:12px;right:14px;font-size:1.6rem;cursor:pointer;background:none;border:none}
+  .stars{margin:10px 0 6px;font-size:1.4rem;cursor:pointer;user-select:none}
+  .stars span{color:#4a4180}.stars span.on{color:var(--gold)}
+  .card select,.card textarea{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:7px;margin-top:6px;font-family:inherit}
+  .card textarea{resize:vertical;min-height:55px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;margin-top:4px}
+  .b-enlice{background:var(--blue)}.b-nomine{background:var(--red)}.b-immunise{background:var(--green);color:#0b0820}.b-elimine{background:#555}.b-finaliste{background:var(--gold);color:#0b0820}.b-gagnant{background:linear-gradient(90deg,var(--gold),var(--pink));color:#0b0820}
+  h2{margin:10px 0 15px;color:var(--gold)}
+  .podium{display:flex;justify-content:center;align-items:flex-end;gap:12px;margin:20px 0 30px}
+  .pod{background:var(--card);border-radius:14px 14px 0 0;width:130px;text-align:center;padding:12px 6px}
+  .pod .avatar{margin:0 auto 8px}
+  .p1{height:200px;border-top:4px solid var(--gold)}.p2{height:165px;border-top:4px solid silver}.p3{height:140px;border-top:4px solid #cd7f32}
+  .rank-row{display:flex;align-items:center;gap:12px;background:var(--card);padding:10px 14px;border-radius:12px;margin-bottom:8px}
+  .rank-row .num{font-weight:800;color:var(--gold);width:30px}
+  .rank-row .actions button{background:#2d2466;border:none;color:var(--txt);border-radius:6px;padding:4px 9px;cursor:pointer;margin-left:3px}
+  .prof{background:var(--card);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center}
+  .prof .ic{font-size:2rem}
+  .prof small{color:var(--muted)}
+  .prof button{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer}
+  form.add{display:grid;gap:8px;background:var(--card);padding:16px;border-radius:16px;margin-bottom:20px}
+  form.add input,form.add textarea,form.add select{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:9px;font-family:inherit}
+  .btn{background:linear-gradient(90deg,var(--gold),var(--pink));color:#1a0b2e;border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer}
+  .btn.sec{background:var(--card);color:var(--txt);border:1px solid #3a2f7a}
+  .entry{background:var(--card);border-left:4px solid var(--pink);border-radius:12px;padding:14px;margin-bottom:12px}
+  .entry h3{color:var(--gold);font-size:1.05rem}
+  .entry .meta{color:var(--muted);font-size:.85rem;margin:4px 0 8px}
+  .entry .del{float:right;background:none;border:none;color:var(--muted);cursor:pointer}
+  .empty{text-align:center;color:var(--muted);padding:30px}
+  footer{text-align:center;color:var(--muted);padding:30px 10px;font-size:.85rem}
+  .checks{display:flex;flex-wrap:wrap;gap:6px}
+  .checks label{background:#0f0b2a;padding:5px 10px;border-radius:15px;font-size:.85rem;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⭐ STAR ACADEMY 2026 ⭐</h1>
+  <p>Saison 14 · Mon suivi de fan</p>
+  <div class="infos" id="infos"></div>
+</header>
+
+<nav>
+  <button class="active" data-tab="eleves">🎤 Élèves</button>
+  <button data-tab="classement">🏆 Mon classement</button>
+  <button data-tab="profs">🎓 Profs & équipe</button>
+  <button data-tab="journal">📓 Journal des primes</button>
+</nav>
+
+<main>
+  <!-- ÉLÈVES -->
+  <section id="eleves" class="active">
+    <div class="stats" id="stats"></div>
+    <div class="toolbar">
+      <input id="search" placeholder="🔍 Rechercher un élève...">
+      <select id="filter">
+        <option value="all">Tous</option>
+        <option value="fav">❤️ Mes préférés</option>
+        <option value="enlice">En lice</option>
+        <option value="nomine">Nominés</option>
+        <option value="immunise">Immunisés</option>
+        <option value="elimine">Éliminés</option>
+      </select>
+      <select id="sort">
+        <option value="alpha">Tri A → Z</option>
+        <option value="note">Tri par ma note</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- CLASSEMENT -->
+  <section id="classement">
+    <h2>🏆 Mon podium</h2>
+    <div class="podium" id="podium"></div>
+    <h2>📋 Mon classement perso</h2>
+    <p style="color:var(--muted);margin-bottom:10px">Utilise les flèches pour classer tes élèves comme tu veux (les éliminés sont en bas).</p>
+    <div id="ranking"></div>
+  </section>
+
+  <!-- PROFS -->
+  <section id="profs">
+    <h2>🎓 Le corps professoral</h2>
+    <div class="grid" id="profGrid"></div>
+    <h2 style="margin-top:25px">➕ Ajouter / remplacer un prof</h2>
+    <form class="add" id="profForm">
+      <input id="pRole" placeholder="Matière / rôle (ex : Professeur d'anglais)" required>
+      <input id="pName" placeholder="Nom" required>
+      <button class="btn">Ajouter</button>
+    </form>
+  </section>
+
+  <!-- JOURNAL -->
+  <section id="journal">
+    <h2>📓 Journal des primes</h2>
+    <form class="add" id="primeForm">
+      <input id="jTitle" placeholder="Titre (ex : Prime 2)" required>
+      <input id="jDate" type="date">
+      <div><small style="color:var(--muted)">Nominés cette semaine :</small><div class="checks" id="jNom"></div></div>
+      <select id="jElim"><option value="">— Élève éliminé(e) —</option></select>
+      <input id="jBest" placeholder="Ma meilleure prestation de la soirée">
+      <textarea id="jNote" placeholder="Mon avis sur ce prime..."></textarea>
+      <button class="btn">Enregistrer le prime</button>
+    </form>
+    <div id="entries"></div>
+  </section>
+</main>
+
+<footer>
+  <button class="btn sec" id="exportBtn">💾 Sauvegarder mes données</button>
+  <button class="btn sec" id="importBtn">📂 Restaurer</button>
+  <button class="btn sec" id="resetBtn">♻️ Tout réinitialiser</button>
+  <input type="file" id="importFile" accept=".json" hidden>
+  <p style="margin-top:15px">Site de fan non officiel · Tes données restent sur ton appareil</p>
+</footer>
+
+<script>
+/* ===================== DONNÉES DE LA SAISON ===================== */
+const SAISON = {
+  directeur: "Quentin Mosimann",
+  parrain: "Vianney",
+  presentateurs: ["Nikos Aliagas", "Karima Charni"],
+  grandesSoeurs: ["Adèle Castillon", "Eva"]
+};
+
+const PROFS_DEFAUT = [
+  {role:"Directeur", name:"Quentin Mosimann", ic:"🎬"},
+  {role:"Professeure de chant", name:"Sofia Morgavi", ic:"🎤"},
+  {role:"Professeur de danse", name:"Jonathan Jenvrin", ic:"💃"},
+  {role:"Professeur de théâtre", name:"Alain Degois « Papy »", ic:"🎭"},
+  {role:"Professeure d'expression scénique", name:"Lydia Bouchard", ic:"✨", nouveau:true},
+  {role:"Coach sportif & de vie", name:"Ladji Doucouré", ic:"🏃"},
+  {role:"Répétitrice", name:"Fanny Delaigue", ic:"🎶"},
+  {role:"Répétitrice", name:"Philippine Lavrey", ic:"🎶", nouveau:true},
+  {role:"Parrain de la saison", name:"Vianney", ic:"🌟"},
+];
+
+const ELEVES = ["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
+
+const STATUTS = {enlice:"En lice", nomine:"Nominé(e)", immunise:"Immunisé(e)", elimine:"Éliminé(e)", finaliste:"Finaliste", gagnant:"🏆 Gagnant(e)"};
+const COULEURS = ["#ff3d9a","#ffcc33","#4da3ff","#3ddc84","#b57bff","#ff8a3d","#3de0e0","#ff6b6b"];
+
+/* ===================== SAUVEGARDE ===================== */
+const KEY = "staracademy2026_fan";
+function defaut(){
+  const s = {eleves:{}, ordre:[...ELEVES], profs:PROFS_DEFAUT, journal:[]};
+  ELEVES.forEach(n => s.eleves[n] = {fav:false, note:0, statut:"enlice", avis:""});
+  s.eleves["Isabella"].statut = "immunise"; // immunisée au Prime 1
+  return s;
+}
+let S = JSON.parse(localStorage.getItem(KEY) || "null") || defaut();
+const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+const color = n => COULEURS[ELEVES.indexOf(n) % COULEURS.length];
+const avatar = (n,size=54) => `<div class="avatar" style="background:${color(n)};width:${size}px;height:${size}px">${n[0]}</div>`;
+
+/* ===================== EN-TÊTE ===================== */
+document.getElementById("infos").innerHTML = `
+  <span class="chip">🎬 Directeur : ${SAISON.directeur}</span>
+  <span class="chip">🌟 Parrain : ${SAISON.parrain}</span>
+  <span class="chip">🎙️ ${SAISON.presentateurs.join(" & ")}</span>
+  <span class="chip">💖 Grandes sœurs : ${SAISON.grandesSoeurs.join(" & ")}</span>`;
+
+/* ===================== ONGLETS ===================== */
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button,section").forEach(e => e.classList.remove("active"));
+  b.classList.add("active");
+  document.getElementById(b.dataset.tab).classList.add("active");
+  renderAll();
+});
+
+/* ===================== ÉLÈVES ===================== */
+function renderStats(){
+  const v = Object.values(S.eleves);
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><b>${v.filter(e=>e.statut!=="elimine").length}</b>En lice</div>
+    <div class="stat"><b>${v.filter(e=>e.statut==="nomine").length}</b>Nominés</div>
+    <div class="stat"><b>${v.filter(e=>e.statut==="elimine").length}</b>Éliminés</div>
+    <div class="stat"><b>${v.filter(e=>e.fav).length}</b>❤️ Préférés</div>`;
+}
+function renderGrid(){
+  const q = document.getElementById("search").value.toLowerCase();
+  const f = document.getElementById("filter").value;
+  const sort = document.getElementById("sort").value;
+  let list = ELEVES.filter(n => n.toLowerCase().includes(q)).filter(n => {
+    const e = S.eleves[n];
+    return f==="all" || (f==="fav" ? e.fav : e.statut===f);
+  });
+  if(sort==="note") list.sort((a,b)=>S.eleves[b].note - S.eleves[a].note);
+  const g = document.getElementById("grid");
+  if(!list.length){ g.innerHTML = `<p class="empty">Aucun élève ici 😢</p>`; return; }
+  g.innerHTML = list.map(n => {
+    const e = S.eleves[n];
+    return `<div class="card ${e.fav?"fav":""} ${e.statut==="elimine"?"elimine":""}">
+      <button class="heart" onclick="toggleFav('${n}')">${e.fav?"❤️":"🤍"}</button>
+      <div class="top">${avatar(n)}<div><div class="name">${n}</div>
+        <span class="badge b-${e.statut}">${STATUTS[e.statut]}</span></div></div>
+      <div class="stars">${[1,2,3,4,5].map(i=>`<span class="${i<=e.note?"on":""}" onclick="setNote('${n}',${i})">★</span>`).join("")}</div>
+      <select onchange="setStatut('${n}',this.value)">
+        ${Object.entries(STATUTS).map(([k,v])=>`<option value="${k}" ${k===e.statut?"selected":""}>${v}</option>`).join("")}
+      </select>
+      <textarea placeholder="Mon avis sur ${n}..." onchange="setAvis('${n}',this.value)">${e.avis}</textarea>
+    </div>`;
+  }).join("");
+}
+function toggleFav(n){ S.eleves[n].fav = !S.eleves[n].fav; save(); renderAll(); }
+function setNote(n,i){ S.eleves[n].note = S.eleves[n].note===i ? 0 : i; save(); renderAll(); }
+function setStatut(n,v){ S.eleves[n].statut = v; save(); renderAll(); }
+function setAvis(n,v){ S.eleves[n].avis = v; save(); }
+["search","filter","sort"].forEach(id => document.getElementById(id).oninput = renderGrid);
+
+/* ===================== CLASSEMENT ===================== */
+function renderRanking(){
+  const ordre = [...S.ordre.filter(n=>S.eleves[n].statut!=="elimine"), ...S.ordre.filter(n=>S.eleves[n].statut==="elimine")];
+  const top = ordre.filter(n=>S.eleves[n].statut!=="elimine").slice(0,3);
+  const cls = ["p1","p2","p3"], medal = ["🥇","🥈","🥉"];
+  const pos = [1,0,2]; // affichage 2-1-3
+  document.getElementById("podium").innerHTML = pos.filter(i=>top[i]).map(i =>
+    `<div class="pod ${cls[i]}">${avatar(top[i],60)}<div style="font-size:1.6rem">${medal[i]}</div><b>${top[i]}</b></div>`).join("");
+  document.getElementById("ranking").innerHTML = ordre.map((n,i)=>{
+    const e = S.eleves[n];
+    return `<div class="rank-row" style="${e.statut==="elimine"?"opacity:.45":""}">
+      <span class="num">#${i+1}</span>${avatar(n,38)}
+      <b style="flex:1">${n} ${e.fav?"❤️":""}</b>
+      <span style="color:var(--gold)">${"★".repeat(e.note)}</span>
+      <span class="actions"><button onclick="move('${n}',-1)">▲</button><button onclick="move('${n}',1)">▼</button></span>
+    </div>`;
+  }).join("");
+}
+function move(n,d){
+  const i = S.ordre.indexOf(n), j = i+d;
+  if(j<0||j>=S.ordre.length) return;
+  [S.ordre[i],S.ordre[j]] = [S.ordre[j],S.ordre[i]];
+  save(); renderRanking();
+}
+
+/* ===================== PROFS ===================== */
+function renderProfs(){
+  document.getElementById("profGrid").innerHTML = S.profs.map((p,i)=>`
+    <div class="prof"><span class="ic">${p.ic||"🎓"}</span>
+      <div><b>${p.name}</b> ${p.nouveau?'<span class="badge b-immunise">Nouveau</span>':""}<br><small>${p.role}</small></div>
+      <button title="Supprimer" onclick="delProf(${i})">✕</button></div>`).join("");
+}
+function delProf(i){ if(confirm("Retirer ce prof ?")){ S.profs.splice(i,1); save(); renderProfs(); } }
+document.getElementById("profForm").onsubmit = e => {
+  e.preventDefault();
+  S.profs.push({role:pRole.value, name:pName.value, ic:"🎓", nouveau:true});
+  pRole.value = pName.value = ""; save(); renderProfs();
+};
+
+/* ===================== JOURNAL ===================== */
+function renderJournalForm(){
+  const enLice = ELEVES.filter(n=>S.eleves[n].statut!=="elimine");
+  document.getElementById("jNom").innerHTML = enLice.map(n=>`<label><input type="checkbox" value="${n}"> ${n}</label>`).join("");
+  document.getElementById("jElim").innerHTML = `<option value="">— Élève éliminé(e) —</option>` + enLice.map(n=>`<option>${n}</option>`).join("");
+}
+function renderJournal(){
+  const el = document.getElementById("entries");
+  if(!S.journal.length){ el.innerHTML = `<p class="empty">Aucun prime enregistré pour l'instant.</p>`; return; }
+  el.innerHTML = [...S.journal].reverse().map(j=>`
+    <div class="entry"><button class="del" onclick="delEntry(${j.id})">✕</button>
+      <h3>${j.title}</h3>
+      <div class="meta">${j.date?new Date(j.date).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):""}</div>
+      ${j.nom.length?`<p>🔴 Nominés : <b>${j.nom.join(", ")}</b></p>`:""}
+      ${j.elim?`<p>👋 Éliminé(e) : <b>${j.elim}</b></p>`:""}
+      ${j.best?`<p>🌟 Ma meilleure presta : <b>${j.best}</b></p>`:""}
+      ${j.note?`<p style="margin-top:6px">💬 ${j.note}</p>`:""}
+    </div>`).join("");
+}
+document.getElementById("primeForm").onsubmit = e => {
+  e.preventDefault();
+  const nom = [...document.querySelectorAll("#jNom input:checked")].map(c=>c.value);
+  const elim = jElim.value;
+  S.journal.push({id:Date.now(), title:jTitle.value, date:jDate.value, nom, elim, best:jBest.value, note:jNote.value});
+  // mise à jour automatique des statuts
+  ELEVES.forEach(n => { if(["nomine","immunise"].includes(S.eleves[n].statut)) S.eleves[n].statut = "enlice"; });
+  nom.forEach(n => { if(n!==elim) S.eleves[n].statut = "enlice"; });
+  if(elim) S.eleves[elim].statut = "elimine";
+  e.target.reset(); save(); renderAll();
+};
+function delEntry(id){ if(confirm("Supprimer ce prime ?")){ S.journal = S.journal.filter(j=>j.id!==id); save(); renderJournal(); } }
+
+/* ===================== SAUVEGARDE / IMPORT ===================== */
+exportBtn.onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:"application/json"}));
+  a.download = "star-academy-2026-mon-suivi.json"; a.click();
+};
+importBtn.onclick = () => importFile.click();
+importFile.onchange = e => {
+  const r = new FileReader();
+  r.onload = () => { try{ S = JSON.parse(r.result); save(); renderAll(); alert("Données restaurées ✅"); }catch{ alert("Fichier invalide"); } };
+  r.readAsText(e.target.files[0]);
+};
+resetBtn.onclick = () => { if(confirm("Tout effacer et repartir de zéro ?")){ S = defaut(); save(); renderAll(); } };
+
+/* ===================== GO ===================== */
+function renderAll(){ renderStats(); renderGrid(); renderRanking(); renderProfs(); renderJournalForm(); renderJournal(); }
+renderAll();
+</script>
+</body>
+</html>
