@@ -1,10 +1,10 @@
 {
   "maj": "15 octobre 2026",
-  "prochainPrime": "Prime 2 – samedi 17 octobre sur TF1, avec Ben Mazué et Naïka",
   "actus": [
-    "Félix, Khalil et Mélina sont les premiers nominés de la saison.",
-    "Khalil a annoncé vouloir quitter l'aventure : les nominations sont suspendues pour l'instant.",
-    "Top 3 des premières évaluations : Morgan, Amel et Cameron."
+    "Khalil a annoncé vouloir quitter l'aventure : les nominations sont suspendues, son départ n'est pas encore confirmé.",
+    "Félix, Khalil et Mélina doivent s'affronter samedi sur « Hier encore » de Charles Aznavour.",
+    "Top 3 des premières évaluations : Morgan, Amel et Cameron.",
+    "« Dans un autre monde » de Céline Dion devient l'hymne de la promo 2026."
   ],
   "statuts": {
     "Amel": "enlice", "Antoine": "enlice", "Brieuc": "enlice", "Cameron": "enlice",
@@ -12,19 +12,24 @@
     "Kylian": "enlice", "Leeloo": "enlice", "Maud": "enlice", "Mélina": "nomine",
     "Morgan": "enlice", "Noémie": "enlice", "Tracy": "enlice", "Ydriss": "enlice", "Zoé": "enlice"
   },
+  "calendrier": [
+    {
+      "num": 2,
+      "invites": ["Ben Mazué", "Bigflo et Oli", "Adèle Castillon", "Naïka"],
+      "info": "Isabella ouvre le prime. Duel des nominés sur « Hier encore » (Charles Aznavour)."
+    }
+  ],
   "primes": [
     {
-      "titre": "Prime 1 – Le lancement",
-      "date": "Samedi 10 octobre",
+      "num": 1,
       "immunise": "Isabella",
       "resume": "Pas d'élimination. Isabella reçoit la première immunité, choix unanime des profs et de Mosimann."
     },
     {
-      "titre": "Semaine 1 – Premières évaluations",
-      "date": "Mardi 13 octobre",
+      "num": 2,
       "top3": ["Morgan", "Amel", "Cameron"],
       "nomines": ["Félix", "Khalil", "Mélina"],
-      "resume": "Thème : « Se mettre en valeur ». Khalil veut quitter l'aventure, les nominations sont suspendues."
+      "resume": "Évaluations du 13 octobre. Khalil veut quitter l'aventure, les nominations sont suspendues."
     }
   ]
 }
