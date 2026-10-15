@@ -1,0 +1,30 @@
+{
+  "maj": "15 octobre 2026",
+  "prochainPrime": "Prime 2 – samedi 17 octobre sur TF1, avec Ben Mazué et Naïka",
+  "actus": [
+    "Félix, Khalil et Mélina sont les premiers nominés de la saison.",
+    "Khalil a annoncé vouloir quitter l'aventure : les nominations sont suspendues pour l'instant.",
+    "Top 3 des premières évaluations : Morgan, Amel et Cameron."
+  ],
+  "statuts": {
+    "Amel": "enlice", "Antoine": "enlice", "Brieuc": "enlice", "Cameron": "enlice",
+    "Elija": "enlice", "Félix": "nomine", "Isabella": "immunise", "Khalil": "nomine",
+    "Kylian": "enlice", "Leeloo": "enlice", "Maud": "enlice", "Mélina": "nomine",
+    "Morgan": "enlice", "Noémie": "enlice", "Tracy": "enlice", "Ydriss": "enlice", "Zoé": "enlice"
+  },
+  "primes": [
+    {
+      "titre": "Prime 1 – Le lancement",
+      "date": "Samedi 10 octobre",
+      "immunise": "Isabella",
+      "resume": "Pas d'élimination. Isabella reçoit la première immunité, choix unanime des profs et de Mosimann."
+    },
+    {
+      "titre": "Semaine 1 – Premières évaluations",
+      "date": "Mardi 13 octobre",
+      "top3": ["Morgan", "Amel", "Cameron"],
+      "nomines": ["Félix", "Khalil", "Mélina"],
+      "resume": "Thème : « Se mettre en valeur ». Khalil veut quitter l'aventure, les nominations sont suspendues."
+    }
+  ]
+}
