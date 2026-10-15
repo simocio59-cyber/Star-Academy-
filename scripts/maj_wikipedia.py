@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 🤖 Robot Star Academy 2026 : lit Wikipédia et met à jour data.json
+# Robot Star Academy 2026 : lit Wikipedia et met a jour data.json
 import datetime
 import json
 import re
@@ -34,7 +34,7 @@ REGLES = [
 EXCLUS = ("eleve", "tous", "toutes", "prof", "academicien", "chorale", "troupe", "danseur")
 
 
-# ---------- 🧰 Outils ----------
+# ---------- Outils ----------
 def norm(s):
     s = unicodedata.normalize("NFD", str(s or ""))
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
@@ -44,10 +44,7 @@ def norm(s):
 def nettoie(s):
     s = re.sub(r"\s+", " ", s or "").strip()
     s = re.sub(r"\s+([,.)])", r"\1", s)
-    return re.sub(r"
-
-$$
-\s+", "(", s)
+    return re.sub(r"[(]\s+", "(", s)
 
 
 def ajoute(liste, x):
@@ -101,7 +98,7 @@ def entier(v):
 
 
 def grille(table):
-    """Transforme un tableau Wikipédia en liste de lignes (gère les cases fusionnées)."""
+    """Transforme un tableau Wikipedia en liste de lignes (gere les cases fusionnees)."""
     lignes, attente = [], {}
     for tr in table.find_all("tr"):
         if tr.find_parent("table") is not table:
@@ -131,7 +128,7 @@ def grille(table):
     return lignes
 
 
-# ---------- 🌐 Wikipédia ----------
+# ---------- Wikipedia ----------
 def api(**params):
     params.update(format="json", formatversion=2)
     r = requests.get(API, params=params, headers=ENTETES, timeout=30)
@@ -154,24 +151,21 @@ def charger_page():
         try:
             d = api(action="parse", page=t, prop="text", redirects=1, disableeditsection=1)
         except Exception as e:
-            print("Essai raté :", t, e)
+            print("Essai rate :", t, e)
             continue
         if "parse" in d and bonne_page(d["parse"]["title"]):
-            print("📖 Page trouvée :", d["parse"]["title"])
+            print("Page trouvee :", d["parse"]["title"])
             return d["parse"]["title"], d["parse"]["text"]
     return None, None
 
 
-# ---------- 🔎 Lecture des tableaux ----------
+# ---------- Lecture des tableaux ----------
 def invites_de(texte):
     t = texte
     for e in ELEVES:
         t = re.sub(r"\b" + re.escape(e) + r"\b", ",", t, flags=re.I)
     res = []
-    for m in re.split(r"\s*(?:,|;|&|\+|/|\bavec\b|\bfeat\.?|\(|
-$$
-
-)\s*", t):
+    for m in re.split(r"\s*(?:,|;|&|[+]|/|\bavec\b|\bfeat[.]?|[()])\s*", t):
         m = re.sub(r"^(?:et|avec)\s+", "", m.strip(" -–:"))
         if len(m) >= 3 and m[0].isupper() and not any(x in norm(m) for x in EXCLUS):
             res.append(m)
@@ -231,7 +225,7 @@ def categories(cellule):
 
 
 def tableau_recap(table):
-    """Tableau récapitulatif : une ligne par élève, une colonne par prime."""
+    """Tableau recapitulatif : une ligne par eleve, une colonne par prime."""
     g = grille(table)
     debut = next((i for i, r in enumerate(g) if r and len(eleves_dans(r[0])) == 1), None)
     if not debut:
@@ -304,7 +298,7 @@ def analyse_phrases(p):
                     ajoute(p["finalistes"], e)
 
 
-# ---------- 🧩 Analyse complète ----------
+# ---------- Analyse complete ----------
 def analyser(html):
     soup = BeautifulSoup(html, "html.parser")
     for s in soup.select("sup.reference, style, script, .mw-editsection, .noprint"):
@@ -428,7 +422,7 @@ def actus(primes):
     return L[:6]
 
 
-# ---------- 🚀 Programme ----------
+# ---------- Programme ----------
 def main():
     ancien = {}
     if FICHIER.exists():
@@ -439,30 +433,30 @@ def main():
     try:
         titre, html = charger_page()
     except Exception as e:
-        print("⚠️ Wikipédia injoignable :", e)
+        print("Wikipedia injoignable :", e)
         return
     if not html:
-        print("⚠️ Page introuvable : on garde l'ancien data.json")
+        print("Page introuvable : on garde l'ancien data.json")
         return
     try:
         nouveau = analyser(html)
     except Exception as e:
-        print("⚠️ Erreur de lecture :", e)
+        print("Erreur de lecture :", e)
         return
     nouveau["source"] = "https://fr.wikipedia.org/wiki/" + titre.replace(" ", "_")
     if not nouveau["primes"] and ancien.get("primes"):
-        print("⚠️ Rien trouvé cette fois : on garde l'ancien data.json")
+        print("Rien trouve cette fois : on garde l'ancien data.json")
         return
 
     def comparer(d):
         return json.dumps({k: v for k, v in d.items() if k != "maj"}, sort_keys=True, ensure_ascii=False)
 
     if comparer(nouveau) == comparer(ancien):
-        print("✅ Rien de neuf")
+        print("Rien de neuf")
         return
     nouveau["maj"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
     FICHIER.write_text(json.dumps(nouveau, ensure_ascii=False, indent=1), "utf-8")
-    print("✅ data.json mis à jour :", len(nouveau["primes"]), "primes")
+    print("data.json mis a jour :", len(nouveau["primes"]), "primes")
 
 
 if __name__ == "__main__":
