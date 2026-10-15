@@ -329,5 +329,50 @@ resetBtn.onclick = () => { if(confirm("Tout effacer et repartir de zéro ?")){ S
 function renderAll(){ renderStats(); renderGrid(); renderRanking(); renderProfs(); renderJournalForm(); renderJournal(); }
 renderAll();
 </script>
+
+<script>
+/* ===== MISE À JOUR AUTOMATIQUE DEPUIS data.json ===== */
+const _journalPerso = renderJournal;
+renderJournal = function () {
+  _journalPerso();
+  const off = S.officiel || [];
+  if (!off.length) return;
+  const el = document.getElementById("entries");
+  const html = [...off].reverse().map(j => `
+    <div class="entry" style="border-left-color:var(--gold)">
+      <h3>📺 ${j.titre} <span class="badge b-finaliste">Officiel</span></h3>
+      <div class="meta">${j.date || ""}</div>
+      ${j.immunise ? `<p>🛡️ Immunisé(e) : <b>${j.immunise}</b></p>` : ""}
+      ${j.top3 ? `<p>🏅 Top 3 des évals : <b>${j.top3.join(", ")}</b></p>` : ""}
+      ${j.nomines ? `<p>🔴 Nominés : <b>${j.nomines.join(", ")}</b></p>` : ""}
+      ${j.sauve ? `<p>💚 Sauvé(e) : <b>${j.sauve}</b></p>` : ""}
+      ${j.elimine ? `<p>👋 Éliminé(e) : <b>${j.elimine}</b></p>` : ""}
+      ${j.invites ? `<p>🎤 Invités : ${j.invites.join(", ")}</p>` : ""}
+      ${j.resume ? `<p style="margin-top:6px">💬 ${j.resume}</p>` : ""}
+    </div>`).join("");
+  el.innerHTML = S.journal.length ? html + el.innerHTML : html;
+};
+
+(async () => {
+  try {
+    const r = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return;
+    const D = await r.json();
+    Object.entries(D.statuts || {}).forEach(([n, st]) => { if (S.eleves[n]) S.eleves[n].statut = st; });
+    if (D.profs) S.profs = D.profs;
+    S.officiel = D.primes || [];
+    save();
+    const b = document.createElement("div");
+    b.className = "entry";
+    b.style.borderLeftColor = "var(--gold)";
+    b.innerHTML = `<h3>📰 Les dernières infos</h3>
+      <div class="meta">Mis à jour le ${D.maj}</div>
+      ${(D.actus || []).map(a => `<p>• ${a}</p>`).join("")}
+      ${D.prochainPrime ? `<p style="margin-top:8px">📺 <b>Prochain :</b> ${D.prochainPrime}</p>` : ""}`;
+    document.getElementById("eleves").prepend(b);
+    renderAll();
+  } catch (e) { console.log("data.json introuvable", e); }
+})();
+</script>
 </body>
 </html>
