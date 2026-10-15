@@ -2,680 +2,772 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⭐ Star Academy 2026 – Mon Suivi Fan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#120a26">
+<title>⭐ Star Academy 2026 · Mon carnet de fan</title>
 <style>
-  :root{--bg:#0b0820;--card:#1a1440;--gold:#ffcc33;--pink:#ff3d9a;--txt:#f3efff;--muted:#a49cc9;--red:#ff4d5e;--green:#3ddc84;--blue:#4da3ff}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#2a1a6e,var(--bg) 60%);color:var(--txt);min-height:100vh}
-  a{color:var(--pink)}
-  header{text-align:center;padding:30px 15px 10px}
-  header h1{font-size:2.2rem;background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;color:transparent}
-  header p{color:var(--muted);margin-top:6px}
-  .infos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
-  .chip{background:var(--card);border:1px solid #3a2f7a;padding:6px 12px;border-radius:20px;font-size:.85rem}
-  nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:15px;position:sticky;top:0;background:rgba(11,8,32,.92);backdrop-filter:blur(6px);z-index:10}
-  nav button{background:var(--card);color:var(--txt);border:1px solid #3a2f7a;padding:10px 18px;border-radius:25px;cursor:pointer;font-weight:600}
-  nav button.active{background:linear-gradient(90deg,var(--gold),var(--pink));color:#1a0b2e;border:none}
-  main{max-width:1150px;margin:auto;padding:15px}
-  section{display:none}section.active{display:block}
-  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;align-items:center}
-  .toolbar input,.toolbar select{background:var(--card);border:1px solid #3a2f7a;color:var(--txt);padding:9px 12px;border-radius:10px}
-  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-  .stat{flex:1;min-width:110px;background:var(--card);border-radius:14px;padding:12px;text-align:center}
-  .stat b{display:block;font-size:1.6rem;color:var(--gold)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
-  .card{background:var(--card);border-radius:18px;padding:16px;border:2px solid transparent;transition:.2s;position:relative}
-  .card:hover{transform:translateY(-3px)}
-  .card.fav{border-color:var(--gold);box-shadow:0 0 18px rgba(255,204,51,.25)}
-  .card.elimine{opacity:.45;filter:grayscale(.7)}
-  .top{display:flex;align-items:center;gap:12px}
-  .avatar{position:relative;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a0b2e;flex-shrink:0;cursor:pointer;border:2px solid rgba(255,255,255,.15)}
-  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .name{font-size:1.25rem;font-weight:700;cursor:pointer}
-  .sub{color:var(--muted);font-size:.8rem}
-  .heart{position:absolute;top:12px;right:14px;font-size:1.6rem;cursor:pointer;background:none;border:none}
-  .stars{margin:10px 0 6px;font-size:1.4rem;cursor:pointer;user-select:none}
-  .stars span{color:#4a4180}.stars span.on{color:var(--gold)}
-  .card select{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:7px;margin-top:6px;font-family:inherit}
-  .cbtn{width:100%;margin-top:8px;background:#0f0b2a;border:1px solid #3a2f7a;color:var(--txt);border-radius:8px;padding:8px;cursor:pointer;font-family:inherit}
-  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;margin-top:4px}
-  .b-enlice{background:var(--blue)}.b-nomine{background:var(--red)}.b-immunise{background:var(--green);color:#0b0820}.b-elimine{background:#555}.b-finaliste{background:var(--gold);color:#0b0820}.b-gagnant{background:linear-gradient(90deg,var(--gold),var(--pink));color:#0b0820}
-  h2{margin:10px 0 15px;color:var(--gold)}
-  .podium{display:flex;justify-content:center;align-items:flex-end;gap:12px;margin:20px 0 30px}
-  .pod{background:var(--card);border-radius:14px 14px 0 0;width:130px;text-align:center;padding:12px 6px}
-  .pod .avatar{margin:0 auto 8px}
-  .p1{height:200px;border-top:4px solid var(--gold)}.p2{height:165px;border-top:4px solid silver}.p3{height:140px;border-top:4px solid #cd7f32}
-  .rank-row{display:flex;align-items:center;gap:12px;background:var(--card);padding:10px 14px;border-radius:12px;margin-bottom:8px}
-  .rank-row .num{font-weight:800;color:var(--gold);width:30px}
-  .rank-row .actions button{background:#2d2466;border:none;color:var(--txt);border-radius:6px;padding:4px 9px;cursor:pointer;margin-left:3px}
-  .prof{background:var(--card);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center}
-  .prof .ic{font-size:2rem}
-  .prof small{color:var(--muted)}
-  .prof button{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer}
-  form.add{display:grid;gap:8px;background:var(--card);padding:16px;border-radius:16px;margin-bottom:20px}
-  form.add input{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:9px;font-family:inherit}
-  .btn{background:linear-gradient(90deg,var(--gold),var(--pink));color:#1a0b2e;border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer}
-  .btn.sec{background:var(--card);color:var(--txt);border:1px solid #3a2f7a}
-  .entry{background:var(--card);border-left:4px solid var(--gold);border-radius:12px;padding:14px;margin-bottom:15px}
-  .entry h3{color:var(--gold);font-size:1.05rem}
-  .entry .meta{color:var(--muted);font-size:.85rem;margin:4px 0 8px}
-  .empty{text-align:center;color:var(--muted);padding:30px;line-height:1.6}
-  footer{text-align:center;color:var(--muted);padding:30px 10px;font-size:.85rem}
-  /* PROCHAIN PRIME */
-  .next{background:linear-gradient(135deg,#3a1a7a,#1a1440);border:2px solid var(--gold);border-radius:20px;padding:18px;margin-bottom:15px;box-shadow:0 0 25px rgba(255,204,51,.15)}
-  .next .nlabel{color:var(--pink);font-weight:800;font-size:.8rem;letter-spacing:2px}
-  .next h2{margin:4px 0;color:var(--txt)}
-  .next .when{color:var(--gold);margin-bottom:8px}
-  .next p{margin:8px 0}
-  .pills{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
-  .pill{display:inline-flex;align-items:center;gap:6px;background:#0f0b2a;border-radius:20px;padding:3px 10px 3px 3px;cursor:pointer;font-size:.9rem}
-  /* PRIMES */
-  details.prime{background:var(--card);border-radius:16px;margin-bottom:12px;border-left:5px solid var(--blue);overflow:hidden;scroll-margin-top:80px}
-  details.prime.passe{border-left-color:#555}
-  details.prime.prochain{border-left-color:var(--gold);box-shadow:0 0 18px rgba(255,204,51,.2)}
-  details.prime summary{cursor:pointer;padding:14px 16px;list-style:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  details.prime summary::-webkit-details-marker{display:none}
-  details.prime summary .pt{font-weight:700;flex:1}
-  .pbody{padding:0 16px 16px}
-  .pbody>label{display:block;color:var(--gold);font-weight:700;margin:16px 0 6px}
-  .pbody textarea,.pbody select,.sheet input,.pbody input{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:8px;font-family:inherit}
-  .pbody textarea{min-height:70px;resize:vertical}
-  .off{background:#0f0b2a;border-radius:12px;padding:10px 12px;margin-top:8px;line-height:1.6}
-  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-  .pel{background:#0f0b2a;border-radius:14px;padding:10px}
-  .pel.out{opacity:.4}
-  .pel .stars{margin:6px 0 2px;font-size:1.3rem}
-  .com{background:#1f1850;border-radius:10px;padding:7px 10px;margin-top:6px;font-size:.9rem;word-wrap:break-word}
-  .pel .com{background:#1a1440}
-  .com .cm{color:var(--muted);font-size:.75rem;display:flex;justify-content:space-between;align-items:center;margin-top:3px}
-  .com .cm button{background:none;border:none;cursor:pointer;font-size:.95rem;margin-left:8px}
-  .addc{display:flex;gap:6px;margin-top:6px}
-  .addc input{flex:1;min-width:0}
-  .addc button{background:var(--pink);border:none;color:#fff;border-radius:8px;padding:0 14px;cursor:pointer;font-weight:800;font-size:1.1rem}
-  /* FICHE */
-  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;align-items:center;justify-content:center;padding:15px}
-  .modal.open{display:flex}
-  .sheet{background:var(--card);border-radius:22px;max-width:480px;width:100%;max-height:90vh;overflow:auto;padding:22px;position:relative;border:1px solid #3a2f7a}
-  .sheet .x{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--txt);font-size:1.4rem;cursor:pointer}
-  .sheet .avatar{margin:0 auto 10px}
-  .sheet h3{color:var(--gold);margin:18px 0 8px;font-size:1rem}
-  .sheet ul{padding-left:18px;line-height:1.6}
-  .sheet input{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:8px}
-  .igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
-  .igrid div{background:#0f0b2a;border-radius:12px;padding:10px;text-align:center}
-  .igrid small{display:block;color:var(--muted);font-size:.75rem}
-  .phbtns{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+:root{--card:#22163f;--card2:#2c1d52;--bord:#3d2b72;--txt:#f5f0ff;--mut:#b8a9dc;--or:#ffcf4d;--rose:#ff5fa2}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#120a26 radial-gradient(circle at top,#2d1756,#120a26 60%) fixed;color:var(--txt);line-height:1.4}
+body.noscroll{overflow:hidden}
+[hidden]{display:none!important}
+a{color:var(--or)}
+header{text-align:center;padding:20px 14px 8px}
+h1{margin:0;font-size:1.8rem;background:linear-gradient(90deg,var(--or),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sous{color:var(--mut);font-size:.9rem;margin-top:4px}
+nav{position:sticky;top:0;z-index:30;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 8px;background:rgba(18,10,38,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--bord)}
+nav button{background:var(--card);color:var(--txt);border:1px solid var(--bord);border-radius:999px;padding:8px 14px;font-size:.95rem;cursor:pointer;font-family:inherit}
+nav button.on{background:linear-gradient(90deg,var(--or),var(--rose));color:#1a0b2e;font-weight:700;border-color:transparent}
+main{max-width:1100px;margin:0 auto;padding:14px}
+.mut{color:var(--mut)}.sm{font-size:.82rem}.or{color:var(--or)}
+.titre{margin:8px 0 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(90deg,var(--or),var(--rose));color:#1a0b2e;border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.92rem;font-family:inherit}
+.btn.sec{background:var(--card2);color:var(--txt);border:1px solid var(--bord);font-weight:600}
+.btn.petit{padding:5px 10px;font-size:.8rem}
+select,textarea{font:inherit;color:var(--txt);background:#1a1033;border:1px solid var(--bord);border-radius:10px;padding:8px 10px;max-width:100%}
+textarea{width:100%;min-height:80px;resize:vertical}
+.vedette{background:linear-gradient(135deg,#3b1f74,#5a1e5c);border:1px solid #7a4bc4;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 30px rgba(0,0,0,.35);display:grid;gap:4px}
+.vedette h2{margin:6px 0 2px;font-size:1.35rem}
+.vedette .btn{margin-top:10px;justify-self:start}
+.vtop{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:700}
+.vtag{background:var(--or);color:#1a0b2e;border-radius:999px;padding:2px 10px;font-size:.75rem}
+details.bloc{background:var(--card);border:1px solid var(--bord);border-radius:14px;padding:10px 14px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:600}
+.actus ul{margin:8px 0 0;padding-left:20px}.actus li{margin-bottom:4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.chip{background:var(--card);color:var(--txt);border:1px solid var(--bord);border-radius:999px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:.88rem}
+.chip.on{border-color:var(--or);color:var(--or);background:var(--card2)}
+.filtres{display:flex;gap:6px;flex-wrap:wrap}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.carte{position:relative;background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.carte.fav{border-color:var(--or);box-shadow:0 0 0 1px rgba(255,207,77,.25)}
+.dehors{opacity:.55;filter:grayscale(.6)}
+.cl{display:flex;gap:10px;align-items:center;cursor:pointer;padding-right:30px}
+.nom{font-weight:700;font-size:1.05rem}
+.star{position:absolute;top:8px;right:8px;background:none;border:0;font-size:1.4rem;cursor:pointer;color:var(--or)}
+.av{position:relative;flex:0 0 auto;width:54px;height:54px;border-radius:50%;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;border:2px solid rgba(255,255,255,.25);vertical-align:middle}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.av.big{width:96px;height:96px;font-size:2.4rem}
+.av.mini{width:28px;height:28px;font-size:.8rem;border-width:1px}
+.badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:700;width:max-content;max-width:100%}
+.b-ok{background:#1f4d3c;color:#7ff0c0}.b-nom{background:#5a2626;color:#ffb0b0}.b-imm{background:#1d3f5c;color:#9fdcff}.b-elim{background:#3a3a3a;color:#ccc}.b-win{background:var(--or);color:#1a0b2e}.b-fin{background:#5b3d0f;color:#ffd98a}.b-sauve{background:#244a1f;color:#b5f59f}
+.chs{font-size:.86rem}
+.pnote{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;background:var(--card2);border-radius:10px;padding:4px 8px}
+.etoiles{display:inline-flex;white-space:nowrap}
+.etoiles button{background:none;border:0;font-size:1.35rem;cursor:pointer;color:#5b4a8a;padding:0 1px;line-height:1}
+.etoiles button.on{color:var(--or)}
+.carte .coms{margin-top:auto}
+.modal{position:fixed;inset:0;background:rgba(5,2,15,.78);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+.mbox{position:relative;background:#1c1238;border:1px solid var(--bord);border-radius:18px;max-width:720px;width:100%;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:18px;overscroll-behavior:contain}
+.x{position:sticky;top:0;float:right;z-index:3;width:38px;height:38px;border-radius:50%;background:var(--card2);color:var(--txt);border:1px solid var(--bord);font-size:1.05rem;cursor:pointer}
+.fhead{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.fhead h2{margin:0}
+.fl{flex:1;min-width:0}
+.row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.faits{margin:12px 0 0;padding-left:20px;color:var(--mut)}
+.fsec{border-top:1px solid var(--bord);margin-top:14px;padding-top:12px}
+.fsec h3{margin:0 0 10px;font-size:1.05rem}
+.addcom{display:grid;gap:8px;background:var(--card);border:1px dashed var(--or);border-radius:12px;padding:10px;margin-bottom:14px}
+.addcom label{display:grid;gap:4px}
+.tlbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tl{border-left:3px solid var(--bord);margin-left:6px;padding-left:12px}
+.tlg{margin-bottom:14px}
+.tlh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 8px -20px}
+.tlh::before{content:"";width:13px;height:13px;border-radius:50%;background:var(--or);box-shadow:0 0 0 3px #1c1238;flex:0 0 auto}
+.com{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:10px;margin-bottom:8px}
+.cmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.8rem;margin-bottom:4px}
+.ctxt{word-wrap:break-word;overflow-wrap:anywhere}
+.cact{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cact button{background:var(--card2);border:1px solid var(--bord);color:var(--txt);border-radius:8px;padding:4px 8px;font-size:.78rem;cursor:pointer;font-family:inherit}
+.pbadge{background:linear-gradient(90deg,var(--or),var(--rose));color:#1a0b2e;font-weight:800;border-radius:999px;padding:2px 10px;font-size:.8rem;white-space:nowrap}
+.pbadge.sm{font-size:.7rem;padding:1px 8px}
+.chl{padding-left:20px;margin:6px 0}.chl li{margin-bottom:5px}
+.parc{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.nl{display:grid;gap:6px;margin-top:8px}
+.nlr{display:grid;grid-template-columns:minmax(110px,1fr) minmax(0,1.6fr) auto auto;gap:8px;align-items:center;background:var(--card);border-radius:10px;padding:6px 8px}
+.nlr2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--card);border-radius:10px;padding:6px 8px}
+.nlr2 .etoiles{margin-left:auto}
+.nm{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.lien{cursor:pointer}.lien:hover{text-decoration:underline}
+.tag{font-size:.72rem;border-radius:999px;padding:2px 8px;background:var(--card2);margin-left:4px;white-space:nowrap;font-weight:600}
+.tag.or{background:var(--or);color:#1a0b2e}.tag.ok{background:#1f4d3c;color:#7ff0c0}
+.pbody{display:grid;gap:12px;margin-top:10px}
+.offi,.mien{background:var(--card2);border-radius:12px;padding:10px}
+.offi>div{margin-bottom:3px}
+h4{margin:0 0 8px}
+.mien textarea{margin:8px 0}
+.wiki{margin-top:10px}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:14px 0}
+.pod{text-align:center;cursor:pointer;width:110px}
+.pod .av{width:72px;height:72px;font-size:1.8rem}
+.pod .nom{font-size:.95rem;margin-top:4px}
+.marche{margin-top:6px;border-radius:10px 10px 0 0;color:#1a0b2e;font-weight:900;font-size:1.4rem;display:flex;align-items:center;justify-content:center}
+.p1 .marche{height:90px;background:linear-gradient(180deg,var(--or),#b8860b)}
+.p2 .marche{height:65px;background:linear-gradient(180deg,#eeeef6,#9a9ab0)}
+.p3 .marche{height:45px;background:linear-gradient(180deg,#e7ab72,#9c5b28)}
+.liste .row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.rang{font-weight:900;color:var(--or);width:26px;text-align:center;font-size:1.1rem}
+.fleches{display:flex;flex-direction:column;gap:4px}
+.fleches button{background:var(--card2);border:1px solid var(--bord);border-radius:8px;cursor:pointer;padding:2px 6px}
+.fleches button:disabled{opacity:.3;cursor:default}
+.equipe{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.eq{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:10px;display:grid;gap:2px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.pcarte{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:14px;display:grid;gap:8px}
+.new{background:var(--rose);color:#fff;border-radius:999px;padding:1px 8px;font-size:.66rem;font-weight:800;vertical-align:middle}
+.vide{text-align:center;padding:30px 16px;background:var(--card);border-radius:16px;border:1px dashed var(--bord)}
+footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;color:var(--mut);font-size:.84rem;display:grid;gap:6px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
+#toast.on{transform:translate(-50%,0)}
+@media (max-width:640px){
+  h1{font-size:1.45rem}
+  .nlr{grid-template-columns:1fr auto auto}
+  .nlr .chx{grid-column:1/-1;grid-row:2}
+  .mbox{padding:14px}
+  .modal{padding:8px}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>⭐ STAR ACADEMY 2026 ⭐</h1>
-  <p>Saison 14 · Mon suivi de fan</p>
-  <div class="infos" id="infos"></div>
+  <h1>⭐ Star Academy 2026</h1>
+  <div class="sous">Saison 14 · TF1 · les primes chaque samedi à 21h10 · mon carnet de fan 💜</div>
 </header>
 
 <nav>
-  <button class="active" data-tab="eleves">🎤 Élèves</button>
-  <button data-tab="primes">📺 Primes</button>
-  <button data-tab="classement">🏆 Mon classement</button>
-  <button data-tab="profs">🎓 Profs & équipe</button>
+  <button data-o="eleves" onclick="allerOnglet('eleves')">👥 Élèves</button>
+  <button data-o="primes" onclick="allerOnglet('primes')">📺 Primes</button>
+  <button data-o="classement" onclick="allerOnglet('classement')">🏆 Mon classement</button>
+  <button data-o="profs" onclick="allerOnglet('profs')">🎓 Profs</button>
 </nav>
 
-<main>
-  <section id="eleves" class="active">
-    <div id="nextPrime"></div>
-    <div id="actus"></div>
-    <div class="stats" id="stats"></div>
-    <div class="toolbar">
-      <input id="search" placeholder="🔍 Rechercher un élève...">
-      <select id="filter">
-        <option value="all">Tous</option>
-        <option value="fav">❤️ Mes préférés</option>
-        <option value="enlice">En lice</option>
-        <option value="nomine">Nominés</option>
-        <option value="immunise">Immunisés</option>
-        <option value="elimine">Éliminés</option>
-      </select>
-      <select id="sort">
-        <option value="alpha">Tri A → Z</option>
-        <option value="note">Tri par ma note</option>
-      </select>
-    </div>
-    <div class="grid" id="grid"></div>
-  </section>
-
-  <section id="primes">
-    <h2>📺 Tous les primes de la saison</h2>
-    <p class="sub" style="margin-bottom:12px;font-size:.9rem">Clique sur un prime pour l'ouvrir : note chaque élève, ajoute, modifie ou supprime tes commentaires. Tout reste modifiable, même pour les anciens primes.</p>
-    <div id="primeList"></div>
-  </section>
-
-  <section id="classement">
-    <h2>🏆 Le podium de mes préférés</h2>
-    <div class="podium" id="podium"></div>
-    <h2>📋 Mon classement</h2>
-    <p class="sub" style="margin-bottom:10px;font-size:.9rem">Seuls tes préférés ❤️ apparaissent ici. Classe-les avec les flèches (les éliminés passent en bas).</p>
-    <div id="ranking"></div>
-  </section>
-
-  <section id="profs">
-    <h2>🎓 Le corps professoral</h2>
-    <div class="grid" id="profGrid"></div>
-    <h2 style="margin-top:25px">➕ Ajouter / remplacer un prof</h2>
-    <form class="add" id="profForm">
-      <input id="pRole" placeholder="Matière / rôle (ex : Professeur d'anglais)" required>
-      <input id="pName" placeholder="Nom" required>
-      <button class="btn">Ajouter</button>
-    </form>
-  </section>
-</main>
-
-<div class="modal" id="modal" onclick="if(event.target===this)closeFiche()"><div class="sheet" id="sheet"></div></div>
+<main id="main"></main>
 
 <footer>
-  <button class="btn sec" id="exportBtn">💾 Sauvegarder mes données</button>
-  <button class="btn sec" id="importBtn">📂 Restaurer</button>
-  <button class="btn sec" id="resetBtn">♻️ Tout réinitialiser</button>
-  <input type="file" id="importFile" accept=".json" hidden>
-  <p style="margin-top:15px">Site de fan non officiel · Tes données restent sur ton appareil</p>
+  <div id="majInfo"></div>
+  <div>💾 Tes notes, commentaires et photos sont enregistrés dans ce navigateur (sur cet appareil).</div>
 </footer>
 
+<div id="modal" class="modal" hidden onclick="if(event.target===this)fermerFiche()">
+  <div class="mbox" id="mbox">
+    <button class="x" onclick="fermerFiche()" aria-label="Fermer">✖</button>
+    <div id="mbody"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
 <script>
-/* ===================== DONNÉES DE LA SAISON ===================== */
-const SAISON = {
-  directeur: "Quentin Mosimann",
-  parrain: "Vianney",
-  presentateurs: ["Nikos Aliagas", "Karima Charni"],
-  grandesSoeurs: ["Adèle Castillon", "Eva"]
+"use strict";
+const $=s=>document.querySelector(s);
+const CLE="staracademy2026_fan";
+const RAW_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/data.json";
+
+/* ===================== 🧰 OUTILS ===================== */
+const JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const MOISC=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+function norm(s){return String(s==null?"":s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();}
+function sameName(a,b){a=norm(a);b=norm(b);return !!a&&!!b&&(a===b||a.startsWith(b+" ")||a.startsWith(b+"."));}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function slug(n){return norm(n).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
+function obj(x){return x&&typeof x==="object"&&!Array.isArray(x)?x:{};}
+function liste2(x){
+  if(x==null||x==="") return [];
+  if(Array.isArray(x)) return x.flatMap(liste2);
+  if(typeof x==="object") return x.nom?[String(x.nom)]:(x.texte?[String(x.texte)]:[]);
+  const s=String(x).trim(); return s?[s]:[];
+}
+function liste(x){return liste2(x).flatMap(s=>s.split(/\s*(?:,|;|&|\/|\bet\b)\s*/i)).map(s=>s.trim()).filter(Boolean);}
+function has(x,nom){return liste(x).some(n=>sameName(n,nom));}
+function pad(n){return String(n).padStart(2,"0");}
+function isoJour(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function parseD(d){
+  if(d==null||d==="") return null;
+  if(typeof d==="number") return new Date(d);
+  const s=String(d);
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:\D+(\d{1,2})[h:](\d{2}))?/);
+  if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1],+(m[4]||12),+(m[5]||0));}
+  const t=new Date(s); return isNaN(t)?null:t;
+}
+function tms(d){const t=parseD(d);return t?t.getTime():0;}
+function fDate(d){const t=parseD(d);if(!t)return "";return "le "+pad(t.getDate())+"/"+pad(t.getMonth()+1)+(t.getFullYear()!==2026?"/"+t.getFullYear():"")+" à "+pad(t.getHours())+"h"+pad(t.getMinutes());}
+function jourP(c){return String(c.date).split("-").map(Number);}
+function dateP(c){const [y,m,d]=jourP(c);return new Date(y,m-1,d,21,10);}
+function lundiApres(c){const [y,m,d]=jourP(c);const j=new Date(y,m-1,d).getDay();return new Date(y,m-1,d+(((8-j)%7)||7));}
+function debutJour(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
+function numJ(n){return n===1?"1er":String(n);}
+function dCourte(c){const d=dateP(c);return numJ(d.getDate())+" "+MOISC[d.getMonth()]+(d.getFullYear()!==2026?" "+d.getFullYear():"");}
+function dLongue(c){const d=dateP(c);return JOURS[d.getDay()]+" "+numJ(d.getDate())+" "+MOIS[d.getMonth()]+(d.getFullYear()!==2026?" "+d.getFullYear():"");}
+function couleur(n){let h=0;for(const ch of String(n))h=(h*31+ch.codePointAt(0))%360;return "linear-gradient(135deg,hsl("+h+",70%,55%),hsl("+((h+50)%360)+",65%,38%))";}
+
+/* ===================== 📚 DONNÉES DE BASE ===================== */
+const ELEVES=["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
+
+const BIOS={
+  "Amel":{age:22,ville:"Vitry-sur-Seine",region:"Val-de-Marne, Île-de-France",drapeau:"🇫🇷",nom:"Amel Brun",faits:["🏅 Dans le top 3 des premières évaluations"]},
+  "Antoine":{age:18,ville:"Lyon",region:"Rhône, Auvergne-Rhône-Alpes",drapeau:"🇫🇷",nom:"Antoine (nom de famille non communiqué)",faits:["🐣 Un des benjamins de la promo","🎤 Duo avec Morgan au prime 1"]},
+  "Brieuc":{age:18,ville:"Court-Saint-Étienne",region:"Brabant wallon, Belgique",drapeau:"🇧🇪",nom:"Brieuc Poncelet",faits:["🐣 Un des benjamins de la promo","🇧🇪 Le Belge de la bande"]},
+  "Cameron":{age:26,ville:"Cerin",region:"Ain, Auvergne-Rhône-Alpes",drapeau:"🇫🇷",nom:"Cameron (nom de famille non communiqué)",faits:["🎖️ Le plus âgé de la promo","🎨 Sort des Beaux-Arts","🏅 Dans le top 3 des premières évaluations"]},
+  "Elija":{age:23,ville:"Besançon",region:"Doubs, Bourgogne-Franche-Comté",drapeau:"🇫🇷",nom:"Elija Dirand",faits:["🎨 5 ans aux Beaux-Arts de Besançon","💃 Jonathan (danse) a adoré son prime 1"]},
+  "Félix":{age:18,ville:"Québec",region:"Québec, Canada",drapeau:"🇨🇦",nom:"Félix Morin",faits:["✈️ Arrive tout droit du Québec","🐣 Un des benjamins de la promo","⚠️ Nominé après le prime 1"]},
+  "Isabella":{age:20,ville:"Ris-Orangis",region:"Essonne, Île-de-France",drapeau:"🇫🇷",nom:"Isabella Moutou",faits:["🛡️ Immunisée par les profs à la fin du prime 1","😭 Quentin Mosimann ému aux larmes par son « Louis »"]},
+  "Khalil":{age:24,ville:"Paris",region:"Île-de-France",drapeau:"🇫🇷",nom:"Khalil Erwan",faits:["🎶 Un mashup Eels / Cocciante au prime 1","⚠️ Nominé après le prime 1","🚪 A dit vouloir quitter l’aventure"]},
+  "Kylian":{age:21,ville:"Bordeaux",region:"Gironde, Nouvelle-Aquitaine",drapeau:"🇫🇷",nom:"Kylian (nom de famille non communiqué)",faits:["🎤 Duo avec Noémie au prime 1"]},
+  "Leeloo":{age:24,ville:"Saint-Aignan",region:"Loir-et-Cher, Centre-Val de Loire",drapeau:"🇫🇷🇧🇪",nom:"Leeloo Van Cauberg",faits:["🇫🇷🇧🇪 Franco-belge, fratrie de 6 enfants","🇬🇧 Partie à Londres à 18 ans pour étudier la musique","🎬 A ouvert la saison au prime 1"]},
+  "Maud":{age:20,ville:"Sérent",region:"Morbihan, Bretagne",drapeau:"🇫🇷",nom:"Maud (nom de famille non communiqué)",faits:["🌊 La Bretonne de la promo"]},
+  "Mélina":{age:22,ville:"Florac",region:"Lozère, Occitanie",drapeau:"🇫🇷",nom:"Mélina Danni",faits:["⚠️ Nominée après le prime 1"]},
+  "Morgan":{age:19,ville:"Figanières",region:"Var, Provence-Alpes-Côte d’Azur",drapeau:"🇫🇷",nom:"Morgan Guille",faits:["🏅 Dans le top 3 des premières évaluations","🎤 Duo avec Antoine au prime 1"]},
+  "Noémie":{age:23,ville:"Saint-Justin",region:"Landes, Nouvelle-Aquitaine",drapeau:"🇫🇷",nom:"Noémie Dupeyron (alias Noémie Juna)",faits:["🎤 Duo avec Kylian au prime 1"]},
+  "Tracy":{age:23,ville:"Paris",region:"Île-de-France",drapeau:"🇫🇷",nom:"Tracy Sehl",faits:["🎤 Félicitée par Sofia (chant) au prime 1"]},
+  "Ydriss":{age:19,ville:"Baie-Mahault",region:"Guadeloupe",drapeau:"🇬🇵",nom:"Ydriss Bonalair",faits:["👏 Ovation du public sur « I Will Always Love You »","😮 Sofia l’a trouvé « vertigineux »"]},
+  "Zoé":{age:19,ville:"Rueil-Malmaison",region:"Hauts-de-Seine, Île-de-France",drapeau:"🇫🇷",nom:"Zoé Smittarello",faits:["🎤 Sofia sait déjà sur quoi elle va travailler avec elle"]}
 };
 
-const PROFS_DEFAUT = [
-  {role:"Directeur", name:"Quentin Mosimann", ic:"🎬"},
-  {role:"Professeure de chant", name:"Sofia Morgavi", ic:"🎤"},
-  {role:"Professeur de danse", name:"Jonathan Jenvrin", ic:"💃"},
-  {role:"Professeur de théâtre", name:"Alain Degois « Papy »", ic:"🎭"},
-  {role:"Professeure d'expression scénique", name:"Lydia Bouchard", ic:"✨", nouveau:true},
-  {role:"Coach sportif & de vie", name:"Ladji Doucouré", ic:"🏃"},
-  {role:"Répétitrice", name:"Fanny Delaigue", ic:"🎶"},
-  {role:"Répétitrice", name:"Philippine Lavrey", ic:"🎶", nouveau:true},
-  {role:"Parrain de la saison", name:"Vianney", ic:"🌟"},
-];
+/* 📅 17 primes, chaque samedi à 21h10 */
+const CAL_BASE=(function(){
+  const L=[];
+  for(let i=0;i<17;i++){const d=new Date(2026,9,10+7*i);L.push({num:i+1,date:isoJour(d),ok:i<4,titre:"",invites:[]});}
+  L[0].titre="Le lancement";L[0].invites=["Ambre","Vianney"];
+  L[1].invites=["Ben Mazué","Bigflo et Oli","Adèle Castillon","Naïka"];
+  L[14].titre="Demi-finale";L[15].titre="Demi-finale";L[16].titre="Grande finale 🏆";
+  return L;
+})();
 
-const ELEVES = ["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
-
-const BIOS = {
-  "Amel":    {age:22, ville:"Vitry-sur-Seine", region:"Val-de-Marne", drapeau:"🇫🇷", faits:["Fille d'un célèbre commentateur sportif"]},
-  "Antoine": {age:18, ville:"Lyon", region:"Rhône", drapeau:"🇫🇷", faits:["L'un des plus jeunes de la promo"]},
-  "Brieuc":  {age:18, ville:"Court-Saint-Étienne", region:"Brabant wallon, Belgique", drapeau:"🇧🇪", faits:["A participé à The Voice Kids Belgique en 2023, dans l'équipe de Matthew Irons","Aime voyager et photographier ses souvenirs","S'est récemment lancé dans la composition"]},
-  "Cameron": {age:26, ville:"Cerin", region:"Ain", drapeau:"🇫🇷", faits:["Doyen de la promotion","A étudié aux Beaux-Arts","Barman et barista, il compose ses chansons en autodidacte"], chansons:["Prime 1 : « Dis-moi que tu m'aimes » (Zaho de Sagazan)"]},
-  "Elija":   {nom:"Elija Dirand", age:23, ville:"Besançon", region:"Doubs", drapeau:"🇫🇷", faits:["Cinq années aux Beaux-Arts de Besançon","Tatouages, piercings, création de mode : elle a son propre univers"], chansons:["Prime 1 : « Marcia Baïla » (Rita Mitsouko)"]},
-  "Félix":   {nom:"Félix Morin", age:18, ville:"Québec", region:"Canada", drapeau:"🇨🇦", faits:["Premier candidat québécois de l'émission","Hockeyeur sur glace et guitariste"]},
-  "Isabella":{nom:"Isabella Moutou", age:20, ville:"Ris-Orangis", region:"Essonne", drapeau:"🇫🇷", faits:["Première immunisée de la saison, choix unanime des profs","A ému Quentin Mosimann jusqu'aux larmes"], chansons:["Prime 1 : « Louis » (Barbara Pravi)"]},
-  "Khalil":  {nom:"Khalil Erwan", age:24, ville:"Paris", region:"Île-de-France", drapeau:"🇫🇷", faits:["A annoncé vouloir quitter l'aventure dès la première semaine"]},
-  "Kylian":  {age:21, ville:"Bordeaux", region:"Gironde", drapeau:"🇫🇷"},
-  "Leeloo":  {nom:"Leeloo Van Cauberg", age:24, ville:"Saint-Aignan", region:"Loir-et-Cher", drapeau:"🇫🇷🇧🇪", faits:["Franco-belge, fille de l'humoriste François Pirette","A grandi dans une fratrie de six enfants","Partie à Londres à 18 ans pour étudier la musique","Première élève dévoilée de la saison"]},
-  "Maud":    {age:20, ville:"Sérent", region:"Morbihan", drapeau:"🇫🇷"},
-  "Mélina":  {nom:"Mélina Danni", age:22, ville:"Florac", region:"Lozère", drapeau:"🇫🇷", faits:["Prépa littéraire à Lyon, puis master d'histoire à Paris"]},
-  "Morgan":  {nom:"Morgan Guille", age:19, ville:"Figanières", region:"Var", drapeau:"🇫🇷"},
-  "Noémie":  {nom:"Noémie Dupeyron", age:23, ville:"Saint-Justin", region:"Landes", drapeau:"🇫🇷"},
-  "Tracy":   {nom:"Tracy Sehl", age:23, ville:"Paris", region:"Île-de-France", drapeau:"🇫🇷", faits:["Issue d'une fratrie de quatre filles"]},
-  "Ydriss":  {nom:"Ydriss Bonalair", age:19, ville:"Baie-Mahault", region:"Guadeloupe", drapeau:"🌴", faits:["A quitté la Guadeloupe pour tenter sa chance"], chansons:["Prime 1 : « I Will Always Love You » (Whitney Houston)"]},
-  "Zoé":     {nom:"Zoé Smittarello", age:19, ville:"Rueil-Malmaison", region:"Hauts-de-Seine", drapeau:"🇫🇷"}
+/* 📋 Infos officielles connues (complétées toutes seules par data.json) */
+const PRIMES_BASE={
+  1:{immunise:["Isabella"],chansons:[
+    {eleves:["Leeloo"],titre:"Training Season",artiste:"Dua Lipa"},
+    {eleves:["Zoé"],titre:"S’il suffisait d’aimer",artiste:"Céline Dion"},
+    {eleves:["Félix"],titre:"Je t’aimais, je t’aime, je t’aimerai",artiste:"Francis Cabrel"},
+    {eleves:["Elija"],titre:"Marcia Baïla",artiste:"Les Rita Mitsouko"},
+    {eleves:["Ydriss"],titre:"I Will Always Love You",artiste:"Whitney Houston"},
+    {eleves:["Kylian","Noémie"],titre:"In the Stars",artiste:"Benson Boone feat. Philippine Lavrey"},
+    {eleves:["Isabella"],titre:"Louis",artiste:"Barbara Pravi"},
+    {eleves:["Mélina"],titre:"Résiste",artiste:"France Gall"},
+    {eleves:["Cameron"],titre:"Dis-moi que tu m’aimes",artiste:"Zaho de Sagazan"},
+    {eleves:["Tracy"],titre:"Stop!",artiste:"Sam Brown"},
+    {eleves:["Brieuc"],titre:"Maman s’inquiète",artiste:"Helena"},
+    {eleves:["Maud"],titre:"Melodrama",artiste:"Disiz feat. Theodora"},
+    {eleves:["Khalil"],titre:"Mashup That Look You Give That Guy / Le Coup de soleil",artiste:"Eels / Richard Cocciante"},
+    {eleves:["Antoine","Morgan"],titre:"Le Temps",artiste:"Tayc"},
+    {eleves:["Amel"],titre:"Killing Me Softly with His Song",artiste:"Fugees"}
+  ]},
+  2:{nomines:["Félix","Khalil","Mélina"],top3:["Morgan","Amel","Cameron"]}
 };
 
-/* ===================== CALENDRIER DES PRIMES ===================== */
-/* ok:true = date confirmée · les autres sont prévues (un prime chaque samedi) */
-const CAL = [
-  {num:1,  date:"2026-10-10", titre:"Le lancement", invites:["Ambre","Vianney"], ok:true},
-  {num:2,  date:"2026-10-17", invites:["Ben Mazué","Bigflo et Oli","Adèle Castillon","Naïka"], ok:true},
-  {num:3,  date:"2026-10-24", ok:true},
-  {num:4,  date:"2026-10-31", ok:true},
-  {num:5,  date:"2026-11-07"},
-  {num:6,  date:"2026-11-14"},
-  {num:7,  date:"2026-11-21"},
-  {num:8,  date:"2026-11-28"},
-  {num:9,  date:"2026-12-05"},
-  {num:10, date:"2026-12-12"},
-  {num:11, date:"2026-12-19"},
-  {num:12, date:"2026-12-26"},
-  {num:13, date:"2027-01-02"},
-  {num:14, date:"2027-01-09"},
-  {num:15, date:"2027-01-16", titre:"Demi-finale"},
-  {num:16, date:"2027-01-23", titre:"Demi-finale"},
-  {num:17, date:"2027-01-30", titre:"Grande finale 🏆"}
+const ACTUS_BASE=[
+  "🛡️ Isabella est immunisée par les profs à la fin du prime 1.",
+  "🏅 Top 3 des évaluations : Morgan, Amel et Cameron.",
+  "⚠️ Félix, Khalil et Mélina sont nominés.",
+  "🚪 Khalil a dit vouloir quitter l’aventure : les nominations sont suspendues pour l’instant."
 ];
-const debut = p => new Date(p.date + "T21:10:00");
-const fin = p => new Date(debut(p).getTime() + 4*3600e3);
-const prochain = () => CAL.find(p => fin(p) > new Date());
-function etat(p){
-  if (new Date() > fin(p)) return "passe";
-  const nx = prochain();
-  return nx && nx.num === p.num ? "prochain" : "avenir";
-}
-const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-const fmt = p => cap(debut(p).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}));
-function compte(p){
-  const now = new Date();
-  if (now >= debut(p)) return "en direct maintenant 🔴";
-  const d = Math.round((new Date(debut(p).toDateString()) - new Date(now.toDateString())) / 864e5);
-  return d === 0 ? "ce soir 🔥" : d === 1 ? "demain !" : `dans ${d} jours`;
-}
 
-const STATUTS = {enlice:"En lice", nomine:"Nominé(e)", immunise:"Immunisé(e)", elimine:"Éliminé(e)", finaliste:"Finaliste", gagnant:"🏆 Gagnant(e)"};
-const COULEURS = ["#ff3d9a","#ffcc33","#4da3ff","#3ddc84","#b57bff","#ff8a3d","#3de0e0","#ff6b6b"];
+const EQUIPE=[["🎬 Directeur","Quentin Mosimann"],["🤝 Parrain","Vianney"],["🎙️ Présentateurs","Nikos Aliagas et Karima Charni"],["💖 Grandes sœurs","Adèle Castillon et Eva"]];
+const PROFS=[
+  {nom:"Sofia Morgavi",role:"Professeure de chant",e:"🎤"},
+  {nom:"Jonathan Jenvrin",role:"Professeur de danse",e:"💃"},
+  {nom:"Alain Degois « Papy »",role:"Professeur de théâtre",e:"🎭"},
+  {nom:"Lydia Bouchard",role:"Expression scénique",e:"✨",nouv:true},
+  {nom:"Ladji Doucouré",role:"Coach sportif",e:"🏃"},
+  {nom:"Fanny Delaigue",role:"Répétitrice",e:"🎼"},
+  {nom:"Philippine Lavrey",role:"Répétitrice",e:"🎹",nouv:true}
+];
 
-/* ===================== SAUVEGARDE ===================== */
-const KEY = "staracademy2026_fan";
-function defaut(){
-  const s = {eleves:{}, ordre:[...ELEVES], profs:PROFS_DEFAUT.map(p=>({...p})), journal:[], photos:{}, officiel:[], primes:{}};
-  ELEVES.forEach(n => s.eleves[n] = {fav:false, note:0, statut:"enlice", coms:[]});
-  s.eleves["Isabella"].statut = "immunise";
-  return s;
-}
-let S = JSON.parse(localStorage.getItem(KEY) || "null") || defaut();
-const save = () => localStorage.setItem(KEY, JSON.stringify(S));
-const newId = () => Date.now() + Math.floor(Math.random()*1000);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const dcourt = d => new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
-const color = n => COULEURS[ELEVES.indexOf(n) % COULEURS.length];
+/* ===================== 🧠 ÉTAT ===================== */
+let S=null,SEL=1,SEL_MANUEL=false,FILTRE="tous",FICHE=null,FICHE_P=null,ORDRE_COMS="asc",ETAT_MAJ="";
+let ONGLET=["eleves","primes","classement","profs"].includes(location.hash.slice(1))?location.hash.slice(1):"eleves";
+const OPEN={},PHOTO_KO={},PHOTO_OK={};
 
-function getP(num){ S.primes[num] = S.primes[num] || {avis:"", best:"", eleves:{}}; return S.primes[num]; }
-function getPE(num, n){ const P = getP(num); P.eleves[n] = P.eleves[n] || {note:0, coms:[]}; return P.eleves[n]; }
-
-/* Récupère les données des anciennes versions du site */
-function migrer(){
-  S.photos = S.photos || {}; S.officiel = S.officiel || []; S.primes = S.primes || {};
-  S.journal = S.journal || []; S.ordre = S.ordre || [...ELEVES]; S.profs = S.profs || PROFS_DEFAUT.map(p=>({...p}));
-  S.eleves = S.eleves || {};
-  ELEVES.forEach(n => {
-    const e = S.eleves[n] = S.eleves[n] || {fav:false, note:0, statut:"enlice", coms:[]};
-    e.coms = e.coms || [];
-    if (e.avis) { e.coms.push({id:newId(), txt:e.avis, date:new Date().toISOString()}); }
-    delete e.avis;
-    if (!S.ordre.includes(n)) S.ordre.push(n);
+/* ===================== 📅 CALENDRIER & PRIMES ===================== */
+function CALv(){
+  const auto=(S&&S.officiel&&Array.isArray(S.officiel.calendrier))?S.officiel.calendrier:[];
+  return CAL_BASE.map(c=>{
+    const a=auto.find(x=>x&&+x.num===c.num);
+    if(!a) return c;
+    const r=Object.assign({},c);
+    if(typeof a.date==="string"&&/^\d{4}-\d{2}-\d{2}/.test(a.date)) r.date=a.date.slice(0,10);
+    if(a.ok===true) r.ok=true;
+    const inv=liste2(a.invites); if(inv.length) r.invites=inv;
+    if(typeof a.titre==="string"&&a.titre.trim()) r.titre=a.titre.trim();
+    return r;
   });
-  S.journal.forEach(j => {
-    const m = (j.title || "").match(/\d+/);
-    const passes = CAL.filter(p => etat(p) === "passe");
-    const num = m ? +m[0] : (passes.length ? passes[passes.length-1].num : 1);
-    const P = getP(num);
-    const bits = [j.title, j.note, j.best ? "Meilleure presta : " + j.best : ""].filter(Boolean).join("\n");
-    if (bits) P.avis = (P.avis ? P.avis + "\n\n" : "") + bits;
-    if (j.best && ELEVES.includes(j.best) && !P.best) P.best = j.best;
-  });
-  S.journal = [];
 }
-migrer(); save();
-
-/* ===================== PHOTOS ===================== */
-const slug = n => n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-const EXT = ["jpg","jpeg","png","webp"];
-const PH = {};
-function avatar(n, size=54, click=true){
-  const s = slug(n);
-  let img = "";
-  if (S.photos[n]) img = `<img src="${S.photos[n]}" alt="${n}">`;
-  else if (PH[s] !== false) {
-    const i = PH[s] ? EXT.indexOf(PH[s]) : 0;
-    img = `<img src="photos/${s}.${EXT[i]}" data-s="${s}" data-i="${i}" alt="${n}" onload="PH['${s}']=EXT[this.dataset.i]" onerror="photoErr(this)">`;
-  }
-  return `<div class="avatar" ${click?`onclick="openFiche('${n}')"`:""} style="background:${color(n)};width:${size}px;height:${size}px;font-size:${Math.round(size/2.3)}px">${n[0]}${img}</div>`;
+/* ⭐ Prime vedette : reste affiché jusqu'au lundi qui suit */
+function vedette(){const now=new Date(),cal=CALv();return cal.find(c=>now<lundiApres(c))||cal[cal.length-1];}
+/* 🕰️ Retrouve le prime d'un commentaire grâce à sa date */
+function primeDeDate(d){const t=parseD(d),cal=CALv();if(!t)return 1;const c=cal.find(x=>t<lundiApres(x));return (c||cal[cal.length-1]).num;}
+function primeInfo(num){
+  num=+num;
+  const b=PRIMES_BASE[num]||{};
+  const auto=(S&&S.officiel&&Array.isArray(S.officiel.primes))?S.officiel.primes:[];
+  const a=auto.find(x=>x&&+x.num===num)||{};
+  const r={num};
+  ["nomines","sauve","elimine","abandon","immunise","top3","finalistes","gagnant","invites","wiki"].forEach(k=>{const A=liste2(a[k]);r[k]=A.length?A:liste2(b[k]);});
+  const ca=Array.isArray(a.chansons)?a.chansons.filter(x=>x&&typeof x==="object"):[];
+  r.chansons=ca.length?ca:(b.chansons||[]);
+  return r;
 }
-function photoErr(img){
-  const i = +img.dataset.i + 1;
-  if (i >= EXT.length){ PH[img.dataset.s] = false; img.remove(); return; }
-  img.dataset.i = i; img.src = `photos/${img.dataset.s}.${EXT[i]}`;
-}
-function choisirPhoto(n){
-  const inp = document.createElement("input");
-  inp.type = "file"; inp.accept = "image/*";
-  inp.onchange = () => {
-    const f = inp.files[0]; if (!f) return;
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement("canvas"), T = 300, m = Math.min(img.width, img.height);
-      c.width = c.height = T;
-      c.getContext("2d").drawImage(img, (img.width-m)/2, (img.height-m)/2, m, m, 0, 0, T, T);
-      S.photos[n] = c.toDataURL("image/jpeg", .8);
-      try { save(); } catch { delete S.photos[n]; alert("Mémoire pleine 😕"); }
-      refresh();
-    };
-    img.src = URL.createObjectURL(f);
-  };
-  inp.click();
-}
-function retirerPhoto(n){ delete S.photos[n]; save(); refresh(); }
-
-/* ===================== ÉTOILES & COMMENTAIRES ===================== */
-function stars(note, fn){
-  return [1,2,3,4,5].map(i => `<span class="${i<=note?"on":""}" onclick="${fn.replace("#", i)}">★</span>`).join("");
-}
-// clé "e:Nom" = commentaires généraux · "p:3:Nom" = commentaires du prime 3
-function comsList(k){
-  const [t,a,b] = k.split(":");
-  if (t === "e") return S.eleves[a].coms;
-  const P = S.primes[+a];
-  return (P && P.eleves[b]) ? P.eleves[b].coms : [];
-}
-function comsRef(k){
-  const [t,a,b] = k.split(":");
-  return t === "e" ? S.eleves[a].coms : getPE(+a, b).coms;
-}
-function comsHTML(k, ph){
-  const L = comsList(k), id = "c_" + k.replace(/[^a-zA-Z0-9]/g, "_");
-  return `<div>${L.map(c => `<div class="com">${esc(c.txt).replace(/\n/g,"<br>")}
-      <div class="cm"><span>${dcourt(c.date)}${c.edit ? " · modifié" : ""}</span>
-      <span><button title="Modifier" onclick="editCom('${k}',${c.id})">✏️</button><button title="Supprimer" onclick="delCom('${k}',${c.id})">🗑️</button></span></div></div>`).join("")}
-    <div class="addc"><input id="${id}" placeholder="${ph || "Nouveau commentaire..."}" onkeydown="if(event.key==='Enter')addCom('${k}','${id}')"><button onclick="addCom('${k}','${id}')">+</button></div></div>`;
-}
-function addCom(k, inputId){
-  const el = document.getElementById(inputId), txt = el.value.trim();
-  if (!txt) return;
-  comsRef(k).push({id:newId(), txt, date:new Date().toISOString()});
-  save(); refresh();
-}
-function editCom(k, id){
-  const c = comsRef(k).find(c => c.id === id); if (!c) return;
-  const t = prompt("Modifier ton commentaire :", c.txt);
-  if (t === null) return;
-  if (!t.trim()) return delCom(k, id, true);
-  c.txt = t.trim(); c.edit = new Date().toISOString();
-  save(); refresh();
-}
-function delCom(k, id, ok){
-  if (!ok && !confirm("Supprimer ce commentaire ?")) return;
-  const L = comsRef(k), i = L.findIndex(c => c.id === id);
-  if (i > -1) L.splice(i, 1);
-  save(); refresh();
-}
-
-/* ===================== FICHE ÉLÈVE ===================== */
-let FICHE = null;
-const numOf = j => j.num || +(((j.titre || "").match(/Prime\s*(\d+)/i) || [])[1]) || 0;
-function parcours(n){
-  const out = [];
-  S.officiel.forEach(j => {
-    const t = numOf(j) ? "Prime " + numOf(j) : (j.titre || "");
-    if (j.immunise === n) out.push(`🛡️ Immunisé(e) – ${t}`);
-    if ((j.top3 || []).includes(n)) out.push(`🏅 Top 3 des évaluations – ${t}`);
-    if ((j.nomines || []).includes(n)) out.push(`🔴 Nominé(e) – ${t}`);
-    if (j.sauve === n) out.push(`💚 Sauvé(e) – ${t}`);
-    if (j.elimine === n) out.push(`👋 Éliminé(e) – ${t}`);
-  });
+function invitesDe(num){const p=primeInfo(num);const c=CALv().find(x=>x.num===+num)||{};return p.invites.length?p.invites:liste2(c.invites);}
+function chansonsDe(nom,num){
+  const out=[];
+  primeInfo(num).chansons.forEach(ch=>{const el=liste(ch.eleves);if(el.some(n=>sameName(n,nom)))out.push({titre:ch.titre||"",artiste:ch.artiste||"",avec:el.filter(n=>!sameName(n,nom))});});
   return out;
 }
-function openFiche(n){
-  FICHE = n;
-  const b = BIOS[n] || {}, e = S.eleves[n], p = parcours(n);
-  const parPrime = CAL.map(c => {
-    const x = S.primes[c.num] && S.primes[c.num].eleves[n];
-    if (!x || (!x.note && !x.coms.length)) return "";
-    return `<li><a href="#" onclick="goPrime(${c.num});return false">Prime ${c.num}</a> <span style="color:var(--gold)">${"★".repeat(x.note)}</span>
-      ${x.coms.map(c2 => `<div class="sub">« ${esc(c2.txt)} »</div>`).join("")}</li>`;
-  }).join("");
-  document.getElementById("sheet").innerHTML = `
-    <button class="x" onclick="closeFiche()">✕</button>
-    <div style="text-align:center">
-      ${avatar(n, 150, false)}
-      <h2 style="margin:4px 0 2px">${b.drapeau || ""} ${n} ${e.fav ? "❤️" : ""}</h2>
-      ${b.nom ? `<div class="sub">${b.nom}</div>` : ""}
-      <span class="badge b-${e.statut}">${STATUTS[e.statut]}</span>
-    </div>
-    <div class="igrid">
-      <div><small>Âge</small><b>${b.age ? b.age + " ans" : "?"}</b></div>
-      <div><small>Ville</small><b>${b.ville || "?"}</b></div>
-      <div><small>Région</small><b>${b.region || "?"}</b></div>
-    </div>
-    ${b.faits && b.faits.length ? `<h3>💡 À savoir</h3><ul>${b.faits.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}
-    ${b.chansons && b.chansons.length ? `<h3>🎤 Ses chansons</h3><ul>${b.chansons.map(c => `<li>${c}</li>`).join("")}</ul>` : ""}
-    <h3>📈 Son parcours</h3>
-    ${p.length ? `<ul>${p.map(x => `<li>${x}</li>`).join("")}</ul>` : `<p class="sub">Rien de particulier pour l'instant.</p>`}
-    <h3>⭐ Ma note générale</h3>
-    <div class="stars" style="text-align:center">${stars(e.note, `setNote('${n}',#)`)}</div>
-    <h3>💬 Mes commentaires</h3>
-    ${comsHTML("e:" + n, "Ajouter un commentaire sur " + n + "...")}
-    <h3>📺 Mes notes prime par prime</h3>
-    ${parPrime ? `<ul>${parPrime}</ul>` : `<p class="sub">Pas encore de note sur un prime. Va dans l'onglet 📺 Primes !</p>`}
-    <div class="phbtns">
-      <button class="btn" onclick="toggleFav('${n}')">${e.fav ? "💔 Retirer des préférés" : "❤️ Ajouter aux préférés"}</button>
-      <button class="btn sec" onclick="choisirPhoto('${n}')">📷 Choisir une photo</button>
-      ${S.photos[n] ? `<button class="btn sec" onclick="retirerPhoto('${n}')">🗑️ Retirer la photo</button>` : ""}
-    </div>`;
-  document.getElementById("modal").classList.add("open");
-}
-function closeFiche(){ FICHE = null; document.getElementById("modal").classList.remove("open"); }
-document.addEventListener("keydown", ev => { if (ev.key === "Escape") closeFiche(); });
+function sortiAu(nom){for(const c of CALv()){const p=primeInfo(c.num);if(has(p.elimine,nom)||has(p.abandon,nom))return c.num;}return 0;}
 
-/* ===================== EN-TÊTE & ONGLETS ===================== */
-document.getElementById("infos").innerHTML = `
-  <span class="chip">🎬 Directeur : ${SAISON.directeur}</span>
-  <span class="chip">🌟 Parrain : ${SAISON.parrain}</span>
-  <span class="chip">🎙️ ${SAISON.presentateurs.join(" & ")}</span>
-  <span class="chip">💖 Grandes sœurs : ${SAISON.grandesSoeurs.join(" & ")}</span>`;
-
-function showTab(id){
-  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
-  document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === id));
-  renderAll();
+/* ===================== 🏷️ STATUTS ===================== */
+function statutTexteOfficiel(nom){
+  const st=S.officiel&&S.officiel.statuts;
+  if(Array.isArray(st)){const f=st.find(x=>x&&sameName(x.nom||x.prenom||"",nom));return f?String(f.statut||f.status||""):"";}
+  if(st&&typeof st==="object"){const k=Object.keys(st).find(k=>sameName(k,nom));return k?String(st[k]||""):"";}
+  return "";
 }
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
-
-/* ===================== PAGE ÉLÈVES ===================== */
-let ACTU = null;
-function renderNext(){
-  const p = prochain(), el = document.getElementById("nextPrime");
-  if (!p) { el.innerHTML = `<div class="next"><h2>🏁 La saison est terminée !</h2></div>`; return; }
-  const pills = L => `<span class="pills">${L.map(n => `<span class="pill" onclick="openFiche('${n}')">${avatar(n,28,false)}${n}</span>`).join("")}</span>`;
-  const nom = ELEVES.filter(n => S.eleves[n].statut === "nomine");
-  const imm = ELEVES.filter(n => S.eleves[n].statut === "immunise");
-  el.innerHTML = `<div class="next">
-    <div class="nlabel">📺 PROCHAIN PRIME</div>
-    <h2>Prime ${p.num}${p.titre ? " · " + p.titre : ""}</h2>
-    <div class="when">${fmt(p)} · 21h10 sur TF1 — <b>${compte(p)}</b></div>
-    ${p.ok ? "" : `<div class="sub">Date prévue, pas encore confirmée par TF1</div>`}
-    ${p.invites && p.invites.length ? `<p>🎤 Invités : <b>${p.invites.join(", ")}</b></p>` : ""}
-    ${nom.length ? `<p>🔴 Nominés : ${pills(nom)}</p>` : ""}
-    ${imm.length ? `<p>🛡️ Immunisé(e) : ${pills(imm)}</p>` : ""}
-    ${p.info ? `<p>💬 ${p.info}</p>` : ""}
-    <button class="btn" style="margin-top:8px" onclick="goPrime(${p.num})">✍️ Noter les élèves de ce prime</button>
-  </div>`;
-}
-function renderActus(){
-  const el = document.getElementById("actus");
-  if (!ACTU || !ACTU.actus.length) { el.innerHTML = ""; return; }
-  el.innerHTML = `<div class="entry"><h3>📰 Les dernières infos</h3>
-    <div class="meta">Mis à jour le ${ACTU.maj}</div>
-    ${ACTU.actus.map(a => `<p>• ${a}</p>`).join("")}</div>`;
-}
-function renderStats(){
-  const v = Object.values(S.eleves);
-  document.getElementById("stats").innerHTML = `
-    <div class="stat"><b>${v.filter(e=>e.statut!=="elimine").length}</b>En lice</div>
-    <div class="stat"><b>${v.filter(e=>e.statut==="nomine").length}</b>Nominés</div>
-    <div class="stat"><b>${v.filter(e=>e.statut==="elimine").length}</b>Éliminés</div>
-    <div class="stat"><b>${v.filter(e=>e.fav).length}</b>❤️ Préférés</div>`;
-}
-function renderGrid(){
-  const q = document.getElementById("search").value.toLowerCase();
-  const f = document.getElementById("filter").value;
-  const sort = document.getElementById("sort").value;
-  let list = ELEVES.filter(n => n.toLowerCase().includes(q)).filter(n => {
-    const e = S.eleves[n];
-    return f === "all" || (f === "fav" ? e.fav : e.statut === f);
-  });
-  if (sort === "note") list.sort((a,b) => S.eleves[b].note - S.eleves[a].note);
-  const g = document.getElementById("grid");
-  if (!list.length) { g.innerHTML = `<p class="empty">Aucun élève ici 😢</p>`; return; }
-  g.innerHTML = list.map(n => {
-    const e = S.eleves[n], b = BIOS[n] || {};
-    return `<div class="card ${e.fav?"fav":""} ${e.statut==="elimine"?"elimine":""}">
-      <button class="heart" onclick="toggleFav('${n}')">${e.fav?"❤️":"🤍"}</button>
-      <div class="top">${avatar(n,70)}<div>
-        <div class="name" onclick="openFiche('${n}')">${n}</div>
-        <div class="sub">${b.age ? b.age+" ans · " : ""}${b.ville || ""}</div>
-        <span class="badge b-${e.statut}">${STATUTS[e.statut]}</span></div></div>
-      <div class="stars">${stars(e.note, `setNote('${n}',#)`)}</div>
-      <select onchange="setStatut('${n}',this.value)">
-        ${Object.entries(STATUTS).map(([k,v]) => `<option value="${k}" ${k===e.statut?"selected":""}>${v}</option>`).join("")}
-      </select>
-      <button class="cbtn" onclick="openFiche('${n}')">💬 Mes commentaires (${e.coms.length}) · voir la fiche</button>
-    </div>`;
-  }).join("");
-}
-function toggleFav(n){ S.eleves[n].fav = !S.eleves[n].fav; save(); refresh(); }
-function setNote(n,i){ S.eleves[n].note = S.eleves[n].note === i ? 0 : i; save(); refresh(); }
-function setStatut(n,v){ S.eleves[n].statut = v; save(); refresh(); }
-["search","filter","sort"].forEach(id => document.getElementById(id).oninput = renderGrid);
-
-/* ===================== PRIMES ===================== */
-const OPEN = new Set();
-if (prochain()) OPEN.add(prochain().num);
-function togglePrime(num, open){
-  if (open === OPEN.has(num)) return;
-  open ? OPEN.add(num) : OPEN.delete(num);
-  renderPrimes();
-}
-function goPrime(num){
-  OPEN.add(num); closeFiche(); showTab("primes");
-  setTimeout(() => { const el = document.getElementById("prime-" + num); if (el) el.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
-}
-const elimAvant = (n, num) => S.officiel.some(j => numOf(j) && numOf(j) < num && j.elimine === n);
-function officielHTML(j){
-  return `${j.immunise ? `<div>🛡️ Immunisé(e) : <b>${j.immunise}</b></div>` : ""}
-    ${j.top3 ? `<div>🏅 Top 3 des évals : <b>${j.top3.join(", ")}</b></div>` : ""}
-    ${j.nomines ? `<div>🔴 Nominés : <b>${j.nomines.join(", ")}</b></div>` : ""}
-    ${j.sauve ? `<div>💚 Sauvé(e) : <b>${j.sauve}</b></div>` : ""}
-    ${j.elimine ? `<div>👋 Éliminé(e) : <b>${j.elimine}</b></div>` : ""}
-    ${j.resume ? `<div style="margin-top:4px">💬 ${j.resume}</div>` : ""}`;
-}
-function eleveDansPrime(num, n){
-  const x = (S.primes[num] && S.primes[num].eleves[n]) || {note:0, coms:[]};
-  const out = elimAvant(n, num);
-  return `<div class="pel ${out ? "out" : ""}">
-    <div class="top">${avatar(n,40)}<div><b>${n}</b>${out ? `<div class="sub">Déjà éliminé(e)</div>` : ""}</div></div>
-    <div class="stars">${stars(x.note, `setPNote(${num},'${n}',#)`)}</div>
-    ${comsHTML(`p:${num}:${n}`, "Mon avis sur " + n + "...")}
-  </div>`;
-}
-function corpsPrime(p, off){
-  const P = S.primes[p.num] || {avis:"", best:""};
-  return `<div class="pbody">
-    ${p.info ? `<p>💬 ${p.info}</p>` : ""}
-    ${p.invites && p.invites.length ? `<p style="margin-top:6px">🎤 Invités : <b>${p.invites.join(", ")}</b></p>` : ""}
-    ${off ? `<div class="off"><b style="color:var(--gold)">📋 Officiel</b>${officielHTML(off)}</div>` : ""}
-    <label>📝 Mon avis sur ce prime</label>
-    <textarea placeholder="Qu'est-ce que tu as pensé de ce prime ?" onchange="setPAvis(${p.num},this.value)">${esc(P.avis || "")}</textarea>
-    <label>🌟 Ma meilleure prestation</label>
-    <select onchange="setPBest(${p.num},this.value)"><option value="">— Choisir —</option>${ELEVES.map(n => `<option ${P.best===n?"selected":""}>${n}</option>`).join("")}</select>
-    <label>🎤 Note chaque élève</label>
-    <div class="pgrid">${ELEVES.map(n => eleveDansPrime(p.num, n)).join("")}</div>
-  </div>`;
-}
-function renderPrimes(){
-  const LAB = {passe:["Terminé","b-elimine"], prochain:["Prochain","b-finaliste"], avenir:["À venir","b-enlice"]};
-  document.getElementById("primeList").innerHTML = CAL.map(p => {
-    const st = etat(p), P = S.primes[p.num], off = S.officiel.find(j => numOf(j) === p.num);
-    const nb = P ? Object.values(P.eleves).filter(x => x.note || x.coms.length).length : 0;
-    const open = OPEN.has(p.num);
-    return `<details class="prime ${st}" id="prime-${p.num}" ${open ? "open" : ""} ontoggle="togglePrime(${p.num},this.open)">
-      <summary><span class="pt">📺 Prime ${p.num}${p.titre ? " · " + p.titre : ""}</span><span class="badge ${LAB[st][1]}">${LAB[st][0]}</span>
-        <span class="sub" style="width:100%">${fmt(p)} · 21h10${p.ok ? "" : " · date prévue"}${nb ? ` · ✍️ ${nb} élève(s) noté(s)` : ""}${P && P.avis ? " · 📝 avis écrit" : ""}</span></summary>
-      ${open ? corpsPrime(p, off) : ""}
-    </details>`;
-  }).join("");
-}
-function setPAvis(num, v){ getP(num).avis = v; save(); }
-function setPBest(num, v){ getP(num).best = v; save(); }
-function setPNote(num, n, i){ const x = getPE(num, n); x.note = x.note === i ? 0 : i; save(); refresh(); }
-
-/* ===================== MON CLASSEMENT (préférés) ===================== */
-function rangAffiche(){
-  const favs = S.ordre.filter(n => S.eleves[n].fav);
-  return [...favs.filter(n => S.eleves[n].statut !== "elimine"), ...favs.filter(n => S.eleves[n].statut === "elimine")];
-}
-function renderRanking(){
-  const ordre = rangAffiche();
-  if (!ordre.length) {
-    document.getElementById("podium").innerHTML = "";
-    document.getElementById("ranking").innerHTML = `<p class="empty">Tu n'as pas encore de préférés 🤍<br>Clique sur le cœur d'un élève pour l'ajouter ici.</p>`;
-    return;
+function statutAuto(nom){
+  const txt=statutTexteOfficiel(nom);
+  if(/élimin|elimin|abandon|gagn|vainqu|finalist/i.test(txt)) return txt;
+  for(const c of CALv()){
+    const p=primeInfo(c.num);
+    if(has(p.gagnant,nom)) return "Gagnant(e) 🏆";
+    if(has(p.elimine,nom)) return "Éliminé(e) au prime "+c.num;
+    if(has(p.abandon,nom)) return "Abandon (prime "+c.num+")";
   }
-  const top = ordre.filter(n => S.eleves[n].statut !== "elimine").slice(0,3);
-  const cls = ["p1","p2","p3"], medal = ["🥇","🥈","🥉"];
-  document.getElementById("podium").innerHTML = [1,0,2].filter(i => top[i]).map(i =>
-    `<div class="pod ${cls[i]}">${avatar(top[i],64)}<div style="font-size:1.6rem">${medal[i]}</div><b>${top[i]}</b></div>`).join("");
-  document.getElementById("ranking").innerHTML = ordre.map((n,i) => {
-    const e = S.eleves[n];
-    return `<div class="rank-row" style="${e.statut==="elimine"?"opacity:.45":""}">
-      <span class="num">#${i+1}</span>${avatar(n,42)}
-      <div style="flex:1"><b>${n}</b><br><span class="badge b-${e.statut}">${STATUTS[e.statut]}</span></div>
-      <span style="color:var(--gold)">${"★".repeat(e.note)}</span>
-      <span class="actions"><button onclick="move('${n}',-1)">▲</button><button onclick="move('${n}',1)">▼</button><button title="Retirer des préférés" onclick="toggleFav('${n}')">💔</button></span>
-    </div>`;
-  }).join("");
+  const V=vedette().num,pv=primeInfo(V),pp=V>1?primeInfo(V-1):primeInfo(V);
+  if(has(pv.finalistes,nom)) return "Finaliste ✨";
+  if(has(pv.sauve,nom)) return "Sauvé(e) 🙌";
+  if(has(pv.nomines,nom)) return "Nominé(e) ⚠️";
+  if(has(pv.immunise,nom)||(V>1&&has(pp.immunise,nom))) return "Immunisé(e) 🛡️";
+  return txt||"En compétition";
 }
-function move(n, d){
-  const elim = S.eleves[n].statut === "elimine";
-  const groupe = rangAffiche().filter(x => (S.eleves[x].statut === "elimine") === elim);
-  const o = groupe[groupe.indexOf(n) + d];
-  if (!o) return;
-  const a = S.ordre.indexOf(n), b = S.ordre.indexOf(o);
-  [S.ordre[a], S.ordre[b]] = [S.ordre[b], S.ordre[a]];
-  save(); renderRanking();
+function statut(nom){const e=S.eleves[nom];return (e&&e.statut)||statutAuto(nom);}
+function classeStatut(s){
+  s=norm(s);
+  if(/elimin|abandon|quitte|parti/.test(s)) return "elim";
+  if(/gagn|vainq/.test(s)) return "win";
+  if(/finalist/.test(s)) return "fin";
+  if(/nomin|nomme/.test(s)) return "nom";
+  if(/immun/.test(s)) return "imm";
+  if(/sauve/.test(s)) return "sauve";
+  return "ok";
+}
+function badge(st){return `<span class="badge b-${classeStatut(st)}">${esc(st)}</span>`;}
+
+/* ===================== 💾 SAUVEGARDE + MIGRATION ===================== */
+function save(){try{localStorage.setItem(CLE,JSON.stringify(S));}catch(e){alert("⚠️ La mémoire du navigateur est pleine ! Retire quelques photos pour pouvoir enregistrer.");}}
+function normCom(c){
+  if(c==null) return null;
+  if(typeof c!=="object") c={t:String(c)};
+  const t=c.t??c.texte??c.text??c.txt??c.msg??"";
+  const pd=parseD(c.d??c.date??c.ts??null);
+  const o={t:String(t),d:pd?pd.toISOString():null};
+  if(c.m) o.m=c.m;
+  if(+c.prime>=1) o.prime=+c.prime;
+  return o;
+}
+function migrer(){
+  if(!S||typeof S!=="object"||Array.isArray(S)) S={};
+  S.officiel=obj(S.officiel);
+  S.photos=obj(S.photos);
+  S.profs=obj(S.profs);
+  S.primes=obj(S.primes);
+  S.eleves=obj(S.eleves);
+  if(!Array.isArray(S.ordre)) S.ordre=[];
+  /* 📺 primes : notes + commentaires par prime */
+  Object.keys(S.primes).forEach(k=>{
+    const num=parseInt(String(k).replace(/\D+/g,""),10);
+    if(!(num>=1)) return;
+    const p=obj(S.primes[k]);
+    p.avis=typeof p.avis==="string"?p.avis:"";
+    p.best=typeof p.best==="string"?p.best:"";
+    p.eleves=obj(p.eleves);
+    Object.keys(p.eleves).forEach(n=>{
+      let pe=p.eleves[n]; if(typeof pe==="number") pe={note:pe}; pe=obj(pe);
+      pe.note=+pe.note||0;
+      pe.coms=(Array.isArray(pe.coms)?pe.coms:[]).map(normCom).filter(c=>c&&c.t.trim());
+      pe.coms.forEach(c=>{c.prime=num;});
+      p.eleves[n]=pe;
+    });
+    if(String(num)!==String(k)&&!S.primes[num]){delete S.primes[k];S.primes[num]=p;}else S.primes[k]=p;
+  });
+  /* 👥 élèves : les anciens commentaires reçoivent leur numéro de prime */
+  ELEVES.forEach(n=>{
+    const e=obj(S.eleves[n]);
+    e.fav=!!e.fav; e.note=+e.note||0; e.statut=typeof e.statut==="string"?e.statut:"";
+    const coms=Array.isArray(e.coms)?e.coms:[];
+    ["com","commentaire","comment","avis"].forEach(f=>{if(typeof e[f]==="string"){if(e[f].trim())coms.push({t:e[f],d:null});delete e[f];}});
+    e.coms=coms.map(normCom).filter(c=>c&&c.t.trim());
+    e.coms.forEach(c=>{if(!(c.prime>=1)) c.prime=c.d?primeDeDate(c.d):1;});
+    S.eleves[n]=e;
+  });
+  /* 🎓 profs */
+  Object.keys(S.profs).forEach(k=>{
+    let v=S.profs[k];
+    if(typeof v==="number") v={note:v,avis:""}; else if(typeof v==="string") v={note:0,avis:v};
+    v=obj(v); v.note=+v.note||0; if(typeof v.avis!=="string") v.avis="";
+    if(!v.avis&&Array.isArray(v.coms)&&v.coms.length) v.avis=v.coms.map(normCom).filter(Boolean).map(c=>c.t).join("\n");
+    let cible=k;
+    if(!PROFS.some(p=>p.nom===k)){const w=norm(k).split(/\s+/)[0];const pr=w.length>=3?PROFS.find(p=>norm(p.nom).split(/\s+/).includes(w)):null;if(pr&&!S.profs[pr.nom])cible=pr.nom;}
+    if(cible!==k) delete S.profs[k];
+    S.profs[cible]=v;
+  });
+  syncOrdre();
+  S.v=5;
+}
+function primeData(num){const k=String(num);if(!S.primes[k])S.primes[k]={avis:"",best:"",eleves:{}};return S.primes[k];}
+function noteP(num,nom){const p=S.primes[String(num)];return (p&&p.eleves&&p.eleves[nom]&&+p.eleves[nom].note)||0;}
+function syncOrdre(){
+  S.ordre=S.ordre.filter((n,i,a)=>ELEVES.includes(n)&&S.eleves[n]&&S.eleves[n].fav&&a.indexOf(n)===i);
+  ELEVES.forEach(n=>{if(S.eleves[n]&&S.eleves[n].fav&&!S.ordre.includes(n))S.ordre.push(n);});
+}
+function moyenne(nom){const ns=Object.keys(S.primes).filter(k=>/^\d+$/.test(k)).map(k=>noteP(k,nom)).filter(x=>x>0);return {moy:ns.length?ns.reduce((a,b)=>a+b,0)/ns.length:0,nb:ns.length};}
+function fmtMoy(m){return m.nb?`⭐ ${m.moy.toFixed(1).replace(".",",")}/5 sur ${m.nb} prime${m.nb>1?"s":""}`:"Pas encore noté";}
+
+/* ===================== 💬 COMMENTAIRES ===================== */
+/* clés : "e:Nom" (anciens commentaires généraux) et "p:num:Nom" (commentaires d'un prime) */
+function getComs(key){
+  const parts=key.split(":");
+  if(parts[0]==="e") return S.eleves[parts[1]].coms;
+  const num=parts[1],nom=parts.slice(2).join(":");
+  const pd=primeData(num);
+  if(!pd.eleves[nom]) pd.eleves[nom]={note:0,coms:[]};
+  if(!Array.isArray(pd.eleves[nom].coms)) pd.eleves[nom].coms=[];
+  return pd.eleves[nom].coms;
+}
+function tousComs(nom){
+  const L=[];
+  (S.eleves[nom].coms||[]).forEach((c,i)=>L.push({key:"e:"+nom,i,c,p:+c.prime||1}));
+  Object.keys(S.primes).forEach(k=>{
+    if(!/^\d+$/.test(k)) return;
+    const pe=S.primes[k].eleves&&S.primes[k].eleves[nom];
+    if(pe&&Array.isArray(pe.coms)) pe.coms.forEach((c,i)=>L.push({key:"p:"+k+":"+nom,i,c,p:+k}));
+  });
+  return L;
+}
+function addCom(key,t,prime){getComs(key).push({t,d:new Date().toISOString(),prime});save();}
+function ajouterCom(nom){
+  const ta=$("#fcTxt"),sel=$("#fcPrime");
+  const t=((ta&&ta.value)||"").trim();
+  if(!t){toast("✍️ Écris d’abord ton commentaire");if(ta)ta.focus();return;}
+  const p=parseInt(sel&&sel.value,10)||vedette().num;
+  addCom("p:"+p+":"+nom,t,p);
+  ta.value="";
+  refresh();
+  toast("💬 Commentaire ajouté au prime "+p);
+}
+function editCom(key,i){
+  const arr=getComs(key),c=arr[i]; if(!c) return;
+  const v=prompt("✏️ Modifier ton commentaire :",c.t);
+  if(v===null) return;
+  if(!v.trim()){if(confirm("Le texte est vide : supprimer ce commentaire ?"))arr.splice(i,1);else return;}
+  else{c.t=v.trim();c.m=new Date().toISOString();}
+  save();refresh();toast("✏️ Commentaire modifié");
+}
+function delCom(key,i){
+  const arr=getComs(key); if(!arr[i]) return;
+  if(!confirm("🗑️ Supprimer ce commentaire ?")) return;
+  arr.splice(i,1);save();refresh();toast("🗑️ Commentaire supprimé");
+}
+function moveCom(key,i){
+  const arr=getComs(key),c=arr[i]; if(!c) return;
+  const parts=key.split(":"),max=CALv().length;
+  const cur=parts[0]==="e"?(+c.prime||1):+parts[1];
+  const v=prompt("🔁 Ce commentaire concerne quel prime ? (de 1 à "+max+")",cur);
+  if(v===null) return;
+  const n=parseInt(v,10);
+  if(!(n>=1&&n<=max)){alert("Numéro de prime invalide 😕");return;}
+  if(parts[0]==="e") c.prime=n;
+  else if(n!==cur){arr.splice(i,1);c.prime=n;getComs("p:"+n+":"+parts.slice(2).join(":")).push(c);}
+  save();refresh();toast("🔁 Rangé dans le prime "+n);
+}
+function timeline(nom){
+  const L=tousComs(nom);
+  if(!L.length) return `<p class="mut">Pas encore de commentaire sur ${nom}. Écris le premier ! ✍️</p>`;
+  const G={};
+  L.forEach(x=>{(G[x.p]=G[x.p]||[]).push(x);});
+  const nums=Object.keys(G).map(Number).sort((a,b)=>a-b);
+  if(ORDRE_COMS==="desc") nums.reverse();
+  const cal=CALv();
+  let h=`<div class="tlbar"><b>📜 Tout l’historique (${L.length})</b><button class="btn sec petit" onclick="ORDRE_COMS=(ORDRE_COMS==='asc'?'desc':'asc');refresh()">${ORDRE_COMS==="asc"?"⬇️ Du plus ancien au plus récent":"⬆️ Du plus récent au plus ancien"}</button></div><div class="tl">`;
+  nums.forEach(n=>{
+    const g=G[n].sort((a,b)=>tms(a.c.d)-tms(b.c.d));
+    if(ORDRE_COMS==="desc") g.reverse();
+    const c=cal.find(x=>x.num===n),note=noteP(n,nom);
+    h+=`<div class="tlg"><div class="tlh"><span class="pbadge">🎤 Prime ${n}</span><span class="mut sm">${c?dLongue(c):""}</span>${note?`<span class="or" title="Ma note de ce prime">${"★".repeat(note)}${"☆".repeat(5-note)}</span>`:""}</div>`;
+    g.forEach(x=>{
+      h+=`<div class="com"><div class="cmeta"><span class="pbadge sm">Prime ${n}</span>${x.c.d?`<span class="mut">${fDate(x.c.d)}</span>`:`<span class="mut">date inconnue</span>`}${x.c.m?`<span class="mut">· modifié</span>`:""}</div><div class="ctxt">${esc(x.c.t).replace(/\n/g,"<br>")}</div><div class="cact"><button onclick="editCom('${x.key}',${x.i})">✏️ Modifier</button><button onclick="moveCom('${x.key}',${x.i})">🔁 Changer de prime</button><button onclick="delCom('${x.key}',${x.i})">🗑️ Supprimer</button></div></div>`;
+    });
+    h+=`</div>`;
+  });
+  return h+`</div>`;
 }
 
-/* ===================== PROFS ===================== */
-function renderProfs(){
-  document.getElementById("profGrid").innerHTML = S.profs.map((p,i) => `
-    <div class="prof"><span class="ic">${p.ic || "🎓"}</span>
-      <div><b>${p.name}</b> ${p.nouveau ? '<span class="badge b-immunise">Nouveau</span>' : ""}<br><small>${p.role}</small></div>
-      <button title="Supprimer" onclick="delProf(${i})">✕</button></div>`).join("");
+/* ===================== 🖼️ PETITS MORCEAUX D'AFFICHAGE ===================== */
+function avatar(nom,cl){
+  cl=cl||"";const s=slug(nom);
+  if(S.photos[nom]) return `<span class="av ${cl}"><img src="${S.photos[nom]}" alt="${esc(nom)}"></span>`;
+  const img=PHOTO_KO[s]?"":`<img src="${PHOTO_OK[s]||"photos/"+s+".jpg"}" alt="" onload="PHOTO_OK['${s}']=this.getAttribute('src')" onerror="photoErr(this,'${s}')">`;
+  return `<span class="av ${cl}" style="background:${couleur(nom)}"><b>${nom[0]}</b>${img}</span>`;
 }
-function delProf(i){ if (confirm("Retirer ce prof ?")) { S.profs.splice(i,1); save(); renderProfs(); } }
-document.getElementById("profForm").onsubmit = e => {
-  e.preventDefault();
-  S.profs.push({role:pRole.value, name:pName.value, ic:"🎓", nouveau:true});
-  pRole.value = pName.value = ""; save(); renderProfs();
-};
+function photoErr(img,s){if(!img.dataset.png){img.dataset.png="1";img.src="photos/"+s+".png";}else{PHOTO_KO[s]=1;img.remove();}}
+function etoiles(v,tpl){let h=`<span class="etoiles">`;for(let i=1;i<=5;i++)h+=`<button type="button" class="${i<=v?"on":""}" aria-label="${i} étoile${i>1?"s":""}" onclick="${tpl.replace("#",i)}">★</button>`;return h+`</span>`;}
 
-/* ===================== SAUVEGARDE / IMPORT ===================== */
-exportBtn.onclick = () => {
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,2)], {type:"application/json"}));
-  a.download = "star-academy-2026-mon-suivi.json"; a.click();
-};
-importBtn.onclick = () => importFile.click();
-importFile.onchange = e => {
-  const r = new FileReader();
-  r.onload = () => { try { S = JSON.parse(r.result); migrer(); save(); refresh(); alert("Données restaurées ✅"); } catch { alert("Fichier invalide"); } };
-  r.readAsText(e.target.files[0]);
-};
-resetBtn.onclick = () => { if (confirm("Tout effacer et repartir de zéro ?")) { S = defaut(); save(); refresh(); } };
+/* ===================== 👥 PAGE ÉLÈVES ===================== */
+function boiteVedette(c){
+  const now=new Date(),d=dateP(c),fin=new Date(d.getTime()+3.5*3600e3),p=primeInfo(c.num);
+  let etat;
+  if(now<d){const j=Math.round((debutJour(d)-debutJour(now))/864e5);etat=j<=0?"🔥 C’est ce soir à 21h10 !":(j===1?"⏳ C’est demain soir !":`⏳ J-${j}`);}
+  else if(now<fin) etat="🔴 En direct sur TF1 !";
+  else etat="✅ Terminé — tu peux le noter jusqu’à lundi";
+  const inv=invitesDe(c.num);
+  return `<div class="vedette"><div class="vtop"><span class="vtag">⭐ PRIME VEDETTE</span><span>${etat}</span></div>
+    <h2>🎤 Prime ${c.num}${c.titre?" · "+esc(c.titre):""}</h2>
+    <div>📅 ${dLongue(c)} à 21h10 sur TF1${c.ok?"":` <span class="mut sm">(date prévue)</span>`}</div>
+    ${inv.length?`<div>🎶 Invités : <b>${inv.map(esc).join(", ")}</b></div>`:""}
+    ${p.nomines.length?`<div>⚠️ Nominés : <b>${p.nomines.map(esc).join(", ")}</b></div>`:""}
+    ${SEL!==c.num?`<button class="btn" onclick="SEL=${c.num};SEL_MANUEL=false;refresh()">⭐ Noter les élèves de ce prime</button>`:`<div class="sm" style="margin-top:8px">👇 Note les élèves de ce prime avec les étoiles sur leurs cartes</div>`}
+  </div>`;
+}
+function boiteActus(){
+  const auto=((S.officiel&&Array.isArray(S.officiel.actusAuto))?S.officiel.actusAuto:[]).map(a=>typeof a==="string"?a:((a&&(a.texte||a.t||a.titre||a.text))||"")).filter(Boolean).slice(0,8);
+  const ouvert=OPEN.actus!==false;
+  return `<details class="bloc actus" ${ouvert?"open":""} ontoggle="OPEN.actus=this.open"><summary>📰 Les actus</summary><ul>${auto.concat(ACTUS_BASE).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`;
+}
+function carte(nom){
+  const b=BIOS[nom]||{},e=S.eleves[nom],st=statut(nom),cs=classeStatut(st);
+  const ch=chansonsDe(nom,SEL),n=tousComs(nom).length;
+  return `<div class="carte${cs==="elim"?" dehors":""}${e.fav?" fav":""}">
+    <button class="star" title="Préféré" onclick="toggleFav('${nom}')">${e.fav?"⭐":"☆"}</button>
+    <div class="cl" onclick="openFiche('${nom}')">${avatar(nom)}<div><div class="nom">${nom} ${b.drapeau||""}</div><div class="mut sm">${b.age?b.age+" ans · ":""}${esc(b.ville||"")}</div></div></div>
+    ${badge(st)}
+    <div class="chs">${ch.length?ch.map(x=>`🎵 <b>${esc(x.titre)}</b> <span class="mut">– ${esc(x.artiste)}${x.avec.length?" · avec "+esc(x.avec.join(", ")):""}</span>`).join("<br>"):`<span class="mut">🎵 Chanson du prime ${SEL} : pas encore connue</span>`}</div>
+    <div class="pnote"><span class="mut sm">Ma note · Prime ${SEL}</span>${etoiles(noteP(SEL,nom),`setPNote(${SEL},'${nom}',#)`)}</div>
+    <button class="btn sec coms" onclick="openFiche('${nom}',true)">💬 Mes commentaires (${n}) · voir la fiche</button>
+  </div>`;
+}
+function pageEleves(){
+  const V=vedette();
+  let h=boiteVedette(V)+boiteActus();
+  h+=`<div class="ctrl"><label class="sm">🎤 Je note le :
+      <select id="primeSel" onchange="SEL=+this.value;SEL_MANUEL=(SEL!==vedette().num);refresh()">${CALv().map(c=>`<option value="${c.num}" ${c.num===SEL?"selected":""}>Prime ${c.num} · ${dCourte(c)}${c.num===V.num?" ⭐":""}</option>`).join("")}</select></label>
+    <div class="filtres">${[["tous","👥 Tous"],["fav","⭐ Préférés"],["course","🎯 En course"]].map(([k,l])=>`<button class="chip${FILTRE===k?" on":""}" onclick="FILTRE='${k}';refresh()">${l}</button>`).join("")}</div></div>`;
+  let L=ELEVES.slice();
+  if(FILTRE==="fav") L=L.filter(n=>S.eleves[n].fav);
+  if(FILTRE==="course") L=L.filter(n=>classeStatut(statut(n))!=="elim");
+  const dehors=n=>classeStatut(statut(n))==="elim"?1:0;
+  L.sort((a,b)=>dehors(a)-dehors(b));
+  h+=L.length?`<div class="grille">${L.map(n=>carte(n)).join("")}</div>`:`<div class="vide">Aucun élève ici pour l’instant 🙂</div>`;
+  return h;
+}
 
-/* ===================== AFFICHAGE ===================== */
-function renderAll(){ renderNext(); renderActus(); renderStats(); renderGrid(); renderPrimes(); renderRanking(); renderProfs(); }
-function refresh(){ renderAll(); if (FICHE) openFiche(FICHE); }
-renderAll();
-setInterval(renderNext, 60000); // le compte à rebours se met à jour tout seul
+/* ===================== 📺 PAGE PRIMES ===================== */
+function recapOfficiel(c,p){
+  const inv=invitesDe(c.num);
+  const L=[["🎶 Invités",inv],["🛡️ Immunisé(e)",p.immunise],["🏅 Top 3 des évaluations",p.top3],["⚠️ Nominé(e)s",p.nomines],["🙌 Sauvé(e)",p.sauve],["❌ Éliminé(e)",p.elimine],["🚪 Abandon",p.abandon],["✨ Finalistes",p.finalistes],["🏆 Gagnant(e)",p.gagnant]];
+  const lignes=L.filter(x=>liste2(x[1]).length).map(x=>`<div><span class="mut">${x[0]} :</span> <b>${liste2(x[1]).map(esc).join(", ")}</b></div>`);
+  let h=`<div class="offi"><h4>📋 Officiel</h4>${lignes.length?lignes.join(""):`<div class="mut">Rien d’officiel pour l’instant.</div>`}`;
+  if(p.chansons.length) h+=`<h4 style="margin-top:10px">🎵 Les chansons</h4><ul class="chl">${p.chansons.map(ch=>`<li><b>${esc(liste2(ch.eleves).join(" & "))}</b> — ${esc(ch.titre||"")}${ch.artiste?` <span class="mut">(${esc(ch.artiste)})</span>`:""}</li>`).join("")}</ul>`;
+  if(p.wiki.length) h+=`<details class="wiki" ${OPEN["w"+c.num]?"open":""} ontoggle="OPEN['w${c.num}']=this.open"><summary>📖 Le résumé (Wikipédia)</summary>${p.wiki.map(x=>`<p>${esc(x)}</p>`).join("")}<p class="mut sm">Source : Wikipédia, licence CC BY-SA</p></details>`;
+  return h+`</div>`;
+}
+function monRecap(c,pd,moy){
+  const presents=ELEVES.filter(n=>{const s=sortiAu(n);return !(s&&s<c.num);});
+  return `<div class="mien"><h4>📝 Mon récap</h4>
+    <label class="sm">🏆 Mon meilleur élève de la soirée :
+      <select onchange="setBest(${c.num},this.value)"><option value="">—</option>${presents.map(n=>`<option value="${n}" ${pd.best===n?"selected":""}>${n}</option>`).join("")}</select></label>
+    <textarea id="avis${c.num}" placeholder="Mon avis général sur ce prime…" oninput="setAvis(${c.num},this.value)">${esc(pd.avis||"")}</textarea>
+    ${moy?`<div class="sm">📊 Moyenne de mes notes : <b>${moy.toFixed(1).replace(".",",")}/5</b></div>`:""}
+    <div class="nl">${presents.map(n=>{const ch=chansonsDe(n,c.num);const nc=tousComs(n).filter(x=>x.p===c.num).length;return `<div class="nlr"><span class="lien nm" onclick="openFiche('${n}')">${avatar(n,"mini")} ${n}</span><span class="mut sm chx">${ch.length?"🎵 "+ch.map(x=>esc(x.titre)).join(" / "):""}</span>${etoiles(noteP(c.num,n),`setPNote(${c.num},'${n}',#)`)}<span class="sm lien" title="Mes commentaires de ce prime" onclick="openFiche('${n}',true,${c.num})">💬 ${nc}</span></div>`;}).join("")}</div>
+  </div>`;
+}
+function pagePrimes(){
+  const V=vedette().num,now=new Date();
+  let h=`<h2 class="titre">📺 Les primes</h2><p class="mut sm">Touche un prime pour l’ouvrir : infos officielles (mises à jour toutes seules), ton avis et tes notes.</p>`;
+  CALv().forEach(c=>{
+    const p=primeInfo(c.num),pd=S.primes[String(c.num)]||{avis:"",best:"",eleves:{}};
+    const passe=now>=dateP(c);
+    const ouvert=(OPEN["p"+c.num]!==undefined)?OPEN["p"+c.num]:(c.num===V);
+    const etat=c.num===V?`<span class="tag or">⭐ en ce moment</span>`:(passe?`<span class="tag ok">✅ passé</span>`:`<span class="tag">⏳ à venir</span>`);
+    const ns=ELEVES.map(n=>noteP(c.num,n)).filter(x=>x>0);
+    const moy=ns.length?ns.reduce((a,b)=>a+b,0)/ns.length:0;
+    h+=`<details class="bloc prime" ${ouvert?"open":""} ontoggle="OPEN['p${c.num}']=this.open"><summary>🎤 <b>Prime ${c.num}</b>${c.titre?" · "+esc(c.titre):""} <span class="mut sm">— ${dLongue(c)}${c.ok?"":" (date prévue)"}</span> ${etat}${pd.best?` <span class="tag">🏆 ${esc(pd.best)}</span>`:""}</summary><div class="pbody">${recapOfficiel(c,p)}${monRecap(c,pd,moy)}</div></details>`;
+  });
+  return h;
+}
 
-/* ===================== MISE À JOUR AUTOMATIQUE (data.json) ===================== */
-(async () => {
-  try {
-    const r = await fetch("data.json?v=" + Date.now(), {cache:"no-store"});
-    if (!r.ok) return;
-    const D = await r.json();
-    Object.entries(D.statuts || {}).forEach(([n, st]) => { if (S.eleves[n]) S.eleves[n].statut = st; });
-    Object.entries(D.bios || {}).forEach(([n, b]) => { BIOS[n] = Object.assign(BIOS[n] || {}, b); });
-    (D.calendrier || []).forEach(c => { const p = CAL.find(x => x.num === c.num); if (p) Object.assign(p, c); else CAL.push(c); });
-    CAL.sort((a,b) => a.num - b.num);
-    if (D.profs) S.profs = D.profs;
-    S.officiel = D.primes || [];
-    ACTU = {maj: D.maj, actus: D.actus || []};
-    save(); refresh();
-  } catch (e) { console.log("data.json introuvable", e); }
-})();
+/* ===================== 🏆 PAGE MON CLASSEMENT ===================== */
+function pageClassement(){
+  syncOrdre();
+  const L=S.ordre;
+  let h=`<h2 class="titre">🏆 Mon classement</h2>`;
+  if(!L.length) return h+`<div class="vide">☆ Touche l’étoile d’un élève (sur sa carte ou dans sa fiche) pour l’ajouter à tes préférés : il apparaîtra ici !</div>`;
+  h+=`<div class="podium">`;
+  [1,0,2].forEach(i=>{const n=L[i];if(!n)return;h+=`<div class="pod p${i+1}" onclick="openFiche('${n}')">${avatar(n,"big")}<div class="nom">${["🥇","🥈","🥉"][i]} ${n}</div><div class="mut sm">${fmtMoy(moyenne(n))}</div><div class="marche">${i+1}</div></div>`;});
+  h+=`</div><div class="ctrl"><span class="mut sm">⬆️⬇️ Range tes préférés comme tu veux</span><button class="btn sec" onclick="trierMoy()">📊 Trier par moyenne</button></div><div class="liste">`;
+  L.forEach((n,i)=>{const b=BIOS[n]||{};h+=`<div class="row"><span class="rang">${i+1}</span><span class="lien" onclick="openFiche('${n}')">${avatar(n)}</span><div class="fl"><div class="nom lien" onclick="openFiche('${n}')">${n} ${b.drapeau||""}</div><div class="mut sm">${fmtMoy(moyenne(n))} · 💬 ${tousComs(n).length}</div>${badge(statut(n))}</div><div class="fleches"><button ${i===0?"disabled":""} onclick="bouger(${i},-1)" aria-label="Monter">⬆️</button><button ${i===L.length-1?"disabled":""} onclick="bouger(${i},1)" aria-label="Descendre">⬇️</button></div></div>`;});
+  return h+`</div>`;
+}
+
+/* ===================== 🎓 PAGE PROFS ===================== */
+function pageProfs(){
+  let h=`<h2 class="titre">🎬 L’équipe</h2><div class="equipe">${EQUIPE.map(([r,n])=>`<div class="eq"><span class="mut sm">${r}</span><b>${esc(n)}</b></div>`).join("")}</div>`;
+  h+=`<h2 class="titre">🎓 Les profs</h2><div class="pgrid">${PROFS.map((p,i)=>{const v=S.profs[p.nom]||{note:0,avis:""};return `<div class="pcarte"><div class="cl" style="cursor:default"><span class="av" style="background:${couleur(p.nom)}">${p.e}</span><div><div class="nom">${esc(p.nom)} ${p.nouv?`<span class="new">NOUVEAU</span>`:""}</div><div class="mut sm">${esc(p.role)}</div></div></div>${etoiles(v.note,`setProfNote(${i},#)`)}<textarea id="prof${i}" placeholder="Mon avis sur ${esc(p.nom)}…" oninput="setProfAvis(${i},this.value)">${esc(v.avis)}</textarea></div>`;}).join("")}</div>`;
+  return h;
+}
+
+/* ===================== 🪪 FICHE ÉLÈVE ===================== */
+function parcours(nom){
+  const L=[];
+  CALv().forEach(c=>{
+    const p=primeInfo(c.num),ev=[];
+    if(has(p.immunise,nom)) ev.push("🛡️ Immunisé(e)");
+    if(has(p.top3,nom)) ev.push("🏅 Top 3 des évaluations");
+    if(has(p.nomines,nom)) ev.push("⚠️ Nominé(e)");
+    if(has(p.sauve,nom)) ev.push("🙌 Sauvé(e)");
+    if(has(p.elimine,nom)) ev.push("❌ Éliminé(e)");
+    if(has(p.abandon,nom)) ev.push("🚪 Abandon");
+    if(has(p.finalistes,nom)) ev.push("✨ Finaliste");
+    if(has(p.gagnant,nom)) ev.push("🏆 Gagnant(e)");
+    if(ev.length) L.push(`<li><span class="pbadge sm">Prime ${c.num}</span> ${ev.join(" · ")}</li>`);
+  });
+  return L.length?`<ul class="parc">${L.join("")}</ul>`:`<p class="mut">Rien de spécial pour l’instant.</p>`;
+}
+function notesFiche(nom){
+  const V=vedette().num,sorti=sortiAu(nom);
+  const L=CALv().filter(c=>(c.num<=V&&(!sorti||c.num<=sorti))||noteP(c.num,nom)>0);
+  return `<div class="nl">${L.map(c=>{const ch=chansonsDe(nom,c.num);return `<div class="nlr2"><span class="pbadge sm">Prime ${c.num}</span><span class="mut sm">${dCourte(c)}${ch.length?" · 🎵 "+ch.map(x=>esc(x.titre)).join(" / "):""}</span>${etoiles(noteP(c.num,nom),`setPNote(${c.num},'${nom}',#)`)}</div>`;}).join("")}</div>`;
+}
+function renderFiche(){
+  const nom=FICHE; if(!nom) return;
+  const b=BIOS[nom]||{},e=S.eleves[nom],st=statut(nom),V=vedette().num,defP=FICHE_P||SEL||V;
+  const chs=CALv().flatMap(c=>chansonsDe(nom,c.num).map(x=>Object.assign({num:c.num},x)));
+  const opts=["","En compétition","Nominé(e)","Immunisé(e)","Sauvé(e)","Éliminé(e)","Abandon","Finaliste","Gagnant(e)"];
+  if(e.statut&&!opts.includes(e.statut)) opts.push(e.statut);
+  let h=`<div class="fhead">${avatar(nom,"big")}<div class="fl">
+      <h2>${nom} ${b.drapeau||""}</h2>
+      <div class="mut">${esc(b.nom||"")}</div>
+      <div>🎂 ${b.age||"?"} ans · 📍 ${esc(b.ville||"")}${b.region?" ("+esc(b.region)+")":""}</div>
+      <div class="row2">${badge(st)}<button class="chip${e.fav?" on":""}" onclick="toggleFav('${nom}')">${e.fav?"⭐ Dans mes préférés":"☆ Ajouter à mes préférés"}</button></div>
+    </div></div>`;
+  if(b.faits&&b.faits.length) h+=`<ul class="faits">${b.faits.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>`;
+  /* 💬 écrire + historique complet */
+  h+=`<section class="fsec" id="secComs"><h3>💬 Mes commentaires sur ${nom}</h3>
+    <div class="addcom">
+      <label class="sm">Ce commentaire concerne :
+        <select id="fcPrime" data-keep>${CALv().map(c=>`<option value="${c.num}" ${c.num===defP?"selected":""}>Prime ${c.num} · ${dCourte(c)}${c.num===V?" (en ce moment)":""}</option>`).join("")}</select></label>
+      <textarea id="fcTxt" data-keep placeholder="Écris ce que tu as pensé de ${nom} (prestation, quotidienne, progrès…)"></textarea>
+      <button class="btn" onclick="ajouterCom('${nom}')">➕ Ajouter le commentaire</button>
+    </div>${timeline(nom)}</section>`;
+  h+=`<section class="fsec"><h3>⭐ Mes notes prime par prime</h3>${notesFiche(nom)}</section>`;
+  h+=`<section class="fsec"><h3>🎵 Ses chansons</h3>${chs.length?`<ul class="chl">${chs.map(x=>`<li><span class="pbadge sm">Prime ${x.num}</span> <b>${esc(x.titre)}</b> <span class="mut">– ${esc(x.artiste)}${x.avec.length?" · avec "+esc(x.avec.join(", ")):""}</span></li>`).join("")}</ul>`:`<p class="mut">Pas encore de chanson connue.</p>`}</section>`;
+  h+=`<section class="fsec"><h3>📋 Parcours officiel</h3>${parcours(nom)}</section>`;
+  h+=`<section class="fsec"><h3>🌟 Ma note générale</h3>${etoiles(e.note,`setNote('${nom}',#)`)}</section>`;
+  h+=`<section class="fsec"><h3>🛠️ Réglages</h3>
+    <label class="sm">Corriger le statut :
+      <select onchange="setStatut('${nom}',this.value)">${opts.map(o=>`<option value="${esc(o)}" ${e.statut===o?"selected":""}>${o?esc(o):"🔄 Automatique ("+esc(statutAuto(nom))+")"}</option>`).join("")}</select></label>
+    <div class="row2" style="margin-top:10px"><label class="btn sec">📷 Choisir une photo<input type="file" accept="image/*" hidden onchange="choisirPhoto('${nom}',this)"></label>${S.photos[nom]?`<button class="btn sec" onclick="supprPhoto('${nom}')">🗑️ Retirer ma photo</button>`:""}</div>
+  </section>`;
+  $("#mbody").innerHTML=h;
+}
+function openFiche(nom,versComs,prime){
+  if(!S.eleves[nom]) return;
+  FICHE=nom;FICHE_P=prime||null;
+  $("#modal").hidden=false;document.body.classList.add("noscroll");
+  renderFiche();
+  const box=$("#mbox");box.scrollTop=0;
+  if(versComs){const s=$("#secComs");if(s)box.scrollTop=s.offsetTop-10;}
+}
+function fermerFiche(){
+  const ta=$("#fcTxt");
+  if(ta&&ta.value.trim()&&!confirm("✍️ Ton commentaire n’est pas encore ajouté. Fermer quand même ?")) return;
+  FICHE=null;FICHE_P=null;
+  $("#modal").hidden=true;document.body.classList.remove("noscroll");$("#mbody").innerHTML="";
+  refresh();
+}
+
+/* ===================== 🎛️ ACTIONS ===================== */
+function toggleFav(nom){const e=S.eleves[nom];e.fav=!e.fav;syncOrdre();save();refresh();toast(e.fav?"⭐ "+nom+" ajouté(e) à tes préférés":"☆ "+nom+" retiré(e) de tes préférés");}
+function setPNote(num,nom,n){const pd=primeData(num);const pe=pd.eleves[nom]=pd.eleves[nom]||{note:0,coms:[]};pe.note=(pe.note===n?0:n);save();refresh();}
+function setNote(nom,n){const e=S.eleves[nom];e.note=(e.note===n?0:n);save();refresh();}
+function setStatut(nom,v){S.eleves[nom].statut=v;save();refresh();toast(v?"🛠️ Statut corrigé":"🔄 Statut automatique");}
+function setAvis(num,v){primeData(num).avis=v;save();}
+function setBest(num,v){primeData(num).best=v;save();refresh();}
+function setProfNote(i,n){const k=PROFS[i].nom;const v=S.profs[k]=S.profs[k]||{note:0,avis:""};v.note=(v.note===n?0:n);save();refresh();}
+function setProfAvis(i,val){const k=PROFS[i].nom;const v=S.profs[k]=S.profs[k]||{note:0,avis:""};v.avis=val;save();}
+function bouger(i,d){const j=i+d;if(j<0||j>=S.ordre.length)return;const t=S.ordre[i];S.ordre[i]=S.ordre[j];S.ordre[j]=t;save();refresh();}
+function trierMoy(){S.ordre.sort((a,b)=>{const A=moyenne(a),B=moyenne(b);return (B.moy-A.moy)||(S.eleves[b].note-S.eleves[a].note);});save();refresh();toast("📊 Classement trié par moyenne");}
+function choisirPhoto(nom,inp){
+  const f=inp.files&&inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{const img=new Image();img.onload=()=>{const M=320,k=Math.min(1,M/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);S.photos[nom]=cv.toDataURL("image/jpeg",.82);save();refresh();toast("📷 Photo enregistrée");};img.onerror=()=>alert("Image illisible 😕");img.src=r.result;};
+  r.readAsDataURL(f);inp.value="";
+}
+function supprPhoto(nom){if(!confirm("Retirer ta photo de "+nom+" ?"))return;delete S.photos[nom];save();refresh();}
+function allerOnglet(o){ONGLET=o;try{history.replaceState(null,"","#"+o);}catch(e){}refresh();window.scrollTo(0,0);}
+let TT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(TT);TT=setTimeout(()=>t.classList.remove("on"),2200);}
+
+/* ===================== 🔁 AFFICHAGE (garde le texte en cours) ===================== */
+function render(){
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.o===ONGLET));
+  $("#main").innerHTML=ONGLET==="primes"?pagePrimes():ONGLET==="classement"?pageClassement():ONGLET==="profs"?pageProfs():pageEleves();
+  majInfo();
+}
+function refresh(){
+  const keep={};
+  document.querySelectorAll("[data-keep]").forEach(el=>{if(el.id)keep[el.id]=el.value;});
+  const a=document.activeElement,aid=a&&a.id?a.id:null;
+  let s1=null,s2=null;
+  try{if(a&&typeof a.selectionStart==="number"){s1=a.selectionStart;s2=a.selectionEnd;}}catch(e){}
+  const box=$("#mbox"),st=box?box.scrollTop:0;
+  render();
+  if(FICHE) renderFiche();
+  Object.keys(keep).forEach(id=>{const el=document.getElementById(id);if(el)el.value=keep[id];});
+  if(box) box.scrollTop=st;
+  if(aid){const el=document.getElementById(aid);if(el&&el!==document.activeElement){try{el.focus({preventScroll:true});if(s1!==null&&el.setSelectionRange)el.setSelectionRange(s1,s2);}catch(e){}}}
+}
+
+/* ===================== 🌐 MISE À JOUR AUTOMATIQUE ===================== */
+function majInfo(){
+  const el=$("#majInfo"); if(!el) return;
+  const o=S.officiel||{}; let t="";
+  if(o.maj){const d=parseD(o.maj);t=d?d.toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}):String(o.maj);}
+  let src="";
+  if(typeof o.source==="string"&&o.source) src=/^https?:\/\//.test(o.source)?` · <a href="${esc(o.source)}" target="_blank" rel="noopener">source</a>`:" · "+esc(o.source);
+  el.innerHTML=(ETAT_MAJ==="hors"?"📴 Infos officielles injoignables pour l’instant (je garde les dernières). ":"")+(t?"🔄 Infos officielles mises à jour : "+esc(t):"🔄 Infos officielles : en attente de la 1re mise à jour automatique")+src;
+}
+async function majAuto(){
+  const sansMaj=o=>JSON.stringify(Object.assign({},o||{},{maj:0}));
+  for(const url of [RAW_URL,"data.json"]){
+    try{
+      const r=await fetch(url+"?t="+Date.now(),{cache:"no-store"});
+      if(!r.ok) continue;
+      const d=await r.json();
+      if(!d||typeof d!=="object"||Array.isArray(d)) continue;
+      ETAT_MAJ="ok";
+      const premier=!S.officiel||!Object.keys(S.officiel).length;
+      const change=sansMaj(S.officiel)!==sansMaj(d);
+      S.officiel=d;save();
+      if(change){if(!SEL_MANUEL)SEL=vedette().num;refresh();if(!premier)toast("🔄 Nouvelles infos officielles !");}
+      else majInfo();
+      return;
+    }catch(e){}
+  }
+  ETAT_MAJ="hors";majInfo();
+}
+
+/* ===================== 🚀 DÉMARRAGE ===================== */
+try{S=JSON.parse(localStorage.getItem(CLE)||"null");}catch(e){S=null;}
+migrer();save();
+SEL=vedette().num;
+render();
+majAuto();
+setInterval(majAuto,5*60*1000);
+setInterval(()=>{
+  if(!SEL_MANUEL) SEL=vedette().num;
+  const a=document.activeElement;
+  const occupe=a&&/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName);
+  if(!occupe&&!FICHE&&ONGLET==="eleves") refresh();
+},60*1000);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&FICHE)fermerFiche();});
 </script>
 </body>
 </html>
