@@ -8,6 +8,7 @@
   :root{--bg:#0b0820;--card:#1a1440;--gold:#ffcc33;--pink:#ff3d9a;--txt:#f3efff;--muted:#a49cc9;--red:#ff4d5e;--green:#3ddc84;--blue:#4da3ff}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#2a1a6e,var(--bg) 60%);color:var(--txt);min-height:100vh}
+  a{color:var(--pink)}
   header{text-align:center;padding:30px 15px 10px}
   header h1{font-size:2.2rem;background:linear-gradient(90deg,var(--gold),var(--pink));-webkit-background-clip:text;color:transparent}
   header p{color:var(--muted);margin-top:6px}
@@ -29,13 +30,15 @@
   .card.fav{border-color:var(--gold);box-shadow:0 0 18px rgba(255,204,51,.25)}
   .card.elimine{opacity:.45;filter:grayscale(.7)}
   .top{display:flex;align-items:center;gap:12px}
-  .avatar{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#1a0b2e;flex-shrink:0}
-  .name{font-size:1.25rem;font-weight:700}
+  .avatar{position:relative;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#1a0b2e;flex-shrink:0;cursor:pointer;border:2px solid rgba(255,255,255,.15)}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .name{font-size:1.25rem;font-weight:700;cursor:pointer}
+  .sub{color:var(--muted);font-size:.8rem}
   .heart{position:absolute;top:12px;right:14px;font-size:1.6rem;cursor:pointer;background:none;border:none}
   .stars{margin:10px 0 6px;font-size:1.4rem;cursor:pointer;user-select:none}
   .stars span{color:#4a4180}.stars span.on{color:var(--gold)}
-  .card select,.card textarea{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:7px;margin-top:6px;font-family:inherit}
-  .card textarea{resize:vertical;min-height:55px}
+  .card select{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:7px;margin-top:6px;font-family:inherit}
+  .cbtn{width:100%;margin-top:8px;background:#0f0b2a;border:1px solid #3a2f7a;color:var(--txt);border-radius:8px;padding:8px;cursor:pointer;font-family:inherit}
   .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700;margin-top:4px}
   .b-enlice{background:var(--blue)}.b-nomine{background:var(--red)}.b-immunise{background:var(--green);color:#0b0820}.b-elimine{background:#555}.b-finaliste{background:var(--gold);color:#0b0820}.b-gagnant{background:linear-gradient(90deg,var(--gold),var(--pink));color:#0b0820}
   h2{margin:10px 0 15px;color:var(--gold)}
@@ -51,17 +54,58 @@
   .prof small{color:var(--muted)}
   .prof button{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer}
   form.add{display:grid;gap:8px;background:var(--card);padding:16px;border-radius:16px;margin-bottom:20px}
-  form.add input,form.add textarea,form.add select{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:9px;font-family:inherit}
+  form.add input{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:9px;font-family:inherit}
   .btn{background:linear-gradient(90deg,var(--gold),var(--pink));color:#1a0b2e;border:none;padding:10px 18px;border-radius:25px;font-weight:700;cursor:pointer}
   .btn.sec{background:var(--card);color:var(--txt);border:1px solid #3a2f7a}
-  .entry{background:var(--card);border-left:4px solid var(--pink);border-radius:12px;padding:14px;margin-bottom:12px}
+  .entry{background:var(--card);border-left:4px solid var(--gold);border-radius:12px;padding:14px;margin-bottom:15px}
   .entry h3{color:var(--gold);font-size:1.05rem}
   .entry .meta{color:var(--muted);font-size:.85rem;margin:4px 0 8px}
-  .entry .del{float:right;background:none;border:none;color:var(--muted);cursor:pointer}
-  .empty{text-align:center;color:var(--muted);padding:30px}
+  .empty{text-align:center;color:var(--muted);padding:30px;line-height:1.6}
   footer{text-align:center;color:var(--muted);padding:30px 10px;font-size:.85rem}
-  .checks{display:flex;flex-wrap:wrap;gap:6px}
-  .checks label{background:#0f0b2a;padding:5px 10px;border-radius:15px;font-size:.85rem;cursor:pointer}
+  /* PROCHAIN PRIME */
+  .next{background:linear-gradient(135deg,#3a1a7a,#1a1440);border:2px solid var(--gold);border-radius:20px;padding:18px;margin-bottom:15px;box-shadow:0 0 25px rgba(255,204,51,.15)}
+  .next .nlabel{color:var(--pink);font-weight:800;font-size:.8rem;letter-spacing:2px}
+  .next h2{margin:4px 0;color:var(--txt)}
+  .next .when{color:var(--gold);margin-bottom:8px}
+  .next p{margin:8px 0}
+  .pills{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:#0f0b2a;border-radius:20px;padding:3px 10px 3px 3px;cursor:pointer;font-size:.9rem}
+  /* PRIMES */
+  details.prime{background:var(--card);border-radius:16px;margin-bottom:12px;border-left:5px solid var(--blue);overflow:hidden;scroll-margin-top:80px}
+  details.prime.passe{border-left-color:#555}
+  details.prime.prochain{border-left-color:var(--gold);box-shadow:0 0 18px rgba(255,204,51,.2)}
+  details.prime summary{cursor:pointer;padding:14px 16px;list-style:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  details.prime summary::-webkit-details-marker{display:none}
+  details.prime summary .pt{font-weight:700;flex:1}
+  .pbody{padding:0 16px 16px}
+  .pbody>label{display:block;color:var(--gold);font-weight:700;margin:16px 0 6px}
+  .pbody textarea,.pbody select,.sheet input,.pbody input{width:100%;background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:8px;font-family:inherit}
+  .pbody textarea{min-height:70px;resize:vertical}
+  .off{background:#0f0b2a;border-radius:12px;padding:10px 12px;margin-top:8px;line-height:1.6}
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .pel{background:#0f0b2a;border-radius:14px;padding:10px}
+  .pel.out{opacity:.4}
+  .pel .stars{margin:6px 0 2px;font-size:1.3rem}
+  .com{background:#1f1850;border-radius:10px;padding:7px 10px;margin-top:6px;font-size:.9rem;word-wrap:break-word}
+  .pel .com{background:#1a1440}
+  .com .cm{color:var(--muted);font-size:.75rem;display:flex;justify-content:space-between;align-items:center;margin-top:3px}
+  .com .cm button{background:none;border:none;cursor:pointer;font-size:.95rem;margin-left:8px}
+  .addc{display:flex;gap:6px;margin-top:6px}
+  .addc input{flex:1;min-width:0}
+  .addc button{background:var(--pink);border:none;color:#fff;border-radius:8px;padding:0 14px;cursor:pointer;font-weight:800;font-size:1.1rem}
+  /* FICHE */
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;align-items:center;justify-content:center;padding:15px}
+  .modal.open{display:flex}
+  .sheet{background:var(--card);border-radius:22px;max-width:480px;width:100%;max-height:90vh;overflow:auto;padding:22px;position:relative;border:1px solid #3a2f7a}
+  .sheet .x{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--txt);font-size:1.4rem;cursor:pointer}
+  .sheet .avatar{margin:0 auto 10px}
+  .sheet h3{color:var(--gold);margin:18px 0 8px;font-size:1rem}
+  .sheet ul{padding-left:18px;line-height:1.6}
+  .sheet input{background:#0f0b2a;color:var(--txt);border:1px solid #3a2f7a;border-radius:8px;padding:8px}
+  .igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+  .igrid div{background:#0f0b2a;border-radius:12px;padding:10px;text-align:center}
+  .igrid small{display:block;color:var(--muted);font-size:.75rem}
+  .phbtns{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -74,14 +118,15 @@
 
 <nav>
   <button class="active" data-tab="eleves">🎤 Élèves</button>
+  <button data-tab="primes">📺 Primes</button>
   <button data-tab="classement">🏆 Mon classement</button>
   <button data-tab="profs">🎓 Profs & équipe</button>
-  <button data-tab="journal">📓 Journal des primes</button>
 </nav>
 
 <main>
-  <!-- ÉLÈVES -->
   <section id="eleves" class="active">
+    <div id="nextPrime"></div>
+    <div id="actus"></div>
     <div class="stats" id="stats"></div>
     <div class="toolbar">
       <input id="search" placeholder="🔍 Rechercher un élève...">
@@ -101,16 +146,20 @@
     <div class="grid" id="grid"></div>
   </section>
 
-  <!-- CLASSEMENT -->
+  <section id="primes">
+    <h2>📺 Tous les primes de la saison</h2>
+    <p class="sub" style="margin-bottom:12px;font-size:.9rem">Clique sur un prime pour l'ouvrir : note chaque élève, ajoute, modifie ou supprime tes commentaires. Tout reste modifiable, même pour les anciens primes.</p>
+    <div id="primeList"></div>
+  </section>
+
   <section id="classement">
-    <h2>🏆 Mon podium</h2>
+    <h2>🏆 Le podium de mes préférés</h2>
     <div class="podium" id="podium"></div>
-    <h2>📋 Mon classement perso</h2>
-    <p style="color:var(--muted);margin-bottom:10px">Utilise les flèches pour classer tes élèves comme tu veux (les éliminés sont en bas).</p>
+    <h2>📋 Mon classement</h2>
+    <p class="sub" style="margin-bottom:10px;font-size:.9rem">Seuls tes préférés ❤️ apparaissent ici. Classe-les avec les flèches (les éliminés passent en bas).</p>
     <div id="ranking"></div>
   </section>
 
-  <!-- PROFS -->
   <section id="profs">
     <h2>🎓 Le corps professoral</h2>
     <div class="grid" id="profGrid"></div>
@@ -121,22 +170,9 @@
       <button class="btn">Ajouter</button>
     </form>
   </section>
-
-  <!-- JOURNAL -->
-  <section id="journal">
-    <h2>📓 Journal des primes</h2>
-    <form class="add" id="primeForm">
-      <input id="jTitle" placeholder="Titre (ex : Prime 2)" required>
-      <input id="jDate" type="date">
-      <div><small style="color:var(--muted)">Nominés cette semaine :</small><div class="checks" id="jNom"></div></div>
-      <select id="jElim"><option value="">— Élève éliminé(e) —</option></select>
-      <input id="jBest" placeholder="Ma meilleure prestation de la soirée">
-      <textarea id="jNote" placeholder="Mon avis sur ce prime..."></textarea>
-      <button class="btn">Enregistrer le prime</button>
-    </form>
-    <div id="entries"></div>
-  </section>
 </main>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeFiche()"><div class="sheet" id="sheet"></div></div>
 
 <footer>
   <button class="btn sec" id="exportBtn">💾 Sauvegarder mes données</button>
@@ -169,38 +205,290 @@ const PROFS_DEFAUT = [
 
 const ELEVES = ["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
 
+const BIOS = {
+  "Amel":    {age:22, ville:"Vitry-sur-Seine", region:"Val-de-Marne", drapeau:"🇫🇷", faits:["Fille d'un célèbre commentateur sportif"]},
+  "Antoine": {age:18, ville:"Lyon", region:"Rhône", drapeau:"🇫🇷", faits:["L'un des plus jeunes de la promo"]},
+  "Brieuc":  {age:18, ville:"Court-Saint-Étienne", region:"Brabant wallon, Belgique", drapeau:"🇧🇪", faits:["A participé à The Voice Kids Belgique en 2023, dans l'équipe de Matthew Irons","Aime voyager et photographier ses souvenirs","S'est récemment lancé dans la composition"]},
+  "Cameron": {age:26, ville:"Cerin", region:"Ain", drapeau:"🇫🇷", faits:["Doyen de la promotion","A étudié aux Beaux-Arts","Barman et barista, il compose ses chansons en autodidacte"], chansons:["Prime 1 : « Dis-moi que tu m'aimes » (Zaho de Sagazan)"]},
+  "Elija":   {nom:"Elija Dirand", age:23, ville:"Besançon", region:"Doubs", drapeau:"🇫🇷", faits:["Cinq années aux Beaux-Arts de Besançon","Tatouages, piercings, création de mode : elle a son propre univers"], chansons:["Prime 1 : « Marcia Baïla » (Rita Mitsouko)"]},
+  "Félix":   {nom:"Félix Morin", age:18, ville:"Québec", region:"Canada", drapeau:"🇨🇦", faits:["Premier candidat québécois de l'émission","Hockeyeur sur glace et guitariste"]},
+  "Isabella":{nom:"Isabella Moutou", age:20, ville:"Ris-Orangis", region:"Essonne", drapeau:"🇫🇷", faits:["Première immunisée de la saison, choix unanime des profs","A ému Quentin Mosimann jusqu'aux larmes"], chansons:["Prime 1 : « Louis » (Barbara Pravi)"]},
+  "Khalil":  {nom:"Khalil Erwan", age:24, ville:"Paris", region:"Île-de-France", drapeau:"🇫🇷", faits:["A annoncé vouloir quitter l'aventure dès la première semaine"]},
+  "Kylian":  {age:21, ville:"Bordeaux", region:"Gironde", drapeau:"🇫🇷"},
+  "Leeloo":  {nom:"Leeloo Van Cauberg", age:24, ville:"Saint-Aignan", region:"Loir-et-Cher", drapeau:"🇫🇷🇧🇪", faits:["Franco-belge, fille de l'humoriste François Pirette","A grandi dans une fratrie de six enfants","Partie à Londres à 18 ans pour étudier la musique","Première élève dévoilée de la saison"]},
+  "Maud":    {age:20, ville:"Sérent", region:"Morbihan", drapeau:"🇫🇷"},
+  "Mélina":  {nom:"Mélina Danni", age:22, ville:"Florac", region:"Lozère", drapeau:"🇫🇷", faits:["Prépa littéraire à Lyon, puis master d'histoire à Paris"]},
+  "Morgan":  {nom:"Morgan Guille", age:19, ville:"Figanières", region:"Var", drapeau:"🇫🇷"},
+  "Noémie":  {nom:"Noémie Dupeyron", age:23, ville:"Saint-Justin", region:"Landes", drapeau:"🇫🇷"},
+  "Tracy":   {nom:"Tracy Sehl", age:23, ville:"Paris", region:"Île-de-France", drapeau:"🇫🇷", faits:["Issue d'une fratrie de quatre filles"]},
+  "Ydriss":  {nom:"Ydriss Bonalair", age:19, ville:"Baie-Mahault", region:"Guadeloupe", drapeau:"🌴", faits:["A quitté la Guadeloupe pour tenter sa chance"], chansons:["Prime 1 : « I Will Always Love You » (Whitney Houston)"]},
+  "Zoé":     {nom:"Zoé Smittarello", age:19, ville:"Rueil-Malmaison", region:"Hauts-de-Seine", drapeau:"🇫🇷"}
+};
+
+/* ===================== CALENDRIER DES PRIMES ===================== */
+/* ok:true = date confirmée · les autres sont prévues (un prime chaque samedi) */
+const CAL = [
+  {num:1,  date:"2026-10-10", titre:"Le lancement", invites:["Ambre","Vianney"], ok:true},
+  {num:2,  date:"2026-10-17", invites:["Ben Mazué","Bigflo et Oli","Adèle Castillon","Naïka"], ok:true},
+  {num:3,  date:"2026-10-24", ok:true},
+  {num:4,  date:"2026-10-31", ok:true},
+  {num:5,  date:"2026-11-07"},
+  {num:6,  date:"2026-11-14"},
+  {num:7,  date:"2026-11-21"},
+  {num:8,  date:"2026-11-28"},
+  {num:9,  date:"2026-12-05"},
+  {num:10, date:"2026-12-12"},
+  {num:11, date:"2026-12-19"},
+  {num:12, date:"2026-12-26"},
+  {num:13, date:"2027-01-02"},
+  {num:14, date:"2027-01-09"},
+  {num:15, date:"2027-01-16", titre:"Demi-finale"},
+  {num:16, date:"2027-01-23", titre:"Demi-finale"},
+  {num:17, date:"2027-01-30", titre:"Grande finale 🏆"}
+];
+const debut = p => new Date(p.date + "T21:10:00");
+const fin = p => new Date(debut(p).getTime() + 4*3600e3);
+const prochain = () => CAL.find(p => fin(p) > new Date());
+function etat(p){
+  if (new Date() > fin(p)) return "passe";
+  const nx = prochain();
+  return nx && nx.num === p.num ? "prochain" : "avenir";
+}
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const fmt = p => cap(debut(p).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}));
+function compte(p){
+  const now = new Date();
+  if (now >= debut(p)) return "en direct maintenant 🔴";
+  const d = Math.round((new Date(debut(p).toDateString()) - new Date(now.toDateString())) / 864e5);
+  return d === 0 ? "ce soir 🔥" : d === 1 ? "demain !" : `dans ${d} jours`;
+}
+
 const STATUTS = {enlice:"En lice", nomine:"Nominé(e)", immunise:"Immunisé(e)", elimine:"Éliminé(e)", finaliste:"Finaliste", gagnant:"🏆 Gagnant(e)"};
 const COULEURS = ["#ff3d9a","#ffcc33","#4da3ff","#3ddc84","#b57bff","#ff8a3d","#3de0e0","#ff6b6b"];
 
 /* ===================== SAUVEGARDE ===================== */
 const KEY = "staracademy2026_fan";
 function defaut(){
-  const s = {eleves:{}, ordre:[...ELEVES], profs:PROFS_DEFAUT, journal:[]};
-  ELEVES.forEach(n => s.eleves[n] = {fav:false, note:0, statut:"enlice", avis:""});
-  s.eleves["Isabella"].statut = "immunise"; // immunisée au Prime 1
+  const s = {eleves:{}, ordre:[...ELEVES], profs:PROFS_DEFAUT.map(p=>({...p})), journal:[], photos:{}, officiel:[], primes:{}};
+  ELEVES.forEach(n => s.eleves[n] = {fav:false, note:0, statut:"enlice", coms:[]});
+  s.eleves["Isabella"].statut = "immunise";
   return s;
 }
 let S = JSON.parse(localStorage.getItem(KEY) || "null") || defaut();
 const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+const newId = () => Date.now() + Math.floor(Math.random()*1000);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dcourt = d => new Date(d).toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
 const color = n => COULEURS[ELEVES.indexOf(n) % COULEURS.length];
-const avatar = (n,size=54) => `<div class="avatar" style="background:${color(n)};width:${size}px;height:${size}px">${n[0]}</div>`;
 
-/* ===================== EN-TÊTE ===================== */
+function getP(num){ S.primes[num] = S.primes[num] || {avis:"", best:"", eleves:{}}; return S.primes[num]; }
+function getPE(num, n){ const P = getP(num); P.eleves[n] = P.eleves[n] || {note:0, coms:[]}; return P.eleves[n]; }
+
+/* Récupère les données des anciennes versions du site */
+function migrer(){
+  S.photos = S.photos || {}; S.officiel = S.officiel || []; S.primes = S.primes || {};
+  S.journal = S.journal || []; S.ordre = S.ordre || [...ELEVES]; S.profs = S.profs || PROFS_DEFAUT.map(p=>({...p}));
+  S.eleves = S.eleves || {};
+  ELEVES.forEach(n => {
+    const e = S.eleves[n] = S.eleves[n] || {fav:false, note:0, statut:"enlice", coms:[]};
+    e.coms = e.coms || [];
+    if (e.avis) { e.coms.push({id:newId(), txt:e.avis, date:new Date().toISOString()}); }
+    delete e.avis;
+    if (!S.ordre.includes(n)) S.ordre.push(n);
+  });
+  S.journal.forEach(j => {
+    const m = (j.title || "").match(/\d+/);
+    const passes = CAL.filter(p => etat(p) === "passe");
+    const num = m ? +m[0] : (passes.length ? passes[passes.length-1].num : 1);
+    const P = getP(num);
+    const bits = [j.title, j.note, j.best ? "Meilleure presta : " + j.best : ""].filter(Boolean).join("\n");
+    if (bits) P.avis = (P.avis ? P.avis + "\n\n" : "") + bits;
+    if (j.best && ELEVES.includes(j.best) && !P.best) P.best = j.best;
+  });
+  S.journal = [];
+}
+migrer(); save();
+
+/* ===================== PHOTOS ===================== */
+const slug = n => n.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const EXT = ["jpg","jpeg","png","webp"];
+const PH = {};
+function avatar(n, size=54, click=true){
+  const s = slug(n);
+  let img = "";
+  if (S.photos[n]) img = `<img src="${S.photos[n]}" alt="${n}">`;
+  else if (PH[s] !== false) {
+    const i = PH[s] ? EXT.indexOf(PH[s]) : 0;
+    img = `<img src="photos/${s}.${EXT[i]}" data-s="${s}" data-i="${i}" alt="${n}" onload="PH['${s}']=EXT[this.dataset.i]" onerror="photoErr(this)">`;
+  }
+  return `<div class="avatar" ${click?`onclick="openFiche('${n}')"`:""} style="background:${color(n)};width:${size}px;height:${size}px;font-size:${Math.round(size/2.3)}px">${n[0]}${img}</div>`;
+}
+function photoErr(img){
+  const i = +img.dataset.i + 1;
+  if (i >= EXT.length){ PH[img.dataset.s] = false; img.remove(); return; }
+  img.dataset.i = i; img.src = `photos/${img.dataset.s}.${EXT[i]}`;
+}
+function choisirPhoto(n){
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "image/*";
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas"), T = 300, m = Math.min(img.width, img.height);
+      c.width = c.height = T;
+      c.getContext("2d").drawImage(img, (img.width-m)/2, (img.height-m)/2, m, m, 0, 0, T, T);
+      S.photos[n] = c.toDataURL("image/jpeg", .8);
+      try { save(); } catch { delete S.photos[n]; alert("Mémoire pleine 😕"); }
+      refresh();
+    };
+    img.src = URL.createObjectURL(f);
+  };
+  inp.click();
+}
+function retirerPhoto(n){ delete S.photos[n]; save(); refresh(); }
+
+/* ===================== ÉTOILES & COMMENTAIRES ===================== */
+function stars(note, fn){
+  return [1,2,3,4,5].map(i => `<span class="${i<=note?"on":""}" onclick="${fn.replace("#", i)}">★</span>`).join("");
+}
+// clé "e:Nom" = commentaires généraux · "p:3:Nom" = commentaires du prime 3
+function comsList(k){
+  const [t,a,b] = k.split(":");
+  if (t === "e") return S.eleves[a].coms;
+  const P = S.primes[+a];
+  return (P && P.eleves[b]) ? P.eleves[b].coms : [];
+}
+function comsRef(k){
+  const [t,a,b] = k.split(":");
+  return t === "e" ? S.eleves[a].coms : getPE(+a, b).coms;
+}
+function comsHTML(k, ph){
+  const L = comsList(k), id = "c_" + k.replace(/[^a-zA-Z0-9]/g, "_");
+  return `<div>${L.map(c => `<div class="com">${esc(c.txt).replace(/\n/g,"<br>")}
+      <div class="cm"><span>${dcourt(c.date)}${c.edit ? " · modifié" : ""}</span>
+      <span><button title="Modifier" onclick="editCom('${k}',${c.id})">✏️</button><button title="Supprimer" onclick="delCom('${k}',${c.id})">🗑️</button></span></div></div>`).join("")}
+    <div class="addc"><input id="${id}" placeholder="${ph || "Nouveau commentaire..."}" onkeydown="if(event.key==='Enter')addCom('${k}','${id}')"><button onclick="addCom('${k}','${id}')">+</button></div></div>`;
+}
+function addCom(k, inputId){
+  const el = document.getElementById(inputId), txt = el.value.trim();
+  if (!txt) return;
+  comsRef(k).push({id:newId(), txt, date:new Date().toISOString()});
+  save(); refresh();
+}
+function editCom(k, id){
+  const c = comsRef(k).find(c => c.id === id); if (!c) return;
+  const t = prompt("Modifier ton commentaire :", c.txt);
+  if (t === null) return;
+  if (!t.trim()) return delCom(k, id, true);
+  c.txt = t.trim(); c.edit = new Date().toISOString();
+  save(); refresh();
+}
+function delCom(k, id, ok){
+  if (!ok && !confirm("Supprimer ce commentaire ?")) return;
+  const L = comsRef(k), i = L.findIndex(c => c.id === id);
+  if (i > -1) L.splice(i, 1);
+  save(); refresh();
+}
+
+/* ===================== FICHE ÉLÈVE ===================== */
+let FICHE = null;
+const numOf = j => j.num || +(((j.titre || "").match(/Prime\s*(\d+)/i) || [])[1]) || 0;
+function parcours(n){
+  const out = [];
+  S.officiel.forEach(j => {
+    const t = numOf(j) ? "Prime " + numOf(j) : (j.titre || "");
+    if (j.immunise === n) out.push(`🛡️ Immunisé(e) – ${t}`);
+    if ((j.top3 || []).includes(n)) out.push(`🏅 Top 3 des évaluations – ${t}`);
+    if ((j.nomines || []).includes(n)) out.push(`🔴 Nominé(e) – ${t}`);
+    if (j.sauve === n) out.push(`💚 Sauvé(e) – ${t}`);
+    if (j.elimine === n) out.push(`👋 Éliminé(e) – ${t}`);
+  });
+  return out;
+}
+function openFiche(n){
+  FICHE = n;
+  const b = BIOS[n] || {}, e = S.eleves[n], p = parcours(n);
+  const parPrime = CAL.map(c => {
+    const x = S.primes[c.num] && S.primes[c.num].eleves[n];
+    if (!x || (!x.note && !x.coms.length)) return "";
+    return `<li><a href="#" onclick="goPrime(${c.num});return false">Prime ${c.num}</a> <span style="color:var(--gold)">${"★".repeat(x.note)}</span>
+      ${x.coms.map(c2 => `<div class="sub">« ${esc(c2.txt)} »</div>`).join("")}</li>`;
+  }).join("");
+  document.getElementById("sheet").innerHTML = `
+    <button class="x" onclick="closeFiche()">✕</button>
+    <div style="text-align:center">
+      ${avatar(n, 150, false)}
+      <h2 style="margin:4px 0 2px">${b.drapeau || ""} ${n} ${e.fav ? "❤️" : ""}</h2>
+      ${b.nom ? `<div class="sub">${b.nom}</div>` : ""}
+      <span class="badge b-${e.statut}">${STATUTS[e.statut]}</span>
+    </div>
+    <div class="igrid">
+      <div><small>Âge</small><b>${b.age ? b.age + " ans" : "?"}</b></div>
+      <div><small>Ville</small><b>${b.ville || "?"}</b></div>
+      <div><small>Région</small><b>${b.region || "?"}</b></div>
+    </div>
+    ${b.faits && b.faits.length ? `<h3>💡 À savoir</h3><ul>${b.faits.map(f => `<li>${f}</li>`).join("")}</ul>` : ""}
+    ${b.chansons && b.chansons.length ? `<h3>🎤 Ses chansons</h3><ul>${b.chansons.map(c => `<li>${c}</li>`).join("")}</ul>` : ""}
+    <h3>📈 Son parcours</h3>
+    ${p.length ? `<ul>${p.map(x => `<li>${x}</li>`).join("")}</ul>` : `<p class="sub">Rien de particulier pour l'instant.</p>`}
+    <h3>⭐ Ma note générale</h3>
+    <div class="stars" style="text-align:center">${stars(e.note, `setNote('${n}',#)`)}</div>
+    <h3>💬 Mes commentaires</h3>
+    ${comsHTML("e:" + n, "Ajouter un commentaire sur " + n + "...")}
+    <h3>📺 Mes notes prime par prime</h3>
+    ${parPrime ? `<ul>${parPrime}</ul>` : `<p class="sub">Pas encore de note sur un prime. Va dans l'onglet 📺 Primes !</p>`}
+    <div class="phbtns">
+      <button class="btn" onclick="toggleFav('${n}')">${e.fav ? "💔 Retirer des préférés" : "❤️ Ajouter aux préférés"}</button>
+      <button class="btn sec" onclick="choisirPhoto('${n}')">📷 Choisir une photo</button>
+      ${S.photos[n] ? `<button class="btn sec" onclick="retirerPhoto('${n}')">🗑️ Retirer la photo</button>` : ""}
+    </div>`;
+  document.getElementById("modal").classList.add("open");
+}
+function closeFiche(){ FICHE = null; document.getElementById("modal").classList.remove("open"); }
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") closeFiche(); });
+
+/* ===================== EN-TÊTE & ONGLETS ===================== */
 document.getElementById("infos").innerHTML = `
   <span class="chip">🎬 Directeur : ${SAISON.directeur}</span>
   <span class="chip">🌟 Parrain : ${SAISON.parrain}</span>
   <span class="chip">🎙️ ${SAISON.presentateurs.join(" & ")}</span>
   <span class="chip">💖 Grandes sœurs : ${SAISON.grandesSoeurs.join(" & ")}</span>`;
 
-/* ===================== ONGLETS ===================== */
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
-  document.querySelectorAll("nav button,section").forEach(e => e.classList.remove("active"));
-  b.classList.add("active");
-  document.getElementById(b.dataset.tab).classList.add("active");
+function showTab(id){
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  document.querySelectorAll("main section").forEach(s => s.classList.toggle("active", s.id === id));
   renderAll();
-});
+}
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 
-/* ===================== ÉLÈVES ===================== */
+/* ===================== PAGE ÉLÈVES ===================== */
+let ACTU = null;
+function renderNext(){
+  const p = prochain(), el = document.getElementById("nextPrime");
+  if (!p) { el.innerHTML = `<div class="next"><h2>🏁 La saison est terminée !</h2></div>`; return; }
+  const pills = L => `<span class="pills">${L.map(n => `<span class="pill" onclick="openFiche('${n}')">${avatar(n,28,false)}${n}</span>`).join("")}</span>`;
+  const nom = ELEVES.filter(n => S.eleves[n].statut === "nomine");
+  const imm = ELEVES.filter(n => S.eleves[n].statut === "immunise");
+  el.innerHTML = `<div class="next">
+    <div class="nlabel">📺 PROCHAIN PRIME</div>
+    <h2>Prime ${p.num}${p.titre ? " · " + p.titre : ""}</h2>
+    <div class="when">${fmt(p)} · 21h10 sur TF1 — <b>${compte(p)}</b></div>
+    ${p.ok ? "" : `<div class="sub">Date prévue, pas encore confirmée par TF1</div>`}
+    ${p.invites && p.invites.length ? `<p>🎤 Invités : <b>${p.invites.join(", ")}</b></p>` : ""}
+    ${nom.length ? `<p>🔴 Nominés : ${pills(nom)}</p>` : ""}
+    ${imm.length ? `<p>🛡️ Immunisé(e) : ${pills(imm)}</p>` : ""}
+    ${p.info ? `<p>💬 ${p.info}</p>` : ""}
+    <button class="btn" style="margin-top:8px" onclick="goPrime(${p.num})">✍️ Noter les élèves de ce prime</button>
+  </div>`;
+}
+function renderActus(){
+  const el = document.getElementById("actus");
+  if (!ACTU || !ACTU.actus.length) { el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="entry"><h3>📰 Les dernières infos</h3>
+    <div class="meta">Mis à jour le ${ACTU.maj}</div>
+    ${ACTU.actus.map(a => `<p>• ${a}</p>`).join("")}</div>`;
+}
 function renderStats(){
   const v = Object.values(S.eleves);
   document.getElementById("stats").innerHTML = `
@@ -215,162 +503,177 @@ function renderGrid(){
   const sort = document.getElementById("sort").value;
   let list = ELEVES.filter(n => n.toLowerCase().includes(q)).filter(n => {
     const e = S.eleves[n];
-    return f==="all" || (f==="fav" ? e.fav : e.statut===f);
+    return f === "all" || (f === "fav" ? e.fav : e.statut === f);
   });
-  if(sort==="note") list.sort((a,b)=>S.eleves[b].note - S.eleves[a].note);
+  if (sort === "note") list.sort((a,b) => S.eleves[b].note - S.eleves[a].note);
   const g = document.getElementById("grid");
-  if(!list.length){ g.innerHTML = `<p class="empty">Aucun élève ici 😢</p>`; return; }
+  if (!list.length) { g.innerHTML = `<p class="empty">Aucun élève ici 😢</p>`; return; }
   g.innerHTML = list.map(n => {
-    const e = S.eleves[n];
+    const e = S.eleves[n], b = BIOS[n] || {};
     return `<div class="card ${e.fav?"fav":""} ${e.statut==="elimine"?"elimine":""}">
       <button class="heart" onclick="toggleFav('${n}')">${e.fav?"❤️":"🤍"}</button>
-      <div class="top">${avatar(n)}<div><div class="name">${n}</div>
+      <div class="top">${avatar(n,70)}<div>
+        <div class="name" onclick="openFiche('${n}')">${n}</div>
+        <div class="sub">${b.age ? b.age+" ans · " : ""}${b.ville || ""}</div>
         <span class="badge b-${e.statut}">${STATUTS[e.statut]}</span></div></div>
-      <div class="stars">${[1,2,3,4,5].map(i=>`<span class="${i<=e.note?"on":""}" onclick="setNote('${n}',${i})">★</span>`).join("")}</div>
+      <div class="stars">${stars(e.note, `setNote('${n}',#)`)}</div>
       <select onchange="setStatut('${n}',this.value)">
-        ${Object.entries(STATUTS).map(([k,v])=>`<option value="${k}" ${k===e.statut?"selected":""}>${v}</option>`).join("")}
+        ${Object.entries(STATUTS).map(([k,v]) => `<option value="${k}" ${k===e.statut?"selected":""}>${v}</option>`).join("")}
       </select>
-      <textarea placeholder="Mon avis sur ${n}..." onchange="setAvis('${n}',this.value)">${e.avis}</textarea>
+      <button class="cbtn" onclick="openFiche('${n}')">💬 Mes commentaires (${e.coms.length}) · voir la fiche</button>
     </div>`;
   }).join("");
 }
-function toggleFav(n){ S.eleves[n].fav = !S.eleves[n].fav; save(); renderAll(); }
-function setNote(n,i){ S.eleves[n].note = S.eleves[n].note===i ? 0 : i; save(); renderAll(); }
-function setStatut(n,v){ S.eleves[n].statut = v; save(); renderAll(); }
-function setAvis(n,v){ S.eleves[n].avis = v; save(); }
+function toggleFav(n){ S.eleves[n].fav = !S.eleves[n].fav; save(); refresh(); }
+function setNote(n,i){ S.eleves[n].note = S.eleves[n].note === i ? 0 : i; save(); refresh(); }
+function setStatut(n,v){ S.eleves[n].statut = v; save(); refresh(); }
 ["search","filter","sort"].forEach(id => document.getElementById(id).oninput = renderGrid);
 
-/* ===================== CLASSEMENT ===================== */
+/* ===================== PRIMES ===================== */
+const OPEN = new Set();
+if (prochain()) OPEN.add(prochain().num);
+function togglePrime(num, open){
+  if (open === OPEN.has(num)) return;
+  open ? OPEN.add(num) : OPEN.delete(num);
+  renderPrimes();
+}
+function goPrime(num){
+  OPEN.add(num); closeFiche(); showTab("primes");
+  setTimeout(() => { const el = document.getElementById("prime-" + num); if (el) el.scrollIntoView({behavior:"smooth", block:"start"}); }, 60);
+}
+const elimAvant = (n, num) => S.officiel.some(j => numOf(j) && numOf(j) < num && j.elimine === n);
+function officielHTML(j){
+  return `${j.immunise ? `<div>🛡️ Immunisé(e) : <b>${j.immunise}</b></div>` : ""}
+    ${j.top3 ? `<div>🏅 Top 3 des évals : <b>${j.top3.join(", ")}</b></div>` : ""}
+    ${j.nomines ? `<div>🔴 Nominés : <b>${j.nomines.join(", ")}</b></div>` : ""}
+    ${j.sauve ? `<div>💚 Sauvé(e) : <b>${j.sauve}</b></div>` : ""}
+    ${j.elimine ? `<div>👋 Éliminé(e) : <b>${j.elimine}</b></div>` : ""}
+    ${j.resume ? `<div style="margin-top:4px">💬 ${j.resume}</div>` : ""}`;
+}
+function eleveDansPrime(num, n){
+  const x = (S.primes[num] && S.primes[num].eleves[n]) || {note:0, coms:[]};
+  const out = elimAvant(n, num);
+  return `<div class="pel ${out ? "out" : ""}">
+    <div class="top">${avatar(n,40)}<div><b>${n}</b>${out ? `<div class="sub">Déjà éliminé(e)</div>` : ""}</div></div>
+    <div class="stars">${stars(x.note, `setPNote(${num},'${n}',#)`)}</div>
+    ${comsHTML(`p:${num}:${n}`, "Mon avis sur " + n + "...")}
+  </div>`;
+}
+function corpsPrime(p, off){
+  const P = S.primes[p.num] || {avis:"", best:""};
+  return `<div class="pbody">
+    ${p.info ? `<p>💬 ${p.info}</p>` : ""}
+    ${p.invites && p.invites.length ? `<p style="margin-top:6px">🎤 Invités : <b>${p.invites.join(", ")}</b></p>` : ""}
+    ${off ? `<div class="off"><b style="color:var(--gold)">📋 Officiel</b>${officielHTML(off)}</div>` : ""}
+    <label>📝 Mon avis sur ce prime</label>
+    <textarea placeholder="Qu'est-ce que tu as pensé de ce prime ?" onchange="setPAvis(${p.num},this.value)">${esc(P.avis || "")}</textarea>
+    <label>🌟 Ma meilleure prestation</label>
+    <select onchange="setPBest(${p.num},this.value)"><option value="">— Choisir —</option>${ELEVES.map(n => `<option ${P.best===n?"selected":""}>${n}</option>`).join("")}</select>
+    <label>🎤 Note chaque élève</label>
+    <div class="pgrid">${ELEVES.map(n => eleveDansPrime(p.num, n)).join("")}</div>
+  </div>`;
+}
+function renderPrimes(){
+  const LAB = {passe:["Terminé","b-elimine"], prochain:["Prochain","b-finaliste"], avenir:["À venir","b-enlice"]};
+  document.getElementById("primeList").innerHTML = CAL.map(p => {
+    const st = etat(p), P = S.primes[p.num], off = S.officiel.find(j => numOf(j) === p.num);
+    const nb = P ? Object.values(P.eleves).filter(x => x.note || x.coms.length).length : 0;
+    const open = OPEN.has(p.num);
+    return `<details class="prime ${st}" id="prime-${p.num}" ${open ? "open" : ""} ontoggle="togglePrime(${p.num},this.open)">
+      <summary><span class="pt">📺 Prime ${p.num}${p.titre ? " · " + p.titre : ""}</span><span class="badge ${LAB[st][1]}">${LAB[st][0]}</span>
+        <span class="sub" style="width:100%">${fmt(p)} · 21h10${p.ok ? "" : " · date prévue"}${nb ? ` · ✍️ ${nb} élève(s) noté(s)` : ""}${P && P.avis ? " · 📝 avis écrit" : ""}</span></summary>
+      ${open ? corpsPrime(p, off) : ""}
+    </details>`;
+  }).join("");
+}
+function setPAvis(num, v){ getP(num).avis = v; save(); }
+function setPBest(num, v){ getP(num).best = v; save(); }
+function setPNote(num, n, i){ const x = getPE(num, n); x.note = x.note === i ? 0 : i; save(); refresh(); }
+
+/* ===================== MON CLASSEMENT (préférés) ===================== */
+function rangAffiche(){
+  const favs = S.ordre.filter(n => S.eleves[n].fav);
+  return [...favs.filter(n => S.eleves[n].statut !== "elimine"), ...favs.filter(n => S.eleves[n].statut === "elimine")];
+}
 function renderRanking(){
-  const ordre = [...S.ordre.filter(n=>S.eleves[n].statut!=="elimine"), ...S.ordre.filter(n=>S.eleves[n].statut==="elimine")];
-  const top = ordre.filter(n=>S.eleves[n].statut!=="elimine").slice(0,3);
+  const ordre = rangAffiche();
+  if (!ordre.length) {
+    document.getElementById("podium").innerHTML = "";
+    document.getElementById("ranking").innerHTML = `<p class="empty">Tu n'as pas encore de préférés 🤍<br>Clique sur le cœur d'un élève pour l'ajouter ici.</p>`;
+    return;
+  }
+  const top = ordre.filter(n => S.eleves[n].statut !== "elimine").slice(0,3);
   const cls = ["p1","p2","p3"], medal = ["🥇","🥈","🥉"];
-  const pos = [1,0,2]; // affichage 2-1-3
-  document.getElementById("podium").innerHTML = pos.filter(i=>top[i]).map(i =>
-    `<div class="pod ${cls[i]}">${avatar(top[i],60)}<div style="font-size:1.6rem">${medal[i]}</div><b>${top[i]}</b></div>`).join("");
-  document.getElementById("ranking").innerHTML = ordre.map((n,i)=>{
+  document.getElementById("podium").innerHTML = [1,0,2].filter(i => top[i]).map(i =>
+    `<div class="pod ${cls[i]}">${avatar(top[i],64)}<div style="font-size:1.6rem">${medal[i]}</div><b>${top[i]}</b></div>`).join("");
+  document.getElementById("ranking").innerHTML = ordre.map((n,i) => {
     const e = S.eleves[n];
     return `<div class="rank-row" style="${e.statut==="elimine"?"opacity:.45":""}">
-      <span class="num">#${i+1}</span>${avatar(n,38)}
-      <b style="flex:1">${n} ${e.fav?"❤️":""}</b>
+      <span class="num">#${i+1}</span>${avatar(n,42)}
+      <div style="flex:1"><b>${n}</b><br><span class="badge b-${e.statut}">${STATUTS[e.statut]}</span></div>
       <span style="color:var(--gold)">${"★".repeat(e.note)}</span>
-      <span class="actions"><button onclick="move('${n}',-1)">▲</button><button onclick="move('${n}',1)">▼</button></span>
+      <span class="actions"><button onclick="move('${n}',-1)">▲</button><button onclick="move('${n}',1)">▼</button><button title="Retirer des préférés" onclick="toggleFav('${n}')">💔</button></span>
     </div>`;
   }).join("");
 }
-function move(n,d){
-  const i = S.ordre.indexOf(n), j = i+d;
-  if(j<0||j>=S.ordre.length) return;
-  [S.ordre[i],S.ordre[j]] = [S.ordre[j],S.ordre[i]];
+function move(n, d){
+  const elim = S.eleves[n].statut === "elimine";
+  const groupe = rangAffiche().filter(x => (S.eleves[x].statut === "elimine") === elim);
+  const o = groupe[groupe.indexOf(n) + d];
+  if (!o) return;
+  const a = S.ordre.indexOf(n), b = S.ordre.indexOf(o);
+  [S.ordre[a], S.ordre[b]] = [S.ordre[b], S.ordre[a]];
   save(); renderRanking();
 }
 
 /* ===================== PROFS ===================== */
 function renderProfs(){
-  document.getElementById("profGrid").innerHTML = S.profs.map((p,i)=>`
-    <div class="prof"><span class="ic">${p.ic||"🎓"}</span>
-      <div><b>${p.name}</b> ${p.nouveau?'<span class="badge b-immunise">Nouveau</span>':""}<br><small>${p.role}</small></div>
+  document.getElementById("profGrid").innerHTML = S.profs.map((p,i) => `
+    <div class="prof"><span class="ic">${p.ic || "🎓"}</span>
+      <div><b>${p.name}</b> ${p.nouveau ? '<span class="badge b-immunise">Nouveau</span>' : ""}<br><small>${p.role}</small></div>
       <button title="Supprimer" onclick="delProf(${i})">✕</button></div>`).join("");
 }
-function delProf(i){ if(confirm("Retirer ce prof ?")){ S.profs.splice(i,1); save(); renderProfs(); } }
+function delProf(i){ if (confirm("Retirer ce prof ?")) { S.profs.splice(i,1); save(); renderProfs(); } }
 document.getElementById("profForm").onsubmit = e => {
   e.preventDefault();
   S.profs.push({role:pRole.value, name:pName.value, ic:"🎓", nouveau:true});
   pRole.value = pName.value = ""; save(); renderProfs();
 };
 
-/* ===================== JOURNAL ===================== */
-function renderJournalForm(){
-  const enLice = ELEVES.filter(n=>S.eleves[n].statut!=="elimine");
-  document.getElementById("jNom").innerHTML = enLice.map(n=>`<label><input type="checkbox" value="${n}"> ${n}</label>`).join("");
-  document.getElementById("jElim").innerHTML = `<option value="">— Élève éliminé(e) —</option>` + enLice.map(n=>`<option>${n}</option>`).join("");
-}
-function renderJournal(){
-  const el = document.getElementById("entries");
-  if(!S.journal.length){ el.innerHTML = `<p class="empty">Aucun prime enregistré pour l'instant.</p>`; return; }
-  el.innerHTML = [...S.journal].reverse().map(j=>`
-    <div class="entry"><button class="del" onclick="delEntry(${j.id})">✕</button>
-      <h3>${j.title}</h3>
-      <div class="meta">${j.date?new Date(j.date).toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}):""}</div>
-      ${j.nom.length?`<p>🔴 Nominés : <b>${j.nom.join(", ")}</b></p>`:""}
-      ${j.elim?`<p>👋 Éliminé(e) : <b>${j.elim}</b></p>`:""}
-      ${j.best?`<p>🌟 Ma meilleure presta : <b>${j.best}</b></p>`:""}
-      ${j.note?`<p style="margin-top:6px">💬 ${j.note}</p>`:""}
-    </div>`).join("");
-}
-document.getElementById("primeForm").onsubmit = e => {
-  e.preventDefault();
-  const nom = [...document.querySelectorAll("#jNom input:checked")].map(c=>c.value);
-  const elim = jElim.value;
-  S.journal.push({id:Date.now(), title:jTitle.value, date:jDate.value, nom, elim, best:jBest.value, note:jNote.value});
-  // mise à jour automatique des statuts
-  ELEVES.forEach(n => { if(["nomine","immunise"].includes(S.eleves[n].statut)) S.eleves[n].statut = "enlice"; });
-  nom.forEach(n => { if(n!==elim) S.eleves[n].statut = "enlice"; });
-  if(elim) S.eleves[elim].statut = "elimine";
-  e.target.reset(); save(); renderAll();
-};
-function delEntry(id){ if(confirm("Supprimer ce prime ?")){ S.journal = S.journal.filter(j=>j.id!==id); save(); renderJournal(); } }
-
 /* ===================== SAUVEGARDE / IMPORT ===================== */
 exportBtn.onclick = () => {
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:"application/json"}));
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,2)], {type:"application/json"}));
   a.download = "star-academy-2026-mon-suivi.json"; a.click();
 };
 importBtn.onclick = () => importFile.click();
 importFile.onchange = e => {
   const r = new FileReader();
-  r.onload = () => { try{ S = JSON.parse(r.result); save(); renderAll(); alert("Données restaurées ✅"); }catch{ alert("Fichier invalide"); } };
+  r.onload = () => { try { S = JSON.parse(r.result); migrer(); save(); refresh(); alert("Données restaurées ✅"); } catch { alert("Fichier invalide"); } };
   r.readAsText(e.target.files[0]);
 };
-resetBtn.onclick = () => { if(confirm("Tout effacer et repartir de zéro ?")){ S = defaut(); save(); renderAll(); } };
+resetBtn.onclick = () => { if (confirm("Tout effacer et repartir de zéro ?")) { S = defaut(); save(); refresh(); } };
 
-/* ===================== GO ===================== */
-function renderAll(){ renderStats(); renderGrid(); renderRanking(); renderProfs(); renderJournalForm(); renderJournal(); }
+/* ===================== AFFICHAGE ===================== */
+function renderAll(){ renderNext(); renderActus(); renderStats(); renderGrid(); renderPrimes(); renderRanking(); renderProfs(); }
+function refresh(){ renderAll(); if (FICHE) openFiche(FICHE); }
 renderAll();
-</script>
+setInterval(renderNext, 60000); // le compte à rebours se met à jour tout seul
 
-<script>
-/* ===== MISE À JOUR AUTOMATIQUE DEPUIS data.json ===== */
-const _journalPerso = renderJournal;
-renderJournal = function () {
-  _journalPerso();
-  const off = S.officiel || [];
-  if (!off.length) return;
-  const el = document.getElementById("entries");
-  const html = [...off].reverse().map(j => `
-    <div class="entry" style="border-left-color:var(--gold)">
-      <h3>📺 ${j.titre} <span class="badge b-finaliste">Officiel</span></h3>
-      <div class="meta">${j.date || ""}</div>
-      ${j.immunise ? `<p>🛡️ Immunisé(e) : <b>${j.immunise}</b></p>` : ""}
-      ${j.top3 ? `<p>🏅 Top 3 des évals : <b>${j.top3.join(", ")}</b></p>` : ""}
-      ${j.nomines ? `<p>🔴 Nominés : <b>${j.nomines.join(", ")}</b></p>` : ""}
-      ${j.sauve ? `<p>💚 Sauvé(e) : <b>${j.sauve}</b></p>` : ""}
-      ${j.elimine ? `<p>👋 Éliminé(e) : <b>${j.elimine}</b></p>` : ""}
-      ${j.invites ? `<p>🎤 Invités : ${j.invites.join(", ")}</p>` : ""}
-      ${j.resume ? `<p style="margin-top:6px">💬 ${j.resume}</p>` : ""}
-    </div>`).join("");
-  el.innerHTML = S.journal.length ? html + el.innerHTML : html;
-};
-
+/* ===================== MISE À JOUR AUTOMATIQUE (data.json) ===================== */
 (async () => {
   try {
-    const r = await fetch("data.json?v=" + Date.now(), { cache: "no-store" });
+    const r = await fetch("data.json?v=" + Date.now(), {cache:"no-store"});
     if (!r.ok) return;
     const D = await r.json();
     Object.entries(D.statuts || {}).forEach(([n, st]) => { if (S.eleves[n]) S.eleves[n].statut = st; });
+    Object.entries(D.bios || {}).forEach(([n, b]) => { BIOS[n] = Object.assign(BIOS[n] || {}, b); });
+    (D.calendrier || []).forEach(c => { const p = CAL.find(x => x.num === c.num); if (p) Object.assign(p, c); else CAL.push(c); });
+    CAL.sort((a,b) => a.num - b.num);
     if (D.profs) S.profs = D.profs;
     S.officiel = D.primes || [];
-    save();
-    const b = document.createElement("div");
-    b.className = "entry";
-    b.style.borderLeftColor = "var(--gold)";
-    b.innerHTML = `<h3>📰 Les dernières infos</h3>
-      <div class="meta">Mis à jour le ${D.maj}</div>
-      ${(D.actus || []).map(a => `<p>• ${a}</p>`).join("")}
-      ${D.prochainPrime ? `<p style="margin-top:8px">📺 <b>Prochain :</b> ${D.prochainPrime}</p>` : ""}`;
-    document.getElementById("eleves").prepend(b);
-    renderAll();
+    ACTU = {maj: D.maj, actus: D.actus || []};
+    save(); refresh();
   } catch (e) { console.log("data.json introuvable", e); }
 })();
 </script>
