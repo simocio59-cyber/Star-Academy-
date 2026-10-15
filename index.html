@@ -150,6 +150,15 @@ h4{margin:0 0 8px}
 .grp{background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:10px}
 .grp b{display:block;margin-bottom:6px}
 .grp .nm{margin:3px 8px 3px 0}
+.medias{margin-top:8px}
+.art{padding:7px 0;border-top:1px solid var(--bord);font-size:.9rem}
+.art:first-child{border-top:0}
+.art a,.retenir a{color:var(--txt);text-decoration:none}
+.art a:hover,.retenir a:hover{color:var(--or);text-decoration:underline}
+.src{color:var(--mut);font-size:.75rem}
+.cats{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.cats .tag{margin-left:0}
+.auto{font-size:.68rem;background:#1d3f5c;color:#9fdcff;border-radius:999px;padding:1px 8px;font-weight:700;vertical-align:middle}
 footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;color:var(--mut);font-size:.84rem;display:grid;gap:6px}
 #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
 #toast.on{transform:translate(-50%,0)}
@@ -207,6 +216,7 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
 const $=s=>document.querySelector(s);
 const CLE="staracademy2026_fan";
 const RAW_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/data.json";
+const QUOT_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/quotidienne.json";
 
 /* =====================================================================
    📸 PHOTOS PAR LIEN (visibles par TOUT LE MONDE)
@@ -353,21 +363,16 @@ const PROFS=[
 ];
 
 /* =====================================================================
-   📅 LA QUOTIDIENNE — À MODIFIER ICI QUAND TU VEUX 😉
-   1 bloc { } = 1 quotidienne (date de DIFFUSION au format "AAAA-MM-JJ").
-   - titre : le titre de la carte
-   - points : la liste des infos (1 phrase = 1 ligne)
-   - note : (facultatif) une petite précision en bas
-   Les prénoms des élèves deviennent cliquables tout seuls ✨
-   Pour ajouter un jour : copie un bloc { ... }, colle-le en haut, change le texte.
+   📅 LA QUOTIDIENNE
+   🤖 Le robot ajoute TOUT SEUL les articles de chaque jour (quotidienne.json).
+   ✍️ Ici, ce sont des résumés écrits à la main (facultatif, rien à faire).
    ===================================================================== */
 const QUOTIDIENNES=[
   {date:"2026-10-15",titre:"🤔 Khalil part-il vraiment ?",points:[
-    "La réponse est attendue dans la quotidienne de ce soir à 17h30 : Khalil confirme-t-il son départ ?",
-    "On doit voir la suite de sa discussion en tête-à-tête avec Mosimann, qui veut être sûr qu’il a bien réfléchi.",
-    "Khalil n’est pas réapparu sur le live du château depuis mercredi soir.",
-    "Et pour Félix et Mélina, que deviennent les nominations ? Suspense…"
-  ],note:"Carte à compléter après la quotidienne de ce soir ✍️"},
+    "La suite de la discussion entre Khalil et Mosimann, qui veut être sûr qu’il a bien réfléchi.",
+    "Khalil n’était pas réapparu sur le live du château depuis mercredi soir.",
+    "Grande question : que deviennent les nominations de Félix et Mélina ?"
+  ],note:"Les articles du jour s’ajoutent tout seuls juste en dessous 🤖"},
   {date:"2026-10-14",titre:"💥 Évaluations, nominations… et coup de théâtre",points:[
     "Diffusion des premières évaluations du mardi matin (8h30, dans une nouvelle salle), sur le thème « Se mettre en valeur ». Le détail est plus bas 👇",
     "Au top : Morgan, Amel, Zoé, Antoine et Cameron. Plus dur pour Félix, Mélina et Leeloo.",
@@ -395,12 +400,13 @@ const QUOTIDIENNES=[
   ],note:"L’arrivée au château était aussi dans « Retour au château », juste après le prime 1."}
 ];
 
-/* 🔥 À RETENIR (les nommés et le top 3 s'ajoutent tout seuls) */
+/* 🔥 À RETENIR (les nommés, le top 3 et les gros titres s'ajoutent tout seuls)
+   "jusqu" = date après laquelle la phrase disparaît toute seule */
 const A_RETENIR=[
-  "💥 Khalil veut quitter l’aventure : nominations suspendues, réponse attendue jeudi 15/10.",
-  "👔 Mosimann sera absent au prime 2 (samedi 17/10).",
-  "🛡️ Isabella, immunisée, ouvre le prime 2 avec un tableau spécial.",
-  "🎶 Invité d’honneur du prime 2 : Ben Mazué."
+  {t:"💥 Khalil a annoncé vouloir quitter l’aventure : les nominations ont été suspendues.",jusqu:"2026-10-17"},
+  {t:"👔 Mosimann sera absent au prime 2 (samedi 17/10).",jusqu:"2026-10-17"},
+  {t:"🛡️ Isabella, immunisée, ouvre le prime 2 avec un tableau spécial.",jusqu:"2026-10-17"},
+  {t:"🎶 Invité d’honneur du prime 2 : Ben Mazué.",jusqu:"2026-10-17"}
 ];
 
 /* 🎤 ÉVALUATIONS — humeur : "top" 🟢, "mitige" 🟡, "bof" 🔴, "" ⚪ (pas d'info) */
@@ -440,6 +446,8 @@ let S=null,SEL=1,SEL_MANUEL=false,FILTRE="tous",FICHE=null,FICHE_P=null,ORDRE_CO
 let ONGLET=["eleves","primes","quotidienne","classement","profs"].includes(location.hash.slice(1))?location.hash.slice(1):"eleves";
 const OPEN={},PHOTO_KO={},PHOTO_OK={};
 const EXTS=["jpg","jpeg","png","webp","JPG","JPEG","PNG","WEBP"];
+let QAUTO=null;
+try{QAUTO=JSON.parse(localStorage.getItem(CLE+"_quot")||"null");}catch(e){QAUTO=null;}
 
 /* ===================== 📅 CALENDRIER & PRIMES ===================== */
 function CALv(){
@@ -778,22 +786,42 @@ function nomsDans(t){return ELEVES.filter(n=>reNom(n).test(t));}
 function dateQ(s){const [y,m,d]=String(s).split("-").map(Number);return new Date(y,m-1,d,12);}
 function jourQ(s){const t=dateQ(s),j=JOURS[t.getDay()];return j[0].toUpperCase()+j.slice(1)+" "+numJ(t.getDate())+" "+MOIS[t.getMonth()];}
 function primeDeQ(s){const t=dateQ(s),cal=CALv();return (cal.find(c=>dateP(c)>t)||cal[cal.length-1]).num;}
-/* 🤖 Mélange tes quotidiennes avec celles de data.json (clé "quotidiennes"), si elles existent */
-function fusionQ(base,auto){
-  const M={};
-  base.forEach(q=>{M[q.date]=q;});
-  auto.forEach(a=>{if(a&&typeof a.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(a.date))M[a.date]=Object.assign({},M[a.date]||{},a);});
+function lienOk(u){return /^https?:\/\//i.test(String(u||""))?esc(u):"#";}
+/* 📰 Un article du robot */
+function ligneArt(a){return `${esc(a.emoji||"📺")} <a href="${lienOk(a.lien)}" target="_blank" rel="noopener">${esc(a.titre||"")}</a> <span class="src">· ${esc(a.source||"")}${a.heure?" · "+esc(a.heure):""}</span>`;}
+function listeArts(A){return `<div class="medias">${A.map(a=>`<div class="art">${ligneArt(a)}</div>`).join("")}</div>`;}
+function catsArts(A){
+  const C={};
+  A.forEach(a=>{const k=(a.emoji||"📺")+" "+(a.cat||"Château");C[k]=(C[k]||0)+1;});
+  return `<div class="cats">${Object.entries(C).sort((x,y)=>y[1]-x[1]).map(([k,n])=>`<span class="tag">${esc(k)} ×${n}</span>`).join("")}</div>`;
+}
+/* 🤖 Mélange : résumés écrits + data.json (clé "quotidiennes") + articles du robot */
+function joursQ(){
+  const o=S.officiel||{},M={},ok=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||""));
+  QUOTIDIENNES.concat(Array.isArray(o.quotidiennes)?o.quotidiennes:[]).forEach(q=>{if(q&&ok(q.date))M[q.date]=Object.assign({},M[q.date]||{},q);});
+  ((QAUTO&&Array.isArray(QAUTO.jours))?QAUTO.jours:[]).forEach(j=>{if(j&&ok(j.date)){M[j.date]=Object.assign({date:j.date},M[j.date]||{});M[j.date].auto=j;}});
   return Object.values(M).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
 }
+function artsRecents(n){const lim=isoJour(new Date(Date.now()-n*864e5));return joursQ().filter(q=>q.auto&&q.date>=lim).flatMap(q=>Array.isArray(q.auto.articles)?q.auto.articles:[]);}
 function carteQ(q,auj){
   const pts=liste2(q.points);
-  const etat=q.date>auj?`<span class="tag">⏳ à venir</span>`:(q.date===auj?`<span class="tag or">📺 aujourd’hui</span>`:`<span class="tag ok">✅ diffusée</span>`);
+  const A=(q.auto&&Array.isArray(q.auto.articles))?q.auto.articles:[];
+  const etat=q.date>auj?`<span class="tag">⏳ à venir</span>`:(q.date===auj?`<span class="tag or">📺 aujourd’hui</span>`:`<span class="tag ok">✅ passé</span>`);
   const noms=nomsDans([q.titre||""].concat(pts).join(" "));
+  A.forEach(a=>liste2(a.eleves).forEach(n=>{if(ELEVES.includes(n)&&!noms.includes(n))noms.push(n);}));
+  let corps="";
+  if(pts.length) corps+=`<ul>${pts.map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul>`;
+  if(q.note) corps+=`<p class="mut sm">ℹ️ ${esc(q.note)}</p>`;
+  if(A.length){
+    corps+=catsArts(A);
+    if(pts.length){const k="m"+q.date;corps+=`<details class="wiki" ${OPEN[k]?"open":""} ontoggle="OPEN['${k}']=this.open"><summary>📰 Ce qu’en disent les médias (${A.length}) <span class="auto">🤖 auto</span></summary>${listeArts(A)}</details>`;}
+    else corps+=listeArts(A);
+  }
+  if(!corps) corps=`<p class="mut">Pas encore d’infos.</p>`;
+  const titre=q.titre?lienNoms(q.titre):(A.length?`📰 Le fil des médias <span class="auto">🤖 auto</span>`:"");
   return `<div class="qcard${q.date>=auj?" avenir":""}">
-    <div class="qhead"><span class="qdate">📺 ${jourQ(q.date)}</span>${etat}</div>
-    ${q.titre?`<h3>${lienNoms(q.titre)}</h3>`:""}
-    ${pts.length?`<ul>${pts.map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul>`:`<p class="mut">Pas encore de résumé.</p>`}
-    ${q.note?`<p class="mut sm">ℹ️ ${esc(q.note)}</p>`:""}
+    <div class="qhead"><span class="qdate">📅 ${jourQ(q.date)}</span>${etat}</div>
+    ${titre?`<h3>${titre}</h3>`:""}${corps}
     ${noms.length?`<div class="qav">${noms.map(n=>`<span class="lien" title="Voir la fiche de ${n}" onclick="openFiche('${n}')">${avatar(n,"mini")}</span>`).join("")}</div>`:""}
   </div>`;
 }
@@ -823,18 +851,21 @@ function blocDanse(g){
 }
 function pageQuotidienne(){
   const o=S.officiel||{},auj=isoJour(new Date());
-  const Q=fusionQ(QUOTIDIENNES,Array.isArray(o.quotidiennes)?o.quotidiennes:[]);
+  const Q=joursQ();
   const EV=(Array.isArray(o.evaluations)&&o.evaluations.length)?o.evaluations:EVALUATIONS;
   const GD=(Array.isArray(o.groupesDanse)&&o.groupesDanse.length)?o.groupesDanse:GROUPES_DANSE;
-  const AR=(Array.isArray(o.aRetenir)&&o.aRetenir.length)?o.aRetenir.map(String):A_RETENIR;
+  const AR=((Array.isArray(o.aRetenir)&&o.aRetenir.length)?o.aRetenir:A_RETENIR).map(x=>typeof x==="string"?{t:x}:x).filter(x=>x&&x.t&&(!x.jusqu||auj<=x.jusqu)).map(x=>String(x.t));
   const V=vedette(),pv=primeInfo(V.num),dyn=[];
   if(pv.nomines.length) dyn.push("⚠️ Les nommés de la semaine : "+pv.nomines.join(", ")+".");
   if(pv.top3.length) dyn.push("🏅 Le top 3 des évaluations : "+pv.top3.join(", ")+".");
   if(pv.sauve.length) dyn.push("🙌 Sauvé(e) : "+pv.sauve.join(", ")+".");
+  const IMP=["Départ","Élimination","Nominations","Immunité"];
+  const AI=artsRecents(2).filter(a=>IMP.includes(a.cat)).slice(0,4);
   let h=`<h2 class="titre">📅 La quotidienne</h2>
-    <p class="mut sm">Tout ce qui s’est passé au château, résumé simplement. 👆 Touche un prénom ou une photo pour ouvrir la fiche.</p>
+    <p class="mut sm">Tout ce qui se passe au château, mis à jour tout seul 🤖 Touche un prénom ou une photo pour ouvrir la fiche, ou un titre pour lire l’article.</p>
     <div class="qinfo"><span class="tag">📺 Lun → ven : 17h30</span><span class="tag">Sam : 17h15</span><span class="tag">Dim : 16h05</span><span class="tag">🔴 Le live sur TF1+</span></div>`;
-  h+=`<div class="retenir"><h3>🔥 À retenir · en route vers le prime ${V.num}</h3><ul>${dyn.concat(AR).map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul></div>`;
+  const lis=dyn.concat(AR).map(x=>`<li>${lienNoms(x)}</li>`).join("")+AI.map(a=>`<li>${ligneArt(a)}</li>`).join("");
+  h+=`<div class="retenir"><h3>🔥 À retenir · en route vers le prime ${V.num}</h3>${lis?`<ul>${lis}</ul>`:`<p class="mut">Rien de spécial pour l’instant.</p>`}</div>`;
   let sem=null;
   Q.forEach(q=>{
     const p=primeDeQ(q.date);
@@ -843,8 +874,13 @@ function pageQuotidienne(){
   });
   if(!Q.length) h+=`<div class="vide">Pas encore de quotidienne résumée 🙂</div>`;
   h+=`<h3 class="semaine">📊 Les évaluations et la danse</h3>`;
+  const AE=artsRecents(7).filter(a=>a.cat==="Évaluations").slice(0,8);
+  if(AE.length){const ouv=OPEN.ae!==false;h+=`<details class="bloc" ${ouv?"open":""} ontoggle="OPEN.ae=this.open"><summary>🤖 Les derniers articles sur les évaluations</summary>${listeArts(AE)}</details>`;}
   h+=EV.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocEvals).join("");
   h+=GD.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocDanse).join("");
+  let m="";
+  if(QAUTO&&QAUTO.maj){const d=new Date(QAUTO.maj);if(!isNaN(d))m=d.toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});}
+  h+=`<p class="mut sm">🤖 ${m?"Fil des médias mis à jour tout seul : "+esc(m):"Fil des médias : en attente du 1er passage du robot"} · titres trouvés sur Google Actualités.</p>`;
   h+=`<p class="mut sm">ℹ️ Les médias ne sont pas toujours d’accord entre eux : les infos marquées ⚠️ restent à confirmer.</p>`;
   return h;
 }
@@ -1021,6 +1057,25 @@ async function majAuto(){
   }
   ETAT_MAJ="hors";majInfo();
 }
+/* 📅 Le fil automatique de la quotidienne (quotidienne.json, rempli par le robot) */
+async function majQuot(){
+  for(const url of [QUOT_URL,"quotidienne.json"]){
+    try{
+      const r=await fetch(url+"?t="+Date.now(),{cache:"no-store"});
+      if(!r.ok) continue;
+      const d=await r.json();
+      if(!d||!Array.isArray(d.jours)) continue;
+      const change=JSON.stringify(d.jours)!==JSON.stringify(QAUTO&&QAUTO.jours);
+      QAUTO=d;
+      try{localStorage.setItem(CLE+"_quot",JSON.stringify(d));}catch(e){}
+      if(change&&ONGLET==="quotidienne"&&!FICHE){
+        const a=document.activeElement;
+        if(!(a&&/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName))) refresh();
+      }
+      return;
+    }catch(e){}
+  }
+}
 
 /* ===================== 🚀 DÉMARRAGE ===================== */
 try{S=JSON.parse(localStorage.getItem(CLE)||"null");}catch(e){S=null;}
@@ -1028,7 +1083,9 @@ migrer();save();
 SEL=vedette().num;
 render();
 majAuto();
+majQuot();
 setInterval(majAuto,5*60*1000);
+setInterval(majQuot,10*60*1000);
 setInterval(()=>{
   if(!SEL_MANUEL) SEL=vedette().num;
   const a=document.activeElement;
