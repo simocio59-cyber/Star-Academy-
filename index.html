@@ -50,6 +50,8 @@ summary{cursor:pointer;font-weight:600}
 .av.big{width:96px;height:96px;font-size:2.4rem}
 .av.moy{width:44px;height:44px;font-size:1.1rem}
 .av.mini{width:28px;height:28px;font-size:.8rem;border-width:1px}
+.zoomable{display:inline-flex;cursor:zoom-in;border-radius:50%;transition:transform .15s}
+.zoomable:hover{transform:scale(1.05)}
 .drap{height:.85em;width:auto;border-radius:2px;vertical-align:-1px;margin-left:4px;box-shadow:0 0 0 1px rgba(255,255,255,.2)}
 .badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:700;width:max-content;max-width:100%}
 .b-ok{background:#1f4d3c;color:#7ff0c0}.b-nom{background:#5a2626;color:#ffb0b0}.b-imm{background:#1d3f5c;color:#9fdcff}.b-elim{background:#3a3a3a;color:#ccc}.b-win{background:var(--or);color:#1a0b2e}.b-fin{background:#5b3d0f;color:#ffd98a}.b-sauve{background:#244a1f;color:#b5f59f}
@@ -62,6 +64,11 @@ summary{cursor:pointer;font-weight:600}
 .modal{position:fixed;inset:0;background:rgba(5,2,15,.78);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:16px}
 .mbox{position:relative;background:#1c1238;border:1px solid var(--bord);border-radius:18px;max-width:720px;width:100%;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:18px;overscroll-behavior:contain}
 .x{position:sticky;top:0;float:right;z-index:3;width:38px;height:38px;border-radius:50%;background:var(--card2);color:var(--txt);border:1px solid var(--bord);font-size:1.05rem;cursor:pointer}
+.zoom{position:fixed;inset:0;z-index:70;background:rgba(5,2,15,.94);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out;animation:zin .2s ease}
+.zoom img{max-width:92vw;max-height:75vh;max-height:75dvh;border-radius:18px;border:3px solid var(--or);box-shadow:0 10px 40px rgba(0,0,0,.6);object-fit:contain;background:#000}
+.znom{font-size:1.5rem;font-weight:800;text-align:center}
+.zoom .x{position:absolute;top:14px;right:14px;float:none;width:46px;height:46px;font-size:1.3rem}
+@keyframes zin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
 .fhead{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .fhead h2{margin:0}
 .fl{flex:1;min-width:0}
@@ -119,7 +126,7 @@ h4{margin:0 0 8px}
 .new{background:var(--rose);color:#fff;border-radius:999px;padding:1px 8px;font-size:.66rem;font-weight:800;vertical-align:middle}
 .vide{text-align:center;padding:30px 16px;background:var(--card);border-radius:16px;border:1px dashed var(--bord)}
 footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;color:var(--mut);font-size:.84rem;display:grid;gap:6px}
-#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
 #toast.on{transform:translate(-50%,0)}
 @media (max-width:640px){
   h1{font-size:1.45rem}
@@ -157,6 +164,15 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
     <div id="mbody"></div>
   </div>
 </div>
+
+<!-- 🔍 PHOTO EN GRAND -->
+<div id="zoom" class="zoom" hidden onclick="fermerZoom()" role="dialog" aria-modal="true">
+  <button class="x" type="button" aria-label="Fermer">✖</button>
+  <img id="zoomImg" alt="" referrerpolicy="no-referrer">
+  <div id="zoomNom" class="znom"></div>
+  <div class="mut sm">👆 Touche n’importe où pour fermer</div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -545,6 +561,18 @@ function photoErr(img,s){
   if(i<EXTS.length){img.dataset.i=i;img.src="photos/"+s+"."+EXTS[i];}
   else{PHOTO_KO[s]=1;img.remove();}
 }
+/* 🔍 Avatar cliquable qui ouvre la photo en grand */
+function avatarZoom(nom,cl){return `<span class="zoomable" title="🔍 Voir la photo en grand" onclick="zoomAv(this,'${nom}')">${avatar(nom,cl)}</span>`;}
+function zoomAv(el,nom){
+  const img=el.querySelector(".av img");
+  if(!img||!img.complete||!img.naturalWidth){toast("📷 Pas encore de photo pour "+nom);return;}
+  const b=BIOS[nom]||{};
+  $("#zoomImg").src=img.currentSrc||img.src;
+  $("#zoomImg").alt="Photo de "+nom;
+  $("#zoomNom").innerHTML="⭐ "+esc(nom)+drap(b.drapeau);
+  $("#zoom").hidden=false;
+}
+function fermerZoom(){$("#zoom").hidden=true;$("#zoomImg").removeAttribute("src");}
 function etoiles(v,tpl){let h=`<span class="etoiles">`;for(let i=1;i<=5;i++)h+=`<button type="button" class="${i<=v?"on":""}" aria-label="${i} étoile${i>1?"s":""}" onclick="${tpl.replace("#",i)}">★</button>`;return h+`</span>`;}
 
 /* ===================== 👥 PAGE ÉLÈVES ===================== */
@@ -678,14 +706,15 @@ function renderFiche(){
   const chs=CALv().flatMap(c=>chansonsDe(nom,c.num).map(x=>Object.assign({num:c.num},x)));
   const opts=["","En compétition","Nominé(e)","Immunisé(e)","Sauvé(e)","Éliminé(e)","Abandon","Finaliste","Gagnant(e)"];
   if(e.statut&&!opts.includes(e.statut)) opts.push(e.statut);
-  let h=`<div class="fhead">${avatar(nom,"big")}<div class="fl">
+  let h=`<div class="fhead">${avatarZoom(nom,"big")}<div class="fl">
       <h2>${nom}${drap(b.drapeau)}</h2>
       <div class="mut">${esc(b.nom||"")}</div>
       <div>🎂 ${b.age||"?"} ans · 📍 ${esc(b.ville||"")}${b.region?" ("+esc(b.region)+")":""}</div>
       <div class="row2">${badge(st)}<button class="chip${e.fav?" on":""}" onclick="toggleFav('${nom}')">${e.fav?"⭐ Dans mes préférés":"☆ Ajouter à mes préférés"}</button></div>
+      <div class="mut sm" style="margin-top:6px">🔍 Touche la photo pour la voir en grand</div>
     </div></div>`;
   if(b.faits&&b.faits.length) h+=`<ul class="faits">${b.faits.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>`;
-  h+=`<section class="fsec" id="secComs"><h3>${avatar(nom,"moy")}<span>💬 Mes commentaires sur ${nom}</span></h3>
+  h+=`<section class="fsec" id="secComs"><h3>${avatarZoom(nom,"moy")}<span>💬 Mes commentaires sur ${nom}</span></h3>
     <div class="addcom">
       <label class="sm">Ce commentaire concerne :
         <select id="fcPrime" data-keep>${CALv().map(c=>`<option value="${c.num}" ${c.num===defP?"selected":""}>Prime ${c.num} · ${dCourte(c)}${c.num===V?" (en ce moment)":""}</option>`).join("")}</select></label>
@@ -815,7 +844,11 @@ setInterval(()=>{
   const occupe=a&&/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName);
   if(!occupe&&!FICHE&&ONGLET==="eleves") refresh();
 },60*1000);
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&FICHE)fermerFiche();});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  if(!$("#zoom").hidden){fermerZoom();return;}
+  if(FICHE) fermerFiche();
+});
 </script>
 </body>
 </html>
