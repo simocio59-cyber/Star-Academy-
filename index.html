@@ -165,6 +165,32 @@ const $=s=>document.querySelector(s);
 const CLE="staracademy2026_fan";
 const RAW_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/data.json";
 
+/* =====================================================================
+   📸 PHOTOS PAR LIEN (visibles par TOUT LE MONDE)
+   Colle l'adresse de l'image entre les guillemets "" à côté du prénom.
+   Exemple :  "Amel":"https://exemple.com/photo-amel.jpg",
+   Laisse "" vide si tu n'as pas encore de lien.
+   ===================================================================== */
+const PHOTOS_LIENS={
+  "Amel":"",
+  "Antoine":"",
+  "Brieuc":"",
+  "Cameron":"",
+  "Elija":"",
+  "Félix":"",
+  "Isabella":"",
+  "Khalil":"",
+  "Kylian":"",
+  "Leeloo":"",
+  "Maud":"",
+  "Mélina":"",
+  "Morgan":"",
+  "Noémie":"",
+  "Tracy":"",
+  "Ydriss":"",
+  "Zoé":""
+};
+
 /* ===================== 🧰 OUTILS ===================== */
 const JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
 const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -303,9 +329,7 @@ function CALv(){
     return r;
   });
 }
-/* ⭐ Prime vedette : reste affiché jusqu'au lundi qui suit */
 function vedette(){const now=new Date(),cal=CALv();return cal.find(c=>now<lundiApres(c))||cal[cal.length-1];}
-/* 🕰️ Retrouve le prime d'un commentaire grâce à sa date */
 function primeDeDate(d){const t=parseD(d),cal=CALv();if(!t)return 1;const c=cal.find(x=>t<lundiApres(x));return (c||cal[cal.length-1]).num;}
 function primeInfo(num){
   num=+num;
@@ -508,10 +532,11 @@ function timeline(nom){
 }
 
 /* ===================== 🖼️ PETITS MORCEAUX D'AFFICHAGE ===================== */
-/* 📸 Photo : d'abord celle choisie sur l'appareil, sinon photos/<prenom>.jpg (ou .jpeg, .png, .webp) sur GitHub, sinon la lettre */
+/* 📸 Ordre : 1) photo/lien choisi sur cet appareil  2) PHOTOS_LIENS  3) dossier photos/  4) la lettre */
 function avatar(nom,cl){
   cl=cl||"";const s=slug(nom);
-  if(S.photos[nom]) return `<span class="av ${cl}"><img src="${S.photos[nom]}" alt="${esc(nom)}"></span>`;
+  const perso=S.photos[nom]||PHOTOS_LIENS[nom]||"";
+  if(perso&&!PHOTO_KO["u:"+nom]) return `<span class="av ${cl}" style="background:${couleur(nom)}"><b>${nom[0]}</b><img src="${esc(perso)}" alt="${esc(nom)}" referrerpolicy="no-referrer" onerror="PHOTO_KO['u:${nom}']=1;this.remove()"></span>`;
   const img=PHOTO_KO[s]?"":`<img src="${PHOTO_OK[s]||"photos/"+s+".jpg"}" alt="" onload="PHOTO_OK['${s}']=this.getAttribute('src')" onerror="photoErr(this,'${s}')">`;
   return `<span class="av ${cl}" style="background:${couleur(nom)}"><b>${nom[0]}</b>${img}</span>`;
 }
@@ -674,7 +699,12 @@ function renderFiche(){
   h+=`<section class="fsec"><h3>🛠️ Réglages</h3>
     <label class="sm">Corriger le statut :
       <select onchange="setStatut('${nom}',this.value)">${opts.map(o=>`<option value="${esc(o)}" ${e.statut===o?"selected":""}>${o?esc(o):"🔄 Automatique ("+esc(statutAuto(nom))+")"}</option>`).join("")}</select></label>
-    <div class="row2" style="margin-top:10px"><label class="btn sec">📷 Choisir une photo<input type="file" accept="image/*" hidden onchange="choisirPhoto('${nom}',this)"></label>${S.photos[nom]?`<button class="btn sec" onclick="supprPhoto('${nom}')">🗑️ Retirer ma photo</button>`:""}</div>
+    <div class="row2" style="margin-top:10px">
+      <button class="btn" onclick="lienPhoto('${nom}')">🔗 Coller le lien d’une photo</button>
+      <label class="btn sec">📷 Choisir une photo<input type="file" accept="image/*" hidden onchange="choisirPhoto('${nom}',this)"></label>
+      ${S.photos[nom]?`<button class="btn sec" onclick="supprPhoto('${nom}')">🗑️ Retirer ma photo</button>`:""}
+    </div>
+    ${PHOTO_KO["u:"+nom]?`<p class="sm" style="color:#ffb0b0">⚠️ Le lien de la photo ne marche pas (le site d’origine la bloque peut-être). Essaie un autre lien.</p>`:""}
   </section>`;
   $("#mbody").innerHTML=h;
 }
@@ -705,13 +735,21 @@ function setProfNote(i,n){const k=PROFS[i].nom;const v=S.profs[k]=S.profs[k]||{n
 function setProfAvis(i,val){const k=PROFS[i].nom;const v=S.profs[k]=S.profs[k]||{note:0,avis:""};v.avis=val;save();}
 function bouger(i,d){const j=i+d;if(j<0||j>=S.ordre.length)return;const t=S.ordre[i];S.ordre[i]=S.ordre[j];S.ordre[j]=t;save();refresh();}
 function trierMoy(){S.ordre.sort((a,b)=>{const A=moyenne(a),B=moyenne(b);return (B.moy-A.moy)||(S.eleves[b].note-S.eleves[a].note);});save();refresh();toast("📊 Classement trié par moyenne");}
+/* 🔗 Photo par lien (sur cet appareil) */
+function lienPhoto(nom){
+  const v=prompt("🔗 Colle ici l’adresse de la photo de "+nom+" (elle commence par https://)","");
+  if(v===null) return;
+  const u=v.trim();
+  if(!/^https?:\/\/\S+$/i.test(u)){alert("😕 Ce n’est pas un lien valide. Il doit commencer par https://");return;}
+  S.photos[nom]=u;delete PHOTO_KO["u:"+nom];save();refresh();toast("📸 Photo ajoutée pour "+nom);
+}
 function choisirPhoto(nom,inp){
   const f=inp.files&&inp.files[0]; if(!f) return;
   const r=new FileReader();
-  r.onload=()=>{const img=new Image();img.onload=()=>{const M=320,k=Math.min(1,M/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);S.photos[nom]=cv.toDataURL("image/jpeg",.82);save();refresh();toast("📷 Photo enregistrée");};img.onerror=()=>alert("Image illisible 😕");img.src=r.result;};
+  r.onload=()=>{const img=new Image();img.onload=()=>{const M=320,k=Math.min(1,M/Math.max(img.width,img.height));const w=Math.round(img.width*k),h=Math.round(img.height*k);const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);S.photos[nom]=cv.toDataURL("image/jpeg",.82);delete PHOTO_KO["u:"+nom];save();refresh();toast("📷 Photo enregistrée");};img.onerror=()=>alert("Image illisible 😕");img.src=r.result;};
   r.readAsDataURL(f);inp.value="";
 }
-function supprPhoto(nom){if(!confirm("Retirer ta photo de "+nom+" ?"))return;delete S.photos[nom];save();refresh();}
+function supprPhoto(nom){if(!confirm("Retirer ta photo de "+nom+" ?"))return;delete S.photos[nom];delete PHOTO_KO["u:"+nom];save();refresh();}
 function allerOnglet(o){ONGLET=o;try{history.replaceState(null,"","#"+o);}catch(e){}refresh();window.scrollTo(0,0);}
 let TT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(TT);TT=setTimeout(()=>t.classList.remove("on"),2200);}
 
