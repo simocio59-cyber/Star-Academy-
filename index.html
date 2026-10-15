@@ -125,6 +125,31 @@ h4{margin:0 0 8px}
 .pcarte{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:14px;display:grid;gap:8px}
 .new{background:var(--rose);color:#fff;border-radius:999px;padding:1px 8px;font-size:.66rem;font-weight:800;vertical-align:middle}
 .vide{text-align:center;padding:30px 16px;background:var(--card);border-radius:16px;border:1px dashed var(--bord)}
+/* 📅 QUOTIDIENNE */
+.qinfo{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
+.qinfo .tag{margin-left:0;font-size:.78rem;padding:4px 10px}
+.retenir{background:linear-gradient(135deg,#3b1f74,#5a1e5c);border:1px solid #7a4bc4;border-radius:18px;padding:14px 16px;margin-bottom:14px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.retenir h3{margin:0 0 8px;font-size:1.15rem}
+.retenir ul{margin:0;padding-left:20px}.retenir li{margin-bottom:6px}
+.semaine{margin:20px 0 10px;font-size:1.1rem;color:var(--or)}
+.qcard{background:var(--card);border:1px solid var(--bord);border-radius:16px;padding:14px;margin-bottom:12px}
+.qcard.avenir{border-style:dashed;border-color:var(--or)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.qdate{font-weight:800;color:var(--or)}
+.qcard h3{margin:6px 0 4px;font-size:1.1rem}
+.qcard ul{margin:8px 0 0;padding-left:20px}.qcard li{margin-bottom:6px}
+.qav{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.qn{font-weight:700;color:#ffd9ec}
+.evals{display:grid;gap:8px;margin-top:10px}
+.ev{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;background:var(--card2);border:1px solid var(--bord);border-left:5px solid #6b6b8a;border-radius:12px;padding:10px}
+.ev.top{border-left-color:#3ddc97}.ev.mitige{border-left-color:var(--or)}.ev.bof{border-left-color:#ff6b6b}
+.evh{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:1rem}
+.doute{font-size:.78rem;color:#ffd98a;margin-top:4px}
+.legende{display:flex;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--mut);margin-top:8px}
+.groupes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
+.grp{background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:10px}
+.grp b{display:block;margin-bottom:6px}
+.grp .nm{margin:3px 8px 3px 0}
 footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;color:var(--mut);font-size:.84rem;display:grid;gap:6px}
 #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
 #toast.on{transform:translate(-50%,0)}
@@ -134,6 +159,7 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
   .nlr .chx{grid-column:1/-1;grid-row:2}
   .mbox{padding:14px}
   .modal{padding:8px}
+  nav button{padding:7px 11px;font-size:.88rem}
 }
 </style>
 </head>
@@ -147,6 +173,7 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
 <nav>
   <button data-o="eleves" onclick="allerOnglet('eleves')">👥 Élèves</button>
   <button data-o="primes" onclick="allerOnglet('primes')">📺 Primes</button>
+  <button data-o="quotidienne" onclick="allerOnglet('quotidienne')">📅 Quotidienne</button>
   <button data-o="classement" onclick="allerOnglet('classement')">🏆 Mon classement</button>
   <button data-o="profs" onclick="allerOnglet('profs')">🎓 Profs</button>
 </nav>
@@ -325,9 +352,92 @@ const PROFS=[
   {nom:"Philippine Lavrey",role:"Répétitrice",e:"🎹",nouv:true}
 ];
 
+/* =====================================================================
+   📅 LA QUOTIDIENNE — À MODIFIER ICI QUAND TU VEUX 😉
+   1 bloc { } = 1 quotidienne (date de DIFFUSION au format "AAAA-MM-JJ").
+   - titre : le titre de la carte
+   - points : la liste des infos (1 phrase = 1 ligne)
+   - note : (facultatif) une petite précision en bas
+   Les prénoms des élèves deviennent cliquables tout seuls ✨
+   Pour ajouter un jour : copie un bloc { ... }, colle-le en haut, change le texte.
+   ===================================================================== */
+const QUOTIDIENNES=[
+  {date:"2026-10-15",titre:"🤔 Khalil part-il vraiment ?",points:[
+    "La réponse est attendue dans la quotidienne de ce soir à 17h30 : Khalil confirme-t-il son départ ?",
+    "On doit voir la suite de sa discussion en tête-à-tête avec Mosimann, qui veut être sûr qu’il a bien réfléchi.",
+    "Khalil n’est pas réapparu sur le live du château depuis mercredi soir.",
+    "Et pour Félix et Mélina, que deviennent les nominations ? Suspense…"
+  ],note:"Carte à compléter après la quotidienne de ce soir ✍️"},
+  {date:"2026-10-14",titre:"💥 Évaluations, nominations… et coup de théâtre",points:[
+    "Diffusion des premières évaluations du mardi matin (8h30, dans une nouvelle salle), sur le thème « Se mettre en valeur ». Le détail est plus bas 👇",
+    "Au top : Morgan, Amel, Zoé, Antoine et Cameron. Plus dur pour Félix, Mélina et Leeloo.",
+    "Mosimann annonce les 3 nommés de la semaine : Félix, Khalil et Mélina.",
+    "Coup de théâtre : Khalil annonce qu’il veut quitter l’aventure. Il parle de difficultés personnelles (pas artistiques) et ne veut pas prendre la place de quelqu’un qui mérite de rester.",
+    "Khalil était déjà fatigué et malade : il avait manqué les cours de Lydia Bouchard et de Ladji Doucouré.",
+    "Mosimann l’emmène à l’écart pour en parler. Résultat : les nominations et le vote du public sont suspendus.",
+    "📊 1,24 million de téléspectateurs, avec un pic à 2 millions !"
+  ]},
+  {date:"2026-10-13",titre:"📚 Premiers cours et thème des évaluations",points:[
+    "Mosimann prévient : il sera absent au prime de samedi (sa seule absence de la saison).",
+    "Thème des évaluations : « Se mettre en valeur ». Chacun choisit une chanson parmi une vingtaine sélectionnées par Mosimann, et doit la réinventer à sa façon.",
+    "1er cours de chant avec Sofia Morgavi : on oublie ses certitudes et on retravaille les chansons du prime 1.",
+    "1er cours de danse avec Jonathan Jenvrin : chorégraphie du prime et répartition en 4 groupes de niveau (voir plus bas 👇).",
+    "Noémie confie son stress à Isabella.",
+    "Fanny et Philippine annoncent les invités du prime 2 : Ben Mazué (invité d’honneur), Adèle Castillon…",
+    "Début du travail sur l’hymne de la promo 🎶"
+  ]},
+  {date:"2026-10-12",titre:"🏰 Arrivée au château et 1er débrief",points:[
+    "Après le prime, les élèves découvrent le château de Dammarie-les-Lys et font un bœuf autour du piano 🎹",
+    "Mosimann, le nouveau directeur, les félicite (gros coup de cœur pour Isabella) et insiste sur la ponctualité ⏰",
+    "Il présente son atelier « All access » (une masterclass par semaine sur la réalité du métier) et son studio installé dans le foyer (platines, guitare, clavier).",
+    "Débrief du prime avec Lydia Bouchard, la nouvelle prof d’expression scénique, qui parle cash. Isabella est saluée pour sa sincérité, conseils pour le duo Kylian et Noémie.",
+    "Grosses émotions : Cameron fond en larmes pendant son débrief, et Leeloo craque, déçue de son oubli de paroles."
+  ],note:"L’arrivée au château était aussi dans « Retour au château », juste après le prime 1."}
+];
+
+/* 🔥 À RETENIR (les nommés et le top 3 s'ajoutent tout seuls) */
+const A_RETENIR=[
+  "💥 Khalil veut quitter l’aventure : nominations suspendues, réponse attendue jeudi 15/10.",
+  "👔 Mosimann sera absent au prime 2 (samedi 17/10).",
+  "🛡️ Isabella, immunisée, ouvre le prime 2 avec un tableau spécial.",
+  "🎶 Invité d’honneur du prime 2 : Ben Mazué."
+];
+
+/* 🎤 ÉVALUATIONS — humeur : "top" 🟢, "mitige" 🟡, "bof" 🔴, "" ⚪ (pas d'info) */
+const EVALUATIONS=[
+  {semaine:1,theme:"Se mettre en valeur",quand:"Mardi 13 octobre à 8h30 · diffusées le mercredi 14",passages:[
+    {eleves:["Amel"],chanson:"Monde",artiste:"Luidji",humeur:"top",avis:"À la guitare. Mosimann la trouve « 100 % réussie », Sofia salue l’interprétation, Lydia aime sa présence."},
+    {eleves:["Morgan"],chanson:"Ces gens-là",artiste:"Jacques Brel",humeur:"top",avis:"Sofia est saisie, Papy trouve le « contrat rempli », Jonathan est impressionné et Mosimann a eu des frissons.",doute:"Certains médias attribuent cette chanson à Cameron."},
+    {eleves:["Cameron"],chanson:"",artiste:"",humeur:"top",avis:"Il s’en est très bien sorti, dans le top des profs.",doute:"Certains médias lui attribuent « Ces gens-là » (Brel)."},
+    {eleves:["Zoé"],chanson:"",artiste:"",humeur:"top",avis:"Citée parmi les meilleures de la semaine."},
+    {eleves:["Antoine"],chanson:"Monde",artiste:"Luidji",humeur:"top",avis:"Cité parmi les meilleurs de la semaine."},
+    {eleves:["Brieuc","Kylian"],chanson:"All of Me",artiste:"John Legend",humeur:"",avis:"Kylian a proposé une version douce et soignée."},
+    {eleves:["Isabella"],chanson:"Happy",artiste:"Pharrell Williams",humeur:"",avis:"À la guitare. Déjà immunisée, elle passe quand même l’évaluation.",doute:"Certains médias attribuent « Happy » à Tracy."},
+    {eleves:["Noémie"],chanson:"Tu n’es plus là",artiste:"Amel Bent",humeur:"mitige",avis:"Sofia est émue et trouve ça réussi, Lydia est touchée… mais Mosimann n’est pas convaincu."},
+    {eleves:["Tracy"],chanson:"",artiste:"",humeur:"mitige",avis:"Profs très divisés : Sofia est sévère, Papy et Jonathan sont plus séduits."},
+    {eleves:["Leeloo"],chanson:"À la vie",artiste:"Suzanne",humeur:"bof",avis:"Elle ressort en larmes. Mosimann est frustré par son manque de confiance. Sofia dit qu’elle chante « avec le frein à main » mais adore sa voix. Papy a aimé."},
+    {eleves:["Félix"],chanson:"Set Fire to the Rain",artiste:"Adele",humeur:"bof",avis:"Le stress lui fait faire beaucoup de fausses notes, il n’est pas content de lui. Nommé."},
+    {eleves:["Mélina"],chanson:"",artiste:"",humeur:"bof",avis:"Plusieurs oublis de paroles, elle s’effondre en sortant de la salle. Nommée."},
+    {eleves:["Khalil"],chanson:"",artiste:"",humeur:"bof",avis:"Les profs l’ont trouvé « trop en retrait ». Nommé, puis il annonce vouloir partir."},
+    {eleves:["Maud"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."},
+    {eleves:["Elija"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."},
+    {eleves:["Ydriss"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."}
+  ]}
+];
+
+/* 💃 GROUPES DE DANSE */
+const GROUPES_DANSE=[
+  {semaine:1,info:"Faits par Jonathan Jenvrin au 1er cours, selon le niveau de chacun.",groupes:[
+    {nom:"Groupe A",eleves:["Morgan","Zoé"]},
+    {nom:"Groupe B",eleves:["Mélina","Leeloo","Isabella"]},
+    {nom:"Groupe C",eleves:["Félix","Maud","Tracy","Khalil","Amel"]},
+    {nom:"Groupe D",eleves:["Ydriss","Antoine","Elija","Kylian","Cameron","Noémie","Brieuc"]}
+  ]}
+];
+
 /* ===================== 🧠 ÉTAT ===================== */
 let S=null,SEL=1,SEL_MANUEL=false,FILTRE="tous",FICHE=null,FICHE_P=null,ORDRE_COMS="asc",ETAT_MAJ="";
-let ONGLET=["eleves","primes","classement","profs"].includes(location.hash.slice(1))?location.hash.slice(1):"eleves";
+let ONGLET=["eleves","primes","quotidienne","classement","profs"].includes(location.hash.slice(1))?location.hash.slice(1):"eleves";
 const OPEN={},PHOTO_KO={},PHOTO_OK={};
 const EXTS=["jpg","jpeg","png","webp","JPG","JPEG","PNG","WEBP"];
 
@@ -658,6 +768,87 @@ function pagePrimes(){
   return h;
 }
 
+/* ===================== 📅 PAGE QUOTIDIENNE ===================== */
+const LETTRES="A-Za-zÀ-ÖØ-öø-ÿ";
+function reNom(n,g){return new RegExp("(^|[^"+LETTRES+"])("+n+")(?!["+LETTRES+"])",g||"");}
+const RE_NOMS=reNom(ELEVES.join("|"),"g");
+/* ✨ Rend les prénoms cliquables */
+function lienNoms(t){return esc(t).replace(RE_NOMS,(m,a,n)=>a+`<span class="lien qn" onclick="event.stopPropagation();openFiche('${n}')">${n}</span>`);}
+function nomsDans(t){return ELEVES.filter(n=>reNom(n).test(t));}
+function dateQ(s){const [y,m,d]=String(s).split("-").map(Number);return new Date(y,m-1,d,12);}
+function jourQ(s){const t=dateQ(s),j=JOURS[t.getDay()];return j[0].toUpperCase()+j.slice(1)+" "+numJ(t.getDate())+" "+MOIS[t.getMonth()];}
+function primeDeQ(s){const t=dateQ(s),cal=CALv();return (cal.find(c=>dateP(c)>t)||cal[cal.length-1]).num;}
+/* 🤖 Mélange tes quotidiennes avec celles de data.json (clé "quotidiennes"), si elles existent */
+function fusionQ(base,auto){
+  const M={};
+  base.forEach(q=>{M[q.date]=q;});
+  auto.forEach(a=>{if(a&&typeof a.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(a.date))M[a.date]=Object.assign({},M[a.date]||{},a);});
+  return Object.values(M).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+}
+function carteQ(q,auj){
+  const pts=liste2(q.points);
+  const etat=q.date>auj?`<span class="tag">⏳ à venir</span>`:(q.date===auj?`<span class="tag or">📺 aujourd’hui</span>`:`<span class="tag ok">✅ diffusée</span>`);
+  const noms=nomsDans([q.titre||""].concat(pts).join(" "));
+  return `<div class="qcard${q.date>=auj?" avenir":""}">
+    <div class="qhead"><span class="qdate">📺 ${jourQ(q.date)}</span>${etat}</div>
+    ${q.titre?`<h3>${lienNoms(q.titre)}</h3>`:""}
+    ${pts.length?`<ul>${pts.map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul>`:`<p class="mut">Pas encore de résumé.</p>`}
+    ${q.note?`<p class="mut sm">ℹ️ ${esc(q.note)}</p>`:""}
+    ${noms.length?`<div class="qav">${noms.map(n=>`<span class="lien" title="Voir la fiche de ${n}" onclick="openFiche('${n}')">${avatar(n,"mini")}</span>`).join("")}</div>`:""}
+  </div>`;
+}
+function blocEvals(s){
+  const ORD={top:0,mitige:1,"":2,bof:3},EMO={top:"🟢",mitige:"🟡",bof:"🔴"};
+  const P=(Array.isArray(s.passages)?s.passages:[]).slice().sort((a,b)=>(ORD[a.humeur||""]??2)-(ORD[b.humeur||""]??2));
+  const k="ev"+s.semaine,ouvert=OPEN[k]!==false;
+  return `<details class="bloc" ${ouvert?"open":""} ontoggle="OPEN['${k}']=this.open"><summary>🎤 Évaluations semaine ${esc(s.semaine)}${s.theme?` · « ${esc(s.theme)} »`:""}</summary>
+    ${s.quand?`<div class="mut sm" style="margin-top:6px">🗓️ ${esc(s.quand)}</div>`:""}
+    <div class="legende"><span>🟢 Au top</span><span>🟡 Avis partagés</span><span>🔴 Difficile</span><span>⚪ Pas d’info</span></div>
+    <div class="evals">${P.map(p=>{
+      const el=liste2(p.eleves);if(!el.length) return "";
+      return `<div class="ev ${esc(p.humeur||"")}"><span class="lien" onclick="openFiche('${el[0]}')">${avatar(el[0],"moy")}</span><div>
+        <div class="evh">${el.map(n=>`<span class="lien qn" onclick="openFiche('${n}')">${esc(n)}</span>`).join(" & ")} ${EMO[p.humeur]||"⚪"}</div>
+        <div class="sm">🎵 ${p.chanson?`<b>${esc(p.chanson)}</b>${p.artiste?` <span class="mut">– ${esc(p.artiste)}</span>`:""}`:`<span class="mut">chanson pas encore connue</span>`}</div>
+        <div class="sm" style="margin-top:4px">💬 ${lienNoms(p.avis||"Pas encore d’info.")}</div>
+        ${p.doute?`<div class="doute">⚠️ ${esc(p.doute)}</div>`:""}
+      </div></div>`;}).join("")}</div>
+  </details>`;
+}
+function blocDanse(g){
+  const k="da"+g.semaine,ouvert=OPEN[k]!==false;
+  return `<details class="bloc" ${ouvert?"open":""} ontoggle="OPEN['${k}']=this.open"><summary>💃 Groupes de danse · semaine ${esc(g.semaine)}</summary>
+    ${g.info?`<div class="mut sm" style="margin-top:6px">${esc(g.info)}</div>`:""}
+    <div class="groupes">${(g.groupes||[]).map(x=>`<div class="grp"><b>${esc(x.nom)}</b>${liste2(x.eleves).map(n=>`<span class="nm lien" onclick="openFiche('${n}')">${avatar(n,"mini")} ${esc(n)}</span>`).join("")}</div>`).join("")}</div>
+  </details>`;
+}
+function pageQuotidienne(){
+  const o=S.officiel||{},auj=isoJour(new Date());
+  const Q=fusionQ(QUOTIDIENNES,Array.isArray(o.quotidiennes)?o.quotidiennes:[]);
+  const EV=(Array.isArray(o.evaluations)&&o.evaluations.length)?o.evaluations:EVALUATIONS;
+  const GD=(Array.isArray(o.groupesDanse)&&o.groupesDanse.length)?o.groupesDanse:GROUPES_DANSE;
+  const AR=(Array.isArray(o.aRetenir)&&o.aRetenir.length)?o.aRetenir.map(String):A_RETENIR;
+  const V=vedette(),pv=primeInfo(V.num),dyn=[];
+  if(pv.nomines.length) dyn.push("⚠️ Les nommés de la semaine : "+pv.nomines.join(", ")+".");
+  if(pv.top3.length) dyn.push("🏅 Le top 3 des évaluations : "+pv.top3.join(", ")+".");
+  if(pv.sauve.length) dyn.push("🙌 Sauvé(e) : "+pv.sauve.join(", ")+".");
+  let h=`<h2 class="titre">📅 La quotidienne</h2>
+    <p class="mut sm">Tout ce qui s’est passé au château, résumé simplement. 👆 Touche un prénom ou une photo pour ouvrir la fiche.</p>
+    <div class="qinfo"><span class="tag">📺 Lun → ven : 17h30</span><span class="tag">Sam : 17h15</span><span class="tag">Dim : 16h05</span><span class="tag">🔴 Le live sur TF1+</span></div>`;
+  h+=`<div class="retenir"><h3>🔥 À retenir · en route vers le prime ${V.num}</h3><ul>${dyn.concat(AR).map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul></div>`;
+  let sem=null;
+  Q.forEach(q=>{
+    const p=primeDeQ(q.date);
+    if(p!==sem){sem=p;h+=`<h3 class="semaine">🗓️ Semaine ${Math.max(1,p-1)} · en route vers le prime ${p}</h3>`;}
+    h+=carteQ(q,auj);
+  });
+  if(!Q.length) h+=`<div class="vide">Pas encore de quotidienne résumée 🙂</div>`;
+  h+=`<h3 class="semaine">📊 Les évaluations et la danse</h3>`;
+  h+=EV.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocEvals).join("");
+  h+=GD.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocDanse).join("");
+  h+=`<p class="mut sm">ℹ️ Les médias ne sont pas toujours d’accord entre eux : les infos marquées ⚠️ restent à confirmer.</p>`;
+  return h;
+}
+
 /* ===================== 🏆 PAGE MON CLASSEMENT ===================== */
 function pageClassement(){
   syncOrdre();
@@ -785,7 +976,7 @@ let TT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on
 /* ===================== 🔁 AFFICHAGE (garde le texte en cours) ===================== */
 function render(){
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.o===ONGLET));
-  $("#main").innerHTML=ONGLET==="primes"?pagePrimes():ONGLET==="classement"?pageClassement():ONGLET==="profs"?pageProfs():pageEleves();
+  $("#main").innerHTML=ONGLET==="primes"?pagePrimes():ONGLET==="quotidienne"?pageQuotidienne():ONGLET==="classement"?pageClassement():ONGLET==="profs"?pageProfs():pageEleves();
   majInfo();
 }
 function refresh(){
