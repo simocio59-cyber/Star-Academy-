@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>🔐 Admin photos – Star Academy 2026</title>
+<style>
+:root{--rose:#ff3fa4;--violet:#7b2ff7;--fond:#140b24;--carte:#21143a;--texte:#f4eefe;--gris:#a99cc4;--vert:#2ecc71;--rouge:#ff5c5c;--jaune:#ffc94d}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--fond);color:var(--texte);padding:16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:1.6rem;margin:.2em 0}
+h2{font-size:1.15rem;margin:0 0 6px}
+a{color:var(--rose)}
+.carte{background:var(--carte);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input{width:100%;padding:11px;border-radius:10px;border:1px solid #4a3a6b;background:#120a20;color:var(--texte);font-size:1rem}
+button{background:linear-gradient(90deg,var(--rose),var(--violet));color:#fff;border:0;border-radius:10px;padding:11px 16px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:10px}
+button.sec{background:#3a2a5a}
+button.petit{padding:7px 10px;font-size:.9rem;margin:0}
+button:disabled{opacity:.5;cursor:wait}
+.puce{background:#3a2a5a;font-weight:500;padding:6px 10px;font-size:.9rem;margin:6px 6px 0 0;border-radius:20px}
+.msg{margin-top:10px;padding:10px;border-radius:10px;display:none;white-space:pre-line}
+.msg.ok{display:block;background:rgba(46,204,113,.15);border:1px solid var(--vert)}
+.msg.err{display:block;background:rgba(255,92,92,.15);border:1px solid var(--rouge)}
+.msg.info{display:block;background:rgba(255,201,77,.12);border:1px solid var(--jaune)}
+.apercu{display:flex;gap:12px;align-items:center;margin-top:10px}
+.apercu img{width:90px;height:90px;object-fit:cover;border-radius:50%;border:3px solid var(--rose);background:#000}
+.ligne{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #3a2a5a}
+.ligne:last-child{border-bottom:0}
+.ligne img,.ligne .vide{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;background:#3a2a5a;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.ligne .infos{flex:1;min-width:0}
+.ligne .url{color:var(--gris);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.petitTexte{color:var(--gris);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔐 Admin photos</h1>
+  <p class="petitTexte">Page réservée à toi. Les photos partagées ici sont visibles par <b>tout le monde</b> sur <a href="./">le site</a> 🌍</p>
+
+  <div class="carte">
+    <h2>🔑 1. Ton code d'accès GitHub</h2>
+    <div id="jetonAbsent">
+      <label for="jeton">Colle ton code (il commence par github_pat_)</label>
+      <input id="jeton" type="password" autocomplete="off" placeholder="github_pat_...">
+      <button onclick="enregistrerJeton()">💾 Enregistrer sur cet appareil</button>
+    </div>
+    <div id="jetonPresent" style="display:none">
+      <p>✅ Code enregistré sur cet appareil.</p>
+      <button class="sec" onclick="oublierJeton()">🚪 Oublier le code</button>
+    </div>
+    <div id="msgJeton" class="msg"></div>
+  </div>
+
+  <div class="carte">
+    <h2>📸 2. Ajouter ou changer une photo</h2>
+    <label for="nom">Élève</label>
+    <input id="nom" list="listeEleves" placeholder="ex : Félix" autocomplete="off">
+    <datalist id="listeEleves"></datalist>
+    <div id="puces"></div>
+    <label for="lien">Lien de l'image</label>
+    <input id="lien" placeholder="https://....jpg" oninput="apercu()" autocomplete="off">
+    <div class="apercu">
+      <img id="imgApercu" alt="" style="display:none">
+      <span id="txtApercu" class="petitTexte">L'aperçu s'affiche ici 👀</span>
+    </div>
+    <button id="btnPartager" onclick="partager()">🌍 Partager pour tout le monde</button>
+    <div id="msg" class="msg"></div>
+  </div>
+
+  <div class="carte">
+    <h2>🗂️ 3. Photos partagées</h2>
+    <button class="sec petit" onclick="afficherListe()">🔄 Actualiser</button>
+    <div id="liste"></div>
+  </div>
+</div>
+
+<script>
+const PROPRIO = "simocio59-cyber";
+const DEPOT = "Star-Academy-";
+const BRANCHE = "main";
+const API = "https://api.github.com/repos/" + PROPRIO + "/" + DEPOT + "/contents/";
+const RAW = "https://raw.githubusercontent.com/" + PROPRIO + "/" + DEPOT + "/" + BRANCHE + "/photos/";
+const CLE_JETON = "staracademy2026_jeton";
+const RETOUR = String.fromCharCode(10);
+
+let ELEVES = [];
+let PARTAGEES = {};
+
+const $ = id => document.getElementById(id);
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+function slug(nom) {
+  const sansAccent = [...String(nom).normalize("NFD")].filter(c => {
+    const k = c.charCodeAt(0);
+    return k < 0x300 || k > 0x36f;
+  }).join("");
+  return sansAccent.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function montrer(id, type, texte) {
+  const el = $(id);
+  el.className = "msg " + type;
+  el.textContent = texte;
+}
+
+function jeton() { return localStorage.getItem(CLE_JETON) || ""; }
+
+function b64enc(str) { return btoa(unescape(encodeURIComponent(str))); }
+function b64dec(b) { return decodeURIComponent(escape(atob(b.split(RETOUR).join("")))); }
+
+function afficherEtatJeton() {
+  const ok = !!jeton();
+  $("jetonAbsent").style.display = ok ? "none" : "block";
+  $("jetonPresent").style.display = ok ? "block" : "none";
+}
+
+async function api(chemin, methode, corps) {
+  const m = methode || "GET";
+  const opts = {
+    method: m,
+    cache: "no-store",
+    headers: {
+      "Authorization": "Bearer " + jeton(),
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    }
+  };
+  if (corps) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(corps);
+  }
+  const url = API + chemin + (m === "GET" ? "?ref=" + BRANCHE + "&t=" + Date.now() : "");
+  return fetch(url, opts);
+}
+
+async function lireJSON(chemin) {
+  const r = await api(chemin);
+  if (r.status === 404) return { data: {}, sha: null };
+  if (r.status === 401) throw new Error("🔑 Code d'accès refusé (faux ou expiré). Clique sur « Oublier le code » et recolle-le.");
+  if (!r.ok) throw new Error("⚠️ Erreur GitHub " + r.status);
+  const j = await r.json();
+  const texte = b64dec(j.content || "");
+  let data = {};
+  try { data = texte.trim() ? JSON.parse(texte) : {}; } catch (e) { data = {}; }
+  return { data: data, sha: j.sha };
+}
+
+function trier(obj) {
+  const res = {};
+  Object.keys(obj).sort((a, b) => a.localeCompare(b, "fr")).forEach(k => res[k] = obj[k]);
+  return res;
+}
+
+async function ecrirePhotos(modif, message) {
+  for (let essai = 0; essai < 2; essai++) {
+    const lu = await lireJSON("photos.json");
+    const data = lu.data;
+    modif(data);
+    const corps = {
+      message: message,
+      content: b64enc(JSON.stringify(trier(data), null, 2) + RETOUR),
+      branch: BRANCHE
+    };
+    if (lu.sha) corps.sha = lu.sha;
+    const r = await api("photos.json", "PUT", corps);
+    if (r.ok) { PARTAGEES = data; return data; }
+    if ((r.status === 409 || r.status === 422) && essai === 0) continue;
+    if (r.status === 401) throw new Error("🔑 Code d'accès refusé (faux ou expiré).");
+    if (r.status === 403 || r.status === 404) throw new Error("⛔ Ton code n'a pas le droit d'écrire." + RETOUR + "Vérifie : dépôt « Star-Academy- » + Contents « Read and write ».");
+    throw new Error("⚠️ Erreur GitHub " + r.status);
+  }
+  throw new Error("⚠️ Conflit avec une autre mise à jour, réessaie dans 10 secondes.");
+}
+
+async function enregistrerJeton() {
+  const v = $("jeton").value.trim();
+  if (!v) return montrer("msgJeton", "err", "✏️ Colle d'abord ton code.");
+  localStorage.setItem(CLE_JETON, v);
+  $("jeton").value = "";
+  montrer("msgJeton", "info", "⏳ Vérification du code…");
+  try {
+    await lireJSON("photos.json");
+    montrer("msgJeton", "ok", "✅ Code OK ! Tu peux partager des photos.");
+    afficherEtatJeton();
+    afficherListe();
+  } catch (e) {
+    localStorage.removeItem(CLE_JETON);
+    afficherEtatJeton();
+    montrer("msgJeton", "err", e.message);
+  }
+}
+
+function oublierJeton() {
+  if (!confirm("Oublier le code sur cet appareil ?")) return;
+  localStorage.removeItem(CLE_JETON);
+  afficherEtatJeton();
+  montrer("msgJeton", "ok", "🚪 Code oublié sur cet appareil.");
+  afficherListe();
+}
+
+function apercu() {
+  const lien = $("lien").value.trim();
+  const img = $("imgApercu");
+  const txt = $("txtApercu");
+  if (!lien) {
+    img.style.display = "none";
+    txt.textContent = "L'aperçu s'affiche ici 👀";
+    return;
+  }
+  img.onload = () => { img.style.display = "block"; txt.textContent = "✅ L'image s'affiche bien !"; };
+  img.onerror = () => { img.style.display = "none"; txt.textContent = "⚠️ Pas d'aperçu (lien protégé ou pas une image). Le robot essaiera quand même."; };
+  img.src = lien;
+}
+
+function choisir(nom) {
+  $("nom").value = nom;
+  $("lien").focus();
+}
+
+function nomOfficiel(saisi) {
+  const s = slug(saisi);
+  const trouve = ELEVES.find(e => slug(e) === s);
+  return trouve || saisi;
+}
+
+async function partager() {
+  const nom = nomOfficiel($("nom").value.trim());
+  const lien = $("lien").value.trim();
+  if (!jeton()) return montrer("msg", "err", "🔑 Enregistre d'abord ton code d'accès (étape 1).");
+  if (!nom) return montrer("msg", "err", "✏️ Choisis un élève.");
+  if (!/^https?:[/][/]/i.test(lien)) return montrer("msg", "err", "🔗 Le lien doit commencer par https://");
+  if (/instagram[.]com[/](p|reel|reels)[/]/i.test(lien)) {
+    return montrer("msg", "err", "📱 Ça, c'est le lien de la publication, pas celui de l'image." + RETOUR + "Fais un clic droit (ou un appui long) sur la photo → « Copier l'adresse de l'image ».");
+  }
+  const btn = $("btnPartager");
+  btn.disabled = true;
+  montrer("msg", "info", "⏳ Enregistrement…");
+  try {
+    await ecrirePhotos(d => { d[nom] = lien; }, "📸 Photo de " + nom);
+    montrer("msg", "ok", "✅ Photo de " + nom + " enregistrée !" + RETOUR + "🤖 Le robot la télécharge : environ 1 à 2 minutes ⏳");
+    $("lien").value = "";
+    apercu();
+    afficherListe();
+    setTimeout(afficherListe, 60000);
+    setTimeout(afficherListe, 120000);
+  } catch (e) {
+    montrer("msg", "err", e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function supprimer(nom) {
+  if (!confirm("Retirer la photo de " + nom + " pour tout le monde ?")) return;
+  try {
+    await ecrirePhotos(d => { delete d[nom]; }, "🗑️ Photo retirée : " + nom);
+    afficherListe();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+function majPuces() {
+  $("puces").innerHTML = ELEVES.map(n =>
+    '<button class="puce" data-nom="' + esc(n) + '" onclick="choisir(this.dataset.nom)">' + (PARTAGEES[n] ? "✅ " : "") + esc(n) + '</button>'
+  ).join("");
+}
+
+async function chargerEleves() {
+  try {
+    const r = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
+    const d = await r.json();
+    const st = d.statuts || {};
+    const noms = Array.isArray(st)
+      ? st.map(x => typeof x === "string" ? x : (x && (x.nom || x.prenom || x.name)))
+      : Object.keys(st);
+    ELEVES = noms.filter(Boolean).sort((a, b) => a.localeCompare(b, "fr"));
+  } catch (e) {
+    ELEVES = [];
+  }
+  $("listeEleves").innerHTML = ELEVES.map(n => '<option value="' + esc(n) + '">').join("");
+  majPuces();
+}
+
+async function afficherListe() {
+  const zone = $("liste");
+  if (!jeton()) {
+    zone.innerHTML = '<p class="petitTexte">🔑 Enregistre ton code pour voir la liste.</p>';
+    return;
+  }
+  zone.innerHTML = '<p class="petitTexte">⏳ Chargement…</p>';
+  try {
+    const res = await Promise.all([lireJSON("photos.json"), lireJSON("photos/etat.json")]);
+    const p = res[0].data;
+    const etat = res[1].data;
+    PARTAGEES = p;
+    majPuces();
+    const noms = Object.keys(p).sort((a, b) => a.localeCompare(b, "fr"));
+    if (!noms.length) {
+      zone.innerHTML = '<p class="petitTexte">Aucune photo partagée pour l’instant.</p>';
+      return;
+    }
+    zone.innerHTML = noms.map(nom => {
+      const url = p[nom];
+      const info = etat[nom] || {};
+      let statut;
+      if (info.url === url && info.ok) statut = "✅ Photo en ligne";
+      else if (info.url === url && !info.ok) statut = "❌ Échec : " + esc(info.erreur || "inconnu") + "<br>👉 Télécharge l’image et mets-la à la main dans photos/";
+      else statut = "⏳ Le robot travaille… (1 à 2 min)";
+      const img = info.fichier
+        ? '<img src="' + RAW + esc(info.fichier) + '?t=' + Date.now() + '" alt="">'
+        : '<div class="vide">👤</div>';
+      return '<div class="ligne">' + img +
+        '<div class="infos"><b>' + esc(nom) + '</b><div>' + statut + '</div><div class="url">' + esc(url) + '</div></div>' +
+        '<button class="sec petit" data-nom="' + esc(nom) + '" onclick="supprimer(this.dataset.nom)">🗑️</button></div>';
+    }).join("");
+  } catch (e) {
+    zone.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>';
+  }
+}
+
+afficherEtatJeton();
+chargerEleves();
+afficherListe();
+</script>
+</body>
+</html>
