@@ -1,0 +1,42 @@
+name: Photos Star Ac
+
+on:
+  push:
+    paths:
+      - "photos.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: robot-photos
+  cancel-in-progress: false
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: 🐍 Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 📸 Télécharger les photos
+        run: python scripts/telecharger_photos.py
+
+      - name: 💾 Enregistrer
+        run: |
+          git config user.name "robot-photos"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add photos
+          if git diff --cached --quiet; then
+            echo "Rien de nouveau"
+            exit 0
+          fi
+          git commit -m "📸 Photos mises à jour"
+          git pull --rebase origin main
+          git push
