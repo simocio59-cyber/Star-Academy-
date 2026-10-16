@@ -73,6 +73,12 @@ summary{cursor:pointer;font-weight:600}
 .cform input{font:inherit;color:var(--txt);background:#1a1033;border:1px solid var(--bord);border-radius:10px;padding:10px 12px;width:100%}
 .cmsg{min-height:1.2em;font-weight:600;margin-top:10px;color:#9fdcff}
 .cmsg.err{color:#ffb0b0}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff;color:#1f1f1f;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.gbtn:hover{background:#f3f3f7}
+.gbtn:disabled{opacity:.6;cursor:default}
+.gbtn svg{width:20px;height:20px;flex:0 0 auto}
+.csep{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:.82rem;margin:16px 0 0}
+.csep::before,.csep::after{content:"";flex:1;height:1px;background:var(--bord)}
 .zoom{position:fixed;inset:0;z-index:70;background:rgba(5,2,15,.94);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out;animation:zin .2s ease}
 .zoom img{max-width:92vw;max-height:75vh;max-height:75dvh;border-radius:18px;border:3px solid var(--or);box-shadow:0 10px 40px rgba(0,0,0,.6);object-fit:contain;background:#000}
 .znom{font-size:1.5rem;font-weight:800;text-align:center}
@@ -246,6 +252,8 @@ const FIREBASE_CONFIG={
   appId:"1:870416680823:web:113d08e435a08079f44372"
 };
 const DOMAINE_ID="fan.staracademy2026.app";
+/* Le logo "G" de Google pour le bouton */
+const G_LOGO=`<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
 
 /* =====================================================================
    📸 PHOTOS PAR LIEN (visibles par TOUT LE MONDE)
@@ -634,7 +642,7 @@ function syncOrdre(){
 function moyenne(nom){const ns=Object.keys(S.primes).filter(k=>/^\d+$/.test(k)).map(k=>noteP(k,nom)).filter(x=>x>0);return {moy:ns.length?ns.reduce((a,b)=>a+b,0)/ns.length:0,nb:ns.length};}
 function fmtMoy(m){return m.nb?`⭐ ${m.moy.toFixed(1).replace(".",",")}/5 sur ${m.nb} prime${m.nb>1?"s":""}`:"Pas encore noté";}
 
-/* ===================== 👤 COMPTES (identifiant + mot de passe) ===================== */
+/* ===================== 👤 COMPTES (Google OU identifiant + mot de passe) ===================== */
 function fbActif(){return !!(AUTH&&DB);}
 function demarrerComptes(){
   if(!FIREBASE_CONFIG.apiKey||typeof firebase==="undefined"){majCompteBar();return;}
@@ -642,6 +650,15 @@ function demarrerComptes(){
     firebase.initializeApp(FIREBASE_CONFIG);
     AUTH=firebase.auth();DB=firebase.firestore();
     AUTH.onAuthStateChanged(u=>{changementCompte(u);});
+    /* ↩️ Retour de la page Google (téléphone) : on affiche l'erreur s'il y en a une */
+    AUTH.getRedirectResult().catch(e=>{
+      try{sessionStorage.removeItem(CLE+"_redir");}catch(x){}
+      const c=String((e&&e.code)||"");
+      if(/popup-closed-by-user|cancelled-popup-request/.test(c)) return;
+      console.warn(e);
+      CMSG=msgErreur(e);CMSG_ERR=true;
+      ouvrirCompte();
+    });
   }catch(e){console.warn("Firebase",e);AUTH=null;DB=null;}
   majCompteBar();
 }
@@ -651,7 +668,15 @@ function emailDe(id){
   const s=norm(id).replace(/[^a-z0-9._-]+/g,"-").replace(/^[-.]+|[-.]+$/g,"");
   return s.length>=2?s+"@"+DOMAINE_ID:"";
 }
-function pseudoDe(u){const m=String((u&&u.email)||"");return m.endsWith("@"+DOMAINE_ID)?m.slice(0,-(DOMAINE_ID.length+1)):m;}
+function estGoogle(u){return !!(u&&Array.isArray(u.providerData)&&u.providerData.some(p=>p&&p.providerId==="google.com"));}
+function pseudoDe(u){
+  if(!u) return "";
+  const m=String(u.email||"");
+  if(m.endsWith("@"+DOMAINE_ID)) return m.slice(0,-(DOMAINE_ID.length+1));
+  const n=String(u.displayName||"").trim();
+  if(n) return n.split(/\s+/)[0];
+  return m;
+}
 /* Tes données à toi (sans les infos officielles, qui sont publiques) */
 function donneesPerso(){const d=JSON.parse(JSON.stringify(S));delete d.officiel;return d;}
 function appliquer(d){
@@ -754,7 +779,11 @@ async function changementCompte(user){
   if(fin!==cloud) await pousser();
   ecouter(user);
   SYNC="ok";majCompteBar();
-  if(COMPTE_OUVERT){fermerCompte();toast(fusion?"✅ Connecté ! Tes données sont dans ton compte ☁️":"✅ Connecté !");}
+  let redir=false;
+  try{redir=sessionStorage.getItem(CLE+"_redir")==="1";sessionStorage.removeItem(CLE+"_redir");}catch(e){}
+  const msg=fusion?"✅ Connecté ! Tes données sont dans ton compte ☁️":"✅ Connecté !";
+  if(COMPTE_OUVERT){fermerCompte();toast(msg);}
+  else if(redir) toast(msg);
 }
 async function pousser(){
   if(!UTIL||!PRET||!DB) return;
@@ -792,14 +821,17 @@ function viderAppareil(){
 }
 function msgErreur(e){
   const c=String((e&&e.code)||"");
+  if(/account-exists-with-different-credential/.test(c)) return "😕 Cette adresse e-mail est déjà utilisée par un autre compte. Connecte-toi avec la méthode que tu avais choisie au départ.";
+  if(/popup-blocked/.test(c)) return "🚫 Ton navigateur a bloqué la fenêtre Google. Autorise les fenêtres pop-up pour ce site, puis réessaie.";
+  if(/unauthorized-domain/.test(c)) return "⚙️ Ajoute simocio59-cyber.github.io dans Firebase (Authentication → Paramètres → Domaines autorisés).";
   if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return "❌ Identifiant ou mot de passe incorrect. Pas encore de compte ? Touche « Créer mon compte ».";
   if(/email-already-in-use/.test(c)) return "😕 Cet identifiant est déjà pris. Choisis-en un autre, ou connecte-toi.";
   if(/weak-password/.test(c)) return "🔑 Mot de passe trop court (6 caractères minimum).";
   if(/invalid-email/.test(c)) return "😕 Identifiant pas valide : utilise des lettres et des chiffres.";
   if(/too-many-requests/.test(c)) return "⏳ Trop d’essais : attends quelques minutes.";
   if(/network/.test(c)) return "📴 Pas de connexion internet.";
-  if(/operation-not-allowed|configuration-not-found/.test(c)) return "⚙️ La connexion par mot de passe n’est pas activée dans Firebase (Authentication → Mode de connexion).";
-  if(/unauthorized-domain/.test(c)) return "⚙️ Ajoute simocio59-cyber.github.io dans Firebase (Authentication → Paramètres → Domaines autorisés).";
+  if(/web-storage-unsupported/.test(c)) return "🍪 Ton navigateur bloque les cookies : autorise-les ou essaie un autre navigateur.";
+  if(/operation-not-allowed|configuration-not-found/.test(c)) return "⚙️ Cette méthode de connexion n’est pas activée dans Firebase (Authentication → Méthode de connexion).";
   return "😕 Erreur : "+(c||(e&&e.message)||e);
 }
 function msgCompte(t,err){CMSG=t;CMSG_ERR=!!err;renderCompte();}
@@ -819,6 +851,33 @@ async function actionCompte(creer){
 }
 function connexion(){actionCompte(false);}
 function creerCompte(){actionCompte(true);}
+/* 🇬 Connexion avec Google (fenêtre pop-up, ou nouvelle page si la fenêtre est bloquée) */
+async function connexionGoogle(){
+  if(!fbActif()||OCCUPE_C) return;
+  const p=new firebase.auth.GoogleAuthProvider();
+  p.setCustomParameters({prompt:"select_account"});
+  OCCUPE_C=true;msgCompte("⏳ Ouverture de Google…",false);
+  try{
+    await AUTH.signInWithPopup(p);
+    OCCUPE_C=false;
+    if(!PRET) msgCompte("⏳ Récupération de tes données…",false);
+  }catch(e){
+    const c=String((e&&e.code)||"");
+    if(/popup-blocked|operation-not-supported-in-this-environment/.test(c)){
+      msgCompte("↪️ Direction la page Google…",false);
+      try{sessionStorage.setItem(CLE+"_redir","1");}catch(x){}
+      try{await AUTH.signInWithRedirect(p);return;}
+      catch(e2){
+        try{sessionStorage.removeItem(CLE+"_redir");}catch(x){}
+        OCCUPE_C=false;msgCompte(msgErreur(e2),true);return;
+      }
+    }
+    OCCUPE_C=false;
+    if(/popup-closed-by-user|cancelled-popup-request/.test(c)){msgCompte("",false);return;}
+    console.warn(e);
+    msgCompte(msgErreur(e),true);
+  }
+}
 async function deconnexion(){
   if(!UTIL||!AUTH) return;
   if(!confirm("🚪 Se déconnecter ?\n\nTes données restent sauvegardées dans ton compte, mais elles vont disparaître de cet appareil.")) return;
@@ -842,7 +901,8 @@ function majCompteBar(){
 function ouvrirCompte(){
   COMPTE_OUVERT=true;$("#compte").hidden=false;document.body.classList.add("noscroll");
   renderCompte();
-  const i=$("#cId");if(i)i.focus();
+  let tactile=false;try{tactile=matchMedia("(pointer:coarse)").matches;}catch(e){}
+  const i=$("#cId");if(i&&!tactile)i.focus();
 }
 function fermerCompte(){
   COMPTE_OUVERT=false;$("#compte").hidden=true;CMSG="";CMSG_ERR=false;
@@ -855,12 +915,15 @@ function renderCompte(){
   if(!fbActif()){
     h+=`<p>🔒 Les comptes ne sont pas encore activés sur ce site.</p><p class="mut sm">Il faut coller la configuration Firebase dans index.html (le bloc FIREBASE_CONFIG en haut du code).</p>`;
   }else if(UTIL){
-    h+=`<p>Connecté(e) en tant que <b>${esc(pseudoDe(UTIL))}</b></p>
+    const g=estGoogle(UTIL);
+    h+=`<p>Connecté(e) en tant que <b>${esc(pseudoDe(UTIL))}</b>${g?` <span class="mut sm">(via Google${UTIL.email?" · "+esc(UTIL.email):""})</span>`:""}</p>
       <p class="sm">${PRET?etatSync():"⏳ Récupération de tes données…"}</p>
-      <p class="mut sm">📱 Tes notes, commentaires, préférés, classement, avis et photos sont sauvegardés dans ton compte. Connecte-toi avec le même identifiant sur un autre appareil pour tout retrouver.</p>
+      <p class="mut sm">📱 Tes notes, commentaires, préférés, classement, avis et photos sont sauvegardés dans ton compte. ${g?"Sur un autre appareil, touche « Continuer avec Google » avec le même compte Google pour tout retrouver.":"Connecte-toi avec le même identifiant sur un autre appareil pour tout retrouver."}</p>
       <div class="row2"><button class="btn sec" onclick="pousser()" ${PRET?"":"disabled"}>🔄 Sauvegarder maintenant</button><button class="btn" onclick="deconnexion()">🚪 Se déconnecter</button></div>`;
   }else{
     h+=`<p class="mut sm">Connecte-toi pour retrouver toutes tes données sur n’importe quel appareil 📱💻</p>
+      <button class="gbtn" type="button" onclick="connexionGoogle()" ${OCCUPE_C?"disabled":""}>${G_LOGO}<span>Continuer avec Google</span></button>
+      <div class="csep">ou avec un identifiant</div>
       <form class="cform" onsubmit="event.preventDefault();connexion()">
         <label class="sm">Identifiant<input id="cId" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ex : simo59"></label>
         <label class="sm">Mot de passe<input id="cMdp" type="password" autocomplete="current-password" placeholder="6 caractères minimum"></label>
@@ -869,7 +932,8 @@ function renderCompte(){
       </form>
       <div class="cmsg${CMSG_ERR?" err":""}">${esc(CMSG)}</div>
       <p class="sm">💡 Ce que tu as déjà noté sur cet appareil sera <b>ajouté</b> à ton compte.</p>
-      <p class="sm mut">⚠️ Retiens bien ton mot de passe : sans adresse e-mail, il ne peut pas être récupéré.</p>`;
+      <p class="sm mut">🔑 Avec Google, rien à retenir ! Avec un identifiant, retiens bien ton mot de passe : sans adresse e-mail, il ne peut pas être récupéré.</p>
+      <p class="sm mut">⚠️ Google et identifiant = 2 comptes différents. Utilise toujours la même méthode pour retrouver tes données.</p>`;
   }
   $("#cbody").innerHTML=h;
   const a=$("#cId"),b=$("#cMdp");if(a)a.value=vId;if(b)b.value=vMdp;
