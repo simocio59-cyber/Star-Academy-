@@ -150,14 +150,6 @@ h4{margin:0 0 8px}
 .grp{background:var(--card2);border:1px solid var(--bord);border-radius:12px;padding:10px}
 .grp b{display:block;margin-bottom:6px}
 .grp .nm{margin:3px 8px 3px 0}
-.medias{margin-top:8px}
-.art{padding:7px 0;border-top:1px solid var(--bord);font-size:.9rem}
-.art:first-child{border-top:0}
-.art a,.retenir a{color:var(--txt);text-decoration:none}
-.art a:hover,.retenir a:hover{color:var(--or);text-decoration:underline}
-.src{color:var(--mut);font-size:.75rem}
-.cats{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
-.cats .tag{margin-left:0}
 .auto{font-size:.68rem;background:#1d3f5c;color:#9fdcff;border-radius:999px;padding:1px 8px;font-weight:700;vertical-align:middle}
 footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;color:var(--mut);font-size:.84rem;display:grid;gap:6px}
 #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140px);background:var(--or);color:#1a0b2e;font-weight:700;padding:10px 18px;border-radius:999px;transition:transform .3s;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center}
@@ -288,6 +280,15 @@ function drap(f){
   for(let i=0;i+1<cp.length;i+=2){const cc=String.fromCharCode(cp[i]-0x1F1E6+97,cp[i+1]-0x1F1E6+97);h+=`<img class="drap" src="https://flagcdn.com/w40/${cc}.png" alt="${cc.toUpperCase()}" title="${cc.toUpperCase()}">`;}
   return h;
 }
+/* 🔁 Deux phrases qui disent la même chose ? (pour éviter les doublons) */
+function motsCles(t){return new Set(norm(t).replace(/[^a-z0-9 ]+/g," ").split(/\s+/).filter(w=>w.length>=4));}
+function pareil(a,b){
+  const A=motsCles(a),B=motsCles(b);
+  if(!A.size||!B.size) return false;
+  let c=0;A.forEach(w=>{if(B.has(w))c++;});
+  return c/Math.min(A.size,B.size)>=0.5;
+}
+function sansDoublons(L){const out=[];L.forEach(t=>{if(t&&!out.some(u=>pareil(u,t)))out.push(t);});return out;}
 
 /* ===================== 📚 DONNÉES DE BASE ===================== */
 const ELEVES=["Amel","Antoine","Brieuc","Cameron","Elija","Félix","Isabella","Khalil","Kylian","Leeloo","Maud","Mélina","Morgan","Noémie","Tracy","Ydriss","Zoé"];
@@ -298,13 +299,13 @@ const BIOS={
   "Brieuc":{age:18,ville:"Court-Saint-Étienne",region:"Brabant wallon, Belgique",drapeau:"🇧🇪",nom:"Brieuc Poncelet",faits:["🐣 Un des benjamins de la promo","🇧🇪 Le Belge de la bande"]},
   "Cameron":{age:26,ville:"Cerin",region:"Ain, Auvergne-Rhône-Alpes",drapeau:"🇫🇷",nom:"Cameron (nom de famille non communiqué)",faits:["🎖️ Le plus âgé de la promo","🎨 Sort des Beaux-Arts","🏅 Dans le top 3 des premières évaluations"]},
   "Elija":{age:23,ville:"Besançon",region:"Doubs, Bourgogne-Franche-Comté",drapeau:"🇫🇷",nom:"Elija Dirand",faits:["🎨 5 ans aux Beaux-Arts de Besançon","💃 Jonathan (danse) a adoré son prime 1"]},
-  "Félix":{age:18,ville:"Québec",region:"Québec, Canada",drapeau:"🇨🇦",nom:"Félix Morin",faits:["✈️ Arrive tout droit du Québec","🐣 Un des benjamins de la promo","⚠️ Nominé après le prime 1"]},
+  "Félix":{age:18,ville:"Québec",region:"Québec, Canada",drapeau:"🇨🇦",nom:"Félix Morin",faits:["✈️ Arrive tout droit du Québec","🐣 Un des benjamins de la promo","⚠️ Nommé après les 1res évaluations… puis sauvé : les nominations ont été annulées"]},
   "Isabella":{age:20,ville:"Ris-Orangis",region:"Essonne, Île-de-France",drapeau:"🇫🇷",nom:"Isabella Moutou",faits:["🛡️ Immunisée par les profs à la fin du prime 1","😭 Quentin Mosimann ému aux larmes par son « Louis »"]},
-  "Khalil":{age:24,ville:"Paris",region:"Île-de-France",drapeau:"🇫🇷",nom:"Khalil Erwan",faits:["🎶 Un mashup Eels / Cocciante au prime 1","⚠️ Nominé après le prime 1","🚪 A dit vouloir quitter l’aventure"]},
+  "Khalil":{age:24,ville:"Paris",region:"Île-de-France",drapeau:"🇫🇷",nom:"Khalil Erwan",faits:["🎶 Un mashup Eels / Cocciante au prime 1","⚠️ Nommé après les 1res évaluations","🚪 A quitté le château le jeudi 15 octobre (choix personnel)"]},
   "Kylian":{age:21,ville:"Bordeaux",region:"Gironde, Nouvelle-Aquitaine",drapeau:"🇫🇷",nom:"Kylian (nom de famille non communiqué)",faits:["🎤 Duo avec Noémie au prime 1"]},
   "Leeloo":{age:24,ville:"Saint-Aignan",region:"Loir-et-Cher, Centre-Val de Loire",drapeau:"🇫🇷🇧🇪",nom:"Leeloo Van Cauberg",faits:["🇫🇷🇧🇪 Franco-belge, fratrie de 6 enfants","🇬🇧 Partie à Londres à 18 ans pour étudier la musique","🎬 A ouvert la saison au prime 1"]},
   "Maud":{age:20,ville:"Sérent",region:"Morbihan, Bretagne",drapeau:"🇫🇷",nom:"Maud (nom de famille non communiqué)",faits:["🌊 La Bretonne de la promo"]},
-  "Mélina":{age:22,ville:"Florac",region:"Lozère, Occitanie",drapeau:"🇫🇷",nom:"Mélina Danni",faits:["⚠️ Nominée après le prime 1"]},
+  "Mélina":{age:22,ville:"Florac",region:"Lozère, Occitanie",drapeau:"🇫🇷",nom:"Mélina Danni",faits:["⚠️ Nommée après les 1res évaluations… puis sauvée : les nominations ont été annulées"]},
   "Morgan":{age:19,ville:"Figanières",region:"Var, Provence-Alpes-Côte d’Azur",drapeau:"🇫🇷",nom:"Morgan Guille",faits:["🏅 Dans le top 3 des premières évaluations","🎤 Duo avec Antoine au prime 1"]},
   "Noémie":{age:23,ville:"Saint-Justin",region:"Landes, Nouvelle-Aquitaine",drapeau:"🇫🇷",nom:"Noémie Dupeyron (alias Noémie Juna)",faits:["🎤 Duo avec Kylian au prime 1"]},
   "Tracy":{age:23,ville:"Paris",region:"Île-de-France",drapeau:"🇫🇷",nom:"Tracy Sehl",faits:["🎤 Félicitée par Sofia (chant) au prime 1"]},
@@ -317,7 +318,7 @@ const CAL_BASE=(function(){
   const L=[];
   for(let i=0;i<17;i++){const d=new Date(2026,9,10+7*i);L.push({num:i+1,date:isoJour(d),ok:i<4,titre:"",invites:[]});}
   L[0].titre="Le lancement";L[0].invites=["Ambre","Vianney"];
-  L[1].invites=["Ben Mazué","Bigflo et Oli","Adèle Castillon","Naïka"];
+  L[1].titre="Sans élimination";L[1].invites=["Ben Mazué","Bigflo et Oli","Adèle Castillon","Naïka"];
   L[14].titre="Demi-finale";L[15].titre="Demi-finale";L[16].titre="Grande finale 🏆";
   return L;
 })();
@@ -341,14 +342,14 @@ const PRIMES_BASE={
     {eleves:["Antoine","Morgan"],titre:"Le Temps",artiste:"Tayc"},
     {eleves:["Amel"],titre:"Killing Me Softly with His Song",artiste:"Fugees"}
   ]},
-  2:{nomines:["Félix","Khalil","Mélina"],top3:["Morgan","Amel","Cameron"]}
+  2:{top3:["Morgan","Amel","Cameron"],abandon:["Khalil"]}
 };
 
 const ACTUS_BASE=[
-  "🛡️ Isabella est immunisée par les profs à la fin du prime 1.",
-  "🏅 Top 3 des évaluations : Morgan, Amel et Cameron.",
-  "⚠️ Félix, Khalil et Mélina sont nominés.",
-  "🚪 Khalil a dit vouloir quitter l’aventure : les nominations sont suspendues pour l’instant."
+  "🚪 Khalil a quitté le château le jeudi 15 octobre : ils sont maintenant 16 élèves.",
+  "🙌 Les nominations sont annulées : pas d’élimination au prime 2, Félix et Mélina restent.",
+  "🏅 Top 3 des premières évaluations : Morgan, Amel et Cameron.",
+  "🛡️ Isabella était immunisée à la fin du prime 1."
 ];
 
 const EQUIPE=[["🎬 Directeur","Quentin Mosimann"],["🤝 Parrain","Vianney"],["🎙️ Présentateurs","Nikos Aliagas et Karima Charni"],["💖 Grandes sœurs","Adèle Castillon et Eva"]];
@@ -364,15 +365,19 @@ const PROFS=[
 
 /* =====================================================================
    📅 LA QUOTIDIENNE
-   🤖 Le robot ajoute TOUT SEUL les articles de chaque jour (quotidienne.json).
-   ✍️ Ici, ce sont des résumés écrits à la main (facultatif, rien à faire).
+   🤖 Le robot ajoute TOUT SEUL un résumé simple pour chaque jour (quotidienne.json).
+   ✍️ Ici, des résumés écrits à la main (facultatif). Pour une date donnée,
+      le résumé écrit à la main passe avant celui du robot…
+      sauf si tu mets provisoire:true (le robot le remplace alors).
    ===================================================================== */
 const QUOTIDIENNES=[
-  {date:"2026-10-15",titre:"🤔 Khalil part-il vraiment ?",points:[
-    "La suite de la discussion entre Khalil et Mosimann, qui veut être sûr qu’il a bien réfléchi.",
-    "Khalil n’était pas réapparu sur le live du château depuis mercredi soir.",
-    "Grande question : que deviennent les nominations de Félix et Mélina ?"
-  ],note:"Les articles du jour s’ajoutent tout seuls juste en dessous 🤖"},
+  {date:"2026-10-15",titre:"🚪 Khalil quitte le château",points:[
+    "Khalil discute encore avec Mosimann, mais il ne change pas d’avis : il se sent mal et a envie de retrouver sa vie. Il remercie quand même les profs et la promo.",
+    "Les autres élèves ont essayé de le convaincre de rester au moins jusqu’au prime… sans succès.",
+    "C’est officiel : Khalil quitte l’aventure, quelques jours seulement après le prime 1. Ils sont maintenant 16.",
+    "Le top 3 des évaluations : Morgan, Amel et Cameron 🏅",
+    "Mosimann en parle avec les profs, puis tranche : pas de nominations cette semaine, donc personne ne sera éliminé samedi. Ouf pour Félix et Mélina 🙌"
+  ]},
   {date:"2026-10-14",titre:"💥 Évaluations, nominations… et coup de théâtre",points:[
     "Diffusion des premières évaluations du mardi matin (8h30, dans une nouvelle salle), sur le thème « Se mettre en valeur ». Le détail est plus bas 👇",
     "Au top : Morgan, Amel, Zoé, Antoine et Cameron. Plus dur pour Félix, Mélina et Leeloo.",
@@ -400,21 +405,22 @@ const QUOTIDIENNES=[
   ],note:"L’arrivée au château était aussi dans « Retour au château », juste après le prime 1."}
 ];
 
-/* 🔥 À RETENIR (les nommés, le top 3 et les gros titres s'ajoutent tout seuls)
+/* 🔥 À RETENIR (les nommés, le top 3 et les infos du robot s'ajoutent tout seuls)
    "jusqu" = date après laquelle la phrase disparaît toute seule */
 const A_RETENIR=[
-  {t:"💥 Khalil a annoncé vouloir quitter l’aventure : les nominations ont été suspendues.",jusqu:"2026-10-17"},
+  {t:"🚪 Khalil a quitté le château le jeudi 15 octobre : ils sont maintenant 16 élèves.",jusqu:"2026-10-24"},
+  {t:"🙌 Nominations annulées : personne ne sera éliminé au prime 2, Félix et Mélina restent.",jusqu:"2026-10-17"},
   {t:"👔 Mosimann sera absent au prime 2 (samedi 17/10).",jusqu:"2026-10-17"},
-  {t:"🛡️ Isabella, immunisée, ouvre le prime 2 avec un tableau spécial.",jusqu:"2026-10-17"},
-  {t:"🎶 Invité d’honneur du prime 2 : Ben Mazué.",jusqu:"2026-10-17"}
+  {t:"🛡️ Isabella ouvre le prime 2 avec un tableau spécial.",jusqu:"2026-10-17"},
+  {t:"🎶 Au prime 2 : Ben Mazué en invité d’honneur, et on découvre l’hymne de la promo.",jusqu:"2026-10-17"}
 ];
 
 /* 🎤 ÉVALUATIONS — humeur : "top" 🟢, "mitige" 🟡, "bof" 🔴, "" ⚪ (pas d'info) */
 const EVALUATIONS=[
   {semaine:1,theme:"Se mettre en valeur",quand:"Mardi 13 octobre à 8h30 · diffusées le mercredi 14",passages:[
-    {eleves:["Amel"],chanson:"Monde",artiste:"Luidji",humeur:"top",avis:"À la guitare. Mosimann la trouve « 100 % réussie », Sofia salue l’interprétation, Lydia aime sa présence."},
-    {eleves:["Morgan"],chanson:"Ces gens-là",artiste:"Jacques Brel",humeur:"top",avis:"Sofia est saisie, Papy trouve le « contrat rempli », Jonathan est impressionné et Mosimann a eu des frissons.",doute:"Certains médias attribuent cette chanson à Cameron."},
-    {eleves:["Cameron"],chanson:"",artiste:"",humeur:"top",avis:"Il s’en est très bien sorti, dans le top des profs.",doute:"Certains médias lui attribuent « Ces gens-là » (Brel)."},
+    {eleves:["Amel"],chanson:"Monde",artiste:"Luidji",humeur:"top",avis:"À la guitare. Mosimann la trouve « 100 % réussie », Sofia salue l’interprétation, Lydia aime sa présence. Dans le top 3 🏅"},
+    {eleves:["Morgan"],chanson:"Ces gens-là",artiste:"Jacques Brel",humeur:"top",avis:"Sofia est saisie, Papy trouve le « contrat rempli », Jonathan est impressionné et Mosimann a eu des frissons. Dans le top 3 🏅",doute:"Certains médias attribuent cette chanson à Cameron."},
+    {eleves:["Cameron"],chanson:"",artiste:"",humeur:"top",avis:"Il s’en est très bien sorti. Dans le top 3 🏅",doute:"Certains médias lui attribuent « Ces gens-là » (Brel)."},
     {eleves:["Zoé"],chanson:"",artiste:"",humeur:"top",avis:"Citée parmi les meilleures de la semaine."},
     {eleves:["Antoine"],chanson:"Monde",artiste:"Luidji",humeur:"top",avis:"Cité parmi les meilleurs de la semaine."},
     {eleves:["Brieuc","Kylian"],chanson:"All of Me",artiste:"John Legend",humeur:"",avis:"Kylian a proposé une version douce et soignée."},
@@ -422,9 +428,9 @@ const EVALUATIONS=[
     {eleves:["Noémie"],chanson:"Tu n’es plus là",artiste:"Amel Bent",humeur:"mitige",avis:"Sofia est émue et trouve ça réussi, Lydia est touchée… mais Mosimann n’est pas convaincu."},
     {eleves:["Tracy"],chanson:"",artiste:"",humeur:"mitige",avis:"Profs très divisés : Sofia est sévère, Papy et Jonathan sont plus séduits."},
     {eleves:["Leeloo"],chanson:"À la vie",artiste:"Suzanne",humeur:"bof",avis:"Elle ressort en larmes. Mosimann est frustré par son manque de confiance. Sofia dit qu’elle chante « avec le frein à main » mais adore sa voix. Papy a aimé."},
-    {eleves:["Félix"],chanson:"Set Fire to the Rain",artiste:"Adele",humeur:"bof",avis:"Le stress lui fait faire beaucoup de fausses notes, il n’est pas content de lui. Nommé."},
-    {eleves:["Mélina"],chanson:"",artiste:"",humeur:"bof",avis:"Plusieurs oublis de paroles, elle s’effondre en sortant de la salle. Nommée."},
-    {eleves:["Khalil"],chanson:"",artiste:"",humeur:"bof",avis:"Les profs l’ont trouvé « trop en retrait ». Nommé, puis il annonce vouloir partir."},
+    {eleves:["Félix"],chanson:"Set Fire to the Rain",artiste:"Adele",humeur:"bof",avis:"Le stress lui fait faire beaucoup de fausses notes, il n’est pas content de lui. Nommé… puis sauvé quand les nominations ont été annulées."},
+    {eleves:["Mélina"],chanson:"Anyone Who Loves Me",artiste:"Charlotte Cardin",humeur:"bof",avis:"Elle oublie un couplet et sort en larmes. Nommée… puis sauvée quand les nominations ont été annulées."},
+    {eleves:["Khalil"],chanson:"",artiste:"",humeur:"bof",avis:"Les profs l’ont trouvé « trop en retrait ». Nommé, puis il a quitté l’aventure."},
     {eleves:["Maud"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."},
     {eleves:["Elija"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."},
     {eleves:["Ydriss"],chanson:"",artiste:"",humeur:"",avis:"Pas encore d’info sur son passage."}
@@ -709,10 +715,16 @@ function boiteVedette(c){
     ${SEL!==c.num?`<button class="btn" onclick="SEL=${c.num};SEL_MANUEL=false;refresh()">⭐ Noter les élèves de ce prime</button>`:`<div class="sm" style="margin-top:8px">👇 Note les élèves de ce prime avec les étoiles sur leurs cartes</div>`}
   </div>`;
 }
+/* 🤖 Les infos importantes écrites par le robot (encore valables) */
+function retenirAuto(){
+  const auj=isoJour(new Date());
+  return ((QAUTO&&Array.isArray(QAUTO.aRetenir))?QAUTO.aRetenir:[]).map(x=>typeof x==="string"?{t:x}:x).filter(x=>x&&x.t&&(!x.jusqu||auj<=x.jusqu)).map(x=>String(x.t));
+}
 function boiteActus(){
   const auto=((S.officiel&&Array.isArray(S.officiel.actusAuto))?S.officiel.actusAuto:[]).map(a=>typeof a==="string"?a:((a&&(a.texte||a.t||a.titre||a.text))||"")).filter(Boolean).slice(0,8);
+  const tout=sansDoublons(retenirAuto().concat(auto,ACTUS_BASE));
   const ouvert=OPEN.actus!==false;
-  return `<details class="bloc actus" ${ouvert?"open":""} ontoggle="OPEN.actus=this.open"><summary>📰 Les actus</summary><ul>${auto.concat(ACTUS_BASE).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`;
+  return `<details class="bloc actus" ${ouvert?"open":""} ontoggle="OPEN.actus=this.open"><summary>📰 Les actus</summary><ul>${tout.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`;
 }
 function carte(nom){
   const b=BIOS[nom]||{},e=S.eleves[nom],st=statut(nom),cs=classeStatut(st);
@@ -786,42 +798,30 @@ function nomsDans(t){return ELEVES.filter(n=>reNom(n).test(t));}
 function dateQ(s){const [y,m,d]=String(s).split("-").map(Number);return new Date(y,m-1,d,12);}
 function jourQ(s){const t=dateQ(s),j=JOURS[t.getDay()];return j[0].toUpperCase()+j.slice(1)+" "+numJ(t.getDate())+" "+MOIS[t.getMonth()];}
 function primeDeQ(s){const t=dateQ(s),cal=CALv();return (cal.find(c=>dateP(c)>t)||cal[cal.length-1]).num;}
-function lienOk(u){return /^https?:\/\//i.test(String(u||""))?esc(u):"#";}
-/* 📰 Un article du robot */
-function ligneArt(a){return `${esc(a.emoji||"📺")} <a href="${lienOk(a.lien)}" target="_blank" rel="noopener">${esc(a.titre||"")}</a> <span class="src">· ${esc(a.source||"")}${a.heure?" · "+esc(a.heure):""}</span>`;}
-function listeArts(A){return `<div class="medias">${A.map(a=>`<div class="art">${ligneArt(a)}</div>`).join("")}</div>`;}
-function catsArts(A){
-  const C={};
-  A.forEach(a=>{const k=(a.emoji||"📺")+" "+(a.cat||"Château");C[k]=(C[k]||0)+1;});
-  return `<div class="cats">${Object.entries(C).sort((x,y)=>y[1]-x[1]).map(([k,n])=>`<span class="tag">${esc(k)} ×${n}</span>`).join("")}</div>`;
-}
-/* 🤖 Mélange : résumés écrits + data.json (clé "quotidiennes") + articles du robot */
+/* 🤖 Mélange : résumés écrits à la main + data.json (clé "quotidiennes") + résumés du robot */
 function joursQ(){
   const o=S.officiel||{},M={},ok=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||""));
   QUOTIDIENNES.concat(Array.isArray(o.quotidiennes)?o.quotidiennes:[]).forEach(q=>{if(q&&ok(q.date))M[q.date]=Object.assign({},M[q.date]||{},q);});
-  ((QAUTO&&Array.isArray(QAUTO.jours))?QAUTO.jours:[]).forEach(j=>{if(j&&ok(j.date)){M[j.date]=Object.assign({date:j.date},M[j.date]||{});M[j.date].auto=j;}});
+  ((QAUTO&&Array.isArray(QAUTO.jours))?QAUTO.jours:[]).forEach(j=>{
+    if(!j||!ok(j.date)) return;
+    const pts=liste2(j.points);
+    if(!pts.length) return;
+    const m=M[j.date];
+    if(!m||m.provisoire||!liste2(m.points).length) M[j.date]={date:j.date,titre:j.titre||"La quotidienne",points:pts,auto:true};
+  });
   return Object.values(M).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
 }
-function artsRecents(n){const lim=isoJour(new Date(Date.now()-n*864e5));return joursQ().filter(q=>q.auto&&q.date>=lim).flatMap(q=>Array.isArray(q.auto.articles)?q.auto.articles:[]);}
 function carteQ(q,auj){
   const pts=liste2(q.points);
-  const A=(q.auto&&Array.isArray(q.auto.articles))?q.auto.articles:[];
   const etat=q.date>auj?`<span class="tag">⏳ à venir</span>`:(q.date===auj?`<span class="tag or">📺 aujourd’hui</span>`:`<span class="tag ok">✅ passé</span>`);
   const noms=nomsDans([q.titre||""].concat(pts).join(" "));
-  A.forEach(a=>liste2(a.eleves).forEach(n=>{if(ELEVES.includes(n)&&!noms.includes(n))noms.push(n);}));
   let corps="";
   if(pts.length) corps+=`<ul>${pts.map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul>`;
   if(q.note) corps+=`<p class="mut sm">ℹ️ ${esc(q.note)}</p>`;
-  if(A.length){
-    corps+=catsArts(A);
-    if(pts.length){const k="m"+q.date;corps+=`<details class="wiki" ${OPEN[k]?"open":""} ontoggle="OPEN['${k}']=this.open"><summary>📰 Ce qu’en disent les médias (${A.length}) <span class="auto">🤖 auto</span></summary>${listeArts(A)}</details>`;}
-    else corps+=listeArts(A);
-  }
   if(!corps) corps=`<p class="mut">Pas encore d’infos.</p>`;
-  const titre=q.titre?lienNoms(q.titre):(A.length?`📰 Le fil des médias <span class="auto">🤖 auto</span>`:"");
   return `<div class="qcard${q.date>=auj?" avenir":""}">
-    <div class="qhead"><span class="qdate">📅 ${jourQ(q.date)}</span>${etat}</div>
-    ${titre?`<h3>${titre}</h3>`:""}${corps}
+    <div class="qhead"><span class="qdate">📅 ${jourQ(q.date)}</span><span>${q.auto?`<span class="auto">🤖 auto</span> `:""}${etat}</span></div>
+    ${q.titre?`<h3>${lienNoms(q.titre)}</h3>`:""}${corps}
     ${noms.length?`<div class="qav">${noms.map(n=>`<span class="lien" title="Voir la fiche de ${n}" onclick="openFiche('${n}')">${avatar(n,"mini")}</span>`).join("")}</div>`:""}
   </div>`;
 }
@@ -859,13 +859,11 @@ function pageQuotidienne(){
   if(pv.nomines.length) dyn.push("⚠️ Les nommés de la semaine : "+pv.nomines.join(", ")+".");
   if(pv.top3.length) dyn.push("🏅 Le top 3 des évaluations : "+pv.top3.join(", ")+".");
   if(pv.sauve.length) dyn.push("🙌 Sauvé(e) : "+pv.sauve.join(", ")+".");
-  const IMP=["Départ","Élimination","Nominations","Immunité"];
-  const AI=artsRecents(2).filter(a=>IMP.includes(a.cat)).slice(0,4);
+  const tout=sansDoublons(dyn.concat(AR,retenirAuto()));
   let h=`<h2 class="titre">📅 La quotidienne</h2>
-    <p class="mut sm">Tout ce qui se passe au château, mis à jour tout seul 🤖 Touche un prénom ou une photo pour ouvrir la fiche, ou un titre pour lire l’article.</p>
+    <p class="mut sm">Tout ce qui se passe au château, en résumé simple, mis à jour tout seul 🤖 Touche un prénom ou une photo pour ouvrir la fiche.</p>
     <div class="qinfo"><span class="tag">📺 Lun → ven : 17h30</span><span class="tag">Sam : 17h15</span><span class="tag">Dim : 16h05</span><span class="tag">🔴 Le live sur TF1+</span></div>`;
-  const lis=dyn.concat(AR).map(x=>`<li>${lienNoms(x)}</li>`).join("")+AI.map(a=>`<li>${ligneArt(a)}</li>`).join("");
-  h+=`<div class="retenir"><h3>🔥 À retenir · en route vers le prime ${V.num}</h3>${lis?`<ul>${lis}</ul>`:`<p class="mut">Rien de spécial pour l’instant.</p>`}</div>`;
+  h+=`<div class="retenir"><h3>🔥 À retenir · en route vers le prime ${V.num}</h3>${tout.length?`<ul>${tout.map(x=>`<li>${lienNoms(x)}</li>`).join("")}</ul>`:`<p class="mut">Rien de spécial pour l’instant.</p>`}</div>`;
   let sem=null;
   Q.forEach(q=>{
     const p=primeDeQ(q.date);
@@ -874,14 +872,12 @@ function pageQuotidienne(){
   });
   if(!Q.length) h+=`<div class="vide">Pas encore de quotidienne résumée 🙂</div>`;
   h+=`<h3 class="semaine">📊 Les évaluations et la danse</h3>`;
-  const AE=artsRecents(7).filter(a=>a.cat==="Évaluations").slice(0,8);
-  if(AE.length){const ouv=OPEN.ae!==false;h+=`<details class="bloc" ${ouv?"open":""} ontoggle="OPEN.ae=this.open"><summary>🤖 Les derniers articles sur les évaluations</summary>${listeArts(AE)}</details>`;}
   h+=EV.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocEvals).join("");
   h+=GD.slice().sort((a,b)=>(+b.semaine||0)-(+a.semaine||0)).map(blocDanse).join("");
   let m="";
   if(QAUTO&&QAUTO.maj){const d=new Date(QAUTO.maj);if(!isNaN(d))m=d.toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});}
-  h+=`<p class="mut sm">🤖 ${m?"Fil des médias mis à jour tout seul : "+esc(m):"Fil des médias : en attente du 1er passage du robot"} · titres trouvés sur Google Actualités.</p>`;
-  h+=`<p class="mut sm">ℹ️ Les médias ne sont pas toujours d’accord entre eux : les infos marquées ⚠️ restent à confirmer.</p>`;
+  h+=`<p class="mut sm">🤖 ${m?"Résumés automatiques mis à jour : "+esc(m):"Résumés automatiques : en attente du 1er passage du robot"}</p>`;
+  h+=`<p class="mut sm">ℹ️ Les infos marquées ⚠️ restent à confirmer.</p>`;
   return h;
 }
 
@@ -1028,6 +1024,11 @@ function refresh(){
   if(box) box.scrollTop=st;
   if(aid){const el=document.getElementById(aid);if(el&&el!==document.activeElement){try{el.focus({preventScroll:true});if(s1!==null&&el.setSelectionRange)el.setSelectionRange(s1,s2);}catch(e){}}}
 }
+/* Rafraîchit seulement si tu n'es pas en train d'écrire */
+function refreshSiLibre(){
+  const a=document.activeElement;
+  if(!(a&&/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName))) refresh();
+}
 
 /* ===================== 🌐 MISE À JOUR AUTOMATIQUE ===================== */
 function majInfo(){
@@ -1057,20 +1058,22 @@ async function majAuto(){
   }
   ETAT_MAJ="hors";majInfo();
 }
-/* 📅 Le fil automatique de la quotidienne (quotidienne.json, rempli par le robot) */
+/* 📅 Les résumés automatiques de la quotidienne (quotidienne.json, écrit par le robot) */
 async function majQuot(){
+  const resume=d=>JSON.stringify([(d&&d.jours||[]).map(j=>[j.date,j.titre,j.points]),d&&d.aRetenir]);
   for(const url of [QUOT_URL,"quotidienne.json"]){
     try{
       const r=await fetch(url+"?t="+Date.now(),{cache:"no-store"});
       if(!r.ok) continue;
       const d=await r.json();
       if(!d||!Array.isArray(d.jours)) continue;
-      const change=JSON.stringify(d.jours)!==JSON.stringify(QAUTO&&QAUTO.jours);
+      const premier=!QAUTO;
+      const change=resume(d)!==resume(QAUTO);
       QAUTO=d;
       try{localStorage.setItem(CLE+"_quot",JSON.stringify(d));}catch(e){}
-      if(change&&ONGLET==="quotidienne"&&!FICHE){
-        const a=document.activeElement;
-        if(!(a&&/^(TEXTAREA|INPUT|SELECT)$/.test(a.tagName))) refresh();
+      if(change){
+        if(!FICHE) refreshSiLibre();
+        if(!premier) toast("📅 Nouvelles infos de la quotidienne !");
       }
       return;
     }catch(e){}
@@ -1086,6 +1089,18 @@ majAuto();
 majQuot();
 setInterval(majAuto,5*60*1000);
 setInterval(majQuot,10*60*1000);
+/* 📲 Quand tu reviens sur le site (onglet ou appli), il va chercher les nouveautés tout de suite */
+let DERNIER_RETOUR=0;
+function auRetour(){
+  if(document.hidden) return;
+  const t=Date.now();
+  if(t-DERNIER_RETOUR<30*1000) return;
+  DERNIER_RETOUR=t;
+  majAuto();majQuot();
+}
+document.addEventListener("visibilitychange",auRetour);
+window.addEventListener("focus",auRetour);
+window.addEventListener("pageshow",e=>{if(e.persisted)auRetour();});
 setInterval(()=>{
   if(!SEL_MANUEL) SEL=vedette().num;
   const a=document.activeElement;
