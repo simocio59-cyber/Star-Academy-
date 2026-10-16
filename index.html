@@ -15,6 +15,7 @@ a{color:var(--or)}
 header{text-align:center;padding:20px 14px 8px}
 h1{margin:0;font-size:1.8rem;background:linear-gradient(90deg,var(--or),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
 .sous{color:var(--mut);font-size:.9rem;margin-top:4px}
+.cbar{margin-top:10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 nav{position:sticky;top:0;z-index:30;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:10px 8px;background:rgba(18,10,38,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--bord)}
 nav button{background:var(--card);color:var(--txt);border:1px solid var(--bord);border-radius:999px;padding:8px 14px;font-size:.95rem;cursor:pointer;font-family:inherit}
 nav button.on{background:linear-gradient(90deg,var(--or),var(--rose));color:#1a0b2e;font-weight:700;border-color:transparent}
@@ -24,6 +25,7 @@ main{max-width:1100px;margin:0 auto;padding:14px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(90deg,var(--or),var(--rose));color:#1a0b2e;border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.92rem;font-family:inherit}
 .btn.sec{background:var(--card2);color:var(--txt);border:1px solid var(--bord);font-weight:600}
 .btn.petit{padding:5px 10px;font-size:.8rem}
+.btn:disabled{opacity:.5;cursor:default}
 select,textarea{font:inherit;color:var(--txt);background:#1a1033;border:1px solid var(--bord);border-radius:10px;padding:8px 10px;max-width:100%}
 textarea{width:100%;min-height:80px;resize:vertical}
 .vedette{background:linear-gradient(135deg,#3b1f74,#5a1e5c);border:1px solid #7a4bc4;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 30px rgba(0,0,0,.35);display:grid;gap:4px}
@@ -62,8 +64,15 @@ summary{cursor:pointer;font-weight:600}
 .etoiles button.on{color:var(--or)}
 .carte .coms{margin-top:auto}
 .modal{position:fixed;inset:0;background:rgba(5,2,15,.78);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:16px}
+#compte{z-index:60}
 .mbox{position:relative;background:#1c1238;border:1px solid var(--bord);border-radius:18px;max-width:720px;width:100%;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:18px;overscroll-behavior:contain}
+.cbox{max-width:440px;margin-top:30px}
 .x{position:sticky;top:0;float:right;z-index:3;width:38px;height:38px;border-radius:50%;background:var(--card2);color:var(--txt);border:1px solid var(--bord);font-size:1.05rem;cursor:pointer}
+.cform{display:grid;gap:10px;margin-top:12px}
+.cform label{display:grid;gap:4px}
+.cform input{font:inherit;color:var(--txt);background:#1a1033;border:1px solid var(--bord);border-radius:10px;padding:10px 12px;width:100%}
+.cmsg{min-height:1.2em;font-weight:600;margin-top:10px;color:#9fdcff}
+.cmsg.err{color:#ffb0b0}
 .zoom{position:fixed;inset:0;z-index:70;background:rgba(5,2,15,.94);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out;animation:zin .2s ease}
 .zoom img{max-width:92vw;max-height:75vh;max-height:75dvh;border-radius:18px;border:3px solid var(--or);box-shadow:0 10px 40px rgba(0,0,0,.6);object-fit:contain;background:#000}
 .znom{font-size:1.5rem;font-weight:800;text-align:center}
@@ -169,6 +178,7 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
 <header>
   <h1>⭐ Star Academy 2026</h1>
   <div class="sous">Saison 14 · TF1 · les primes chaque samedi à 21h10 · mon carnet de fan 💜</div>
+  <div id="compteBar" class="cbar"></div>
 </header>
 
 <nav>
@@ -183,13 +193,21 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
 
 <footer>
   <div id="majInfo"></div>
-  <div>💾 Tes notes, commentaires et photos sont enregistrés dans ce navigateur (sur cet appareil).</div>
+  <div>💾 Sans compte : tes notes, commentaires et photos restent dans ce navigateur. Avec un compte 👤 : tout est sauvegardé en ligne ☁️</div>
 </footer>
 
 <div id="modal" class="modal" hidden onclick="if(event.target===this)fermerFiche()">
   <div class="mbox" id="mbox">
     <button class="x" onclick="fermerFiche()" aria-label="Fermer">✖</button>
     <div id="mbody"></div>
+  </div>
+</div>
+
+<!-- 👤 MON COMPTE -->
+<div id="compte" class="modal" hidden onclick="if(event.target===this)fermerCompte()">
+  <div class="mbox cbox">
+    <button class="x" onclick="fermerCompte()" aria-label="Fermer">✖</button>
+    <div id="cbody"></div>
   </div>
 </div>
 
@@ -203,12 +221,32 @@ footer{max-width:1100px;margin:10px auto 30px;padding:14px;text-align:center;col
 
 <div id="toast"></div>
 
+<!-- 🔥 Firebase (comptes + sauvegarde en ligne) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
 "use strict";
 const $=s=>document.querySelector(s);
 const CLE="staracademy2026_fan";
 const RAW_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/data.json";
 const QUOT_URL="https://raw.githubusercontent.com/simocio59-cyber/Star-Academy-/main/quotidienne.json";
+
+/* =====================================================================
+   👤 COMPTES — colle ici les valeurs de ton projet Firebase
+   (Firebase → ⚙️ Paramètres du projet → Vos applications → </>)
+   Garde bien les guillemets "" autour de chaque valeur.
+   ===================================================================== */
+const FIREBASE_CONFIG={
+  apiKey:"",
+  authDomain:"",
+  projectId:"",
+  storageBucket:"",
+  messagingSenderId:"",
+  appId:""
+};
+const DOMAINE_ID="fan.staracademy2026.app";
 
 /* =====================================================================
    📸 PHOTOS PAR LIEN (visibles par TOUT LE MONDE)
@@ -454,6 +492,8 @@ const OPEN={},PHOTO_KO={},PHOTO_OK={};
 const EXTS=["jpg","jpeg","png","webp","JPG","JPEG","PNG","WEBP"];
 let QAUTO=null;
 try{QAUTO=JSON.parse(localStorage.getItem(CLE+"_quot")||"null");}catch(e){QAUTO=null;}
+/* 👤 état du compte */
+let AUTH=null,DB=null,UTIL=null,SYNC="off",DESABO=null,ENVOI_T=null,PRET=false,COMPTE_OUVERT=false,CMSG="",CMSG_ERR=false,OCCUPE_C=false;
 
 /* ===================== 📅 CALENDRIER & PRIMES ===================== */
 function CALv(){
@@ -527,7 +567,9 @@ function classeStatut(s){
 function badge(st){return `<span class="badge b-${classeStatut(st)}">${esc(st)}</span>`;}
 
 /* ===================== 💾 SAUVEGARDE + MIGRATION ===================== */
-function save(){try{localStorage.setItem(CLE,JSON.stringify(S));}catch(e){alert("⚠️ La mémoire du navigateur est pleine ! Retire quelques photos pour pouvoir enregistrer.");}}
+/* ecrire() = enregistre sur l'appareil ; save() = c'est TOI qui as changé quelque chose → aussi envoyé au compte */
+function ecrire(){try{localStorage.setItem(CLE,JSON.stringify(S));return true;}catch(e){alert("⚠️ La mémoire du navigateur est pleine ! Retire quelques photos pour pouvoir enregistrer.");return false;}}
+function save(){S.modif=Date.now();ecrire();if(UTIL&&PRET)planifierEnvoi();}
 function normCom(c){
   if(c==null) return null;
   if(typeof c!=="object") c={t:String(c)};
@@ -592,6 +634,247 @@ function syncOrdre(){
 }
 function moyenne(nom){const ns=Object.keys(S.primes).filter(k=>/^\d+$/.test(k)).map(k=>noteP(k,nom)).filter(x=>x>0);return {moy:ns.length?ns.reduce((a,b)=>a+b,0)/ns.length:0,nb:ns.length};}
 function fmtMoy(m){return m.nb?`⭐ ${m.moy.toFixed(1).replace(".",",")}/5 sur ${m.nb} prime${m.nb>1?"s":""}`:"Pas encore noté";}
+
+/* ===================== 👤 COMPTES (identifiant + mot de passe) ===================== */
+function fbActif(){return !!(AUTH&&DB);}
+function demarrerComptes(){
+  if(!FIREBASE_CONFIG.apiKey||typeof firebase==="undefined"){majCompteBar();return;}
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    AUTH=firebase.auth();DB=firebase.firestore();
+    AUTH.onAuthStateChanged(u=>{changementCompte(u);});
+  }catch(e){console.warn("Firebase",e);AUTH=null;DB=null;}
+  majCompteBar();
+}
+function emailDe(id){
+  id=String(id||"").trim();
+  if(id.includes("@")) return id.toLowerCase();
+  const s=norm(id).replace(/[^a-z0-9._-]+/g,"-").replace(/^[-.]+|[-.]+$/g,"");
+  return s.length>=2?s+"@"+DOMAINE_ID:"";
+}
+function pseudoDe(u){const m=String((u&&u.email)||"");return m.endsWith("@"+DOMAINE_ID)?m.slice(0,-(DOMAINE_ID.length+1)):m;}
+/* Tes données à toi (sans les infos officielles, qui sont publiques) */
+function donneesPerso(){const d=JSON.parse(JSON.stringify(S));delete d.officiel;return d;}
+function appliquer(d){
+  const off=S.officiel;
+  S=JSON.parse(JSON.stringify(d||{}));S.officiel=off;
+  migrer();ecrire();
+  if(!SEL_MANUEL) SEL=vedette().num;
+  refreshSiLibre();
+}
+/* ➕ Ajoute les données de l'appareil (b) à celles du compte (a) */
+function unionComs(a,b){
+  const L=(Array.isArray(a)?a:[]).slice();
+  (Array.isArray(b)?b:[]).forEach(c=>{
+    if(!c) return;
+    const t=typeof c==="object"?c.t:String(c),d=(c&&c.d)||null;
+    if(!L.some(x=>x&&(typeof x==="object"?x.t:String(x))===t&&((x&&x.d)||null)===d)) L.push(c);
+  });
+  return L;
+}
+function joindre(a,b){
+  a=typeof a==="string"?a:"";b=typeof b==="string"?b:"";
+  if(!b.trim()||a.includes(b.trim())) return a;
+  if(!a.trim()) return b;
+  return a+"\n"+b;
+}
+function fusionDonnees(compte,appareil){
+  const A=obj(JSON.parse(JSON.stringify(compte||{}))),B=obj(appareil);
+  A.eleves=obj(A.eleves);
+  Object.keys(obj(B.eleves)).forEach(n=>{
+    const x=obj(A.eleves[n]),y=obj(B.eleves[n]);
+    x.fav=!!(x.fav||y.fav);
+    x.note=+x.note||+y.note||0;
+    x.statut=x.statut||y.statut||"";
+    x.coms=unionComs(x.coms,y.coms);
+    A.eleves[n]=x;
+  });
+  A.primes=obj(A.primes);
+  Object.keys(obj(B.primes)).forEach(k=>{
+    const x=obj(A.primes[k]),y=obj(B.primes[k]);
+    x.avis=joindre(x.avis,y.avis);
+    x.best=x.best||y.best||"";
+    x.eleves=obj(x.eleves);
+    Object.keys(obj(y.eleves)).forEach(n=>{
+      const p=obj(x.eleves[n]),q=obj(y.eleves[n]);
+      p.note=+p.note||+q.note||0;
+      p.coms=unionComs(p.coms,q.coms);
+      x.eleves[n]=p;
+    });
+    A.primes[k]=x;
+  });
+  A.profs=obj(A.profs);
+  Object.keys(obj(B.profs)).forEach(k=>{
+    const x=obj(A.profs[k]),y=obj(B.profs[k]);
+    x.note=+x.note||+y.note||0;
+    x.avis=joindre(x.avis,y.avis);
+    A.profs[k]=x;
+  });
+  A.photos=Object.assign({},obj(B.photos),obj(A.photos));
+  A.ordre=(Array.isArray(A.ordre)?A.ordre:[]).concat(Array.isArray(B.ordre)?B.ordre:[]);
+  A.modif=Date.now();
+  return A;
+}
+async function changementCompte(user){
+  if(DESABO){DESABO();DESABO=null;}
+  clearTimeout(ENVOI_T);ENVOI_T=null;PRET=false;
+  let uidLocal=null;try{uidLocal=localStorage.getItem(CLE+"_uid");}catch(e){}
+  if(!user){
+    UTIL=null;SYNC="off";
+    if(uidLocal) viderAppareil();
+    majCompteBar();renderCompte();
+    return;
+  }
+  UTIL=user;SYNC="sync";majCompteBar();renderCompte();
+  let cloud=null,lu=false;
+  try{
+    const doc=await DB.collection("comptes").doc(user.uid).get();
+    lu=true;
+    if(doc.exists){try{cloud=JSON.parse(doc.data().json||"null");}catch(e){cloud=null;}}
+  }catch(e){console.warn(e);}
+  if(UTIL!==user) return;
+  if(!lu){
+    if(uidLocal===user.uid){
+      SYNC="err";majCompteBar();renderCompte();
+      setTimeout(()=>{if(UTIL===user&&!PRET)changementCompte(user);},60*1000);
+      return;
+    }
+    CMSG="📴 Impossible de joindre ton compte. Vérifie ta connexion internet et réessaie.";CMSG_ERR=true;
+    try{await AUTH.signOut();}catch(e){}
+    return;
+  }
+  const local=donneesPerso();
+  let fin,fusion=false;
+  if(uidLocal===user.uid) fin=(cloud&&(+cloud.modif||0)>(+local.modif||0))?cloud:local;
+  else if(uidLocal) fin=cloud||{};
+  else{fin=cloud?fusionDonnees(cloud,local):local;fusion=true;}
+  if(!fin.modif) fin.modif=Date.now();
+  try{localStorage.setItem(CLE+"_uid",user.uid);}catch(e){}
+  appliquer(fin);
+  PRET=true;
+  if(fin!==cloud) await pousser();
+  ecouter(user);
+  SYNC="ok";majCompteBar();
+  if(COMPTE_OUVERT){fermerCompte();toast(fusion?"✅ Connecté ! Tes données sont dans ton compte ☁️":"✅ Connecté !");}
+}
+async function pousser(){
+  if(!UTIL||!PRET||!DB) return;
+  clearTimeout(ENVOI_T);ENVOI_T=null;
+  const d=donneesPerso(),json=JSON.stringify(d);
+  if(new Blob([json]).size>1000000){SYNC="err";majCompteBar();toast("⚠️ Trop de photos pour ton compte : retires-en quelques-unes");return;}
+  SYNC="sync";majCompteBar();
+  try{
+    await Promise.race([
+      DB.collection("comptes").doc(UTIL.uid).set({json,modif:+d.modif||Date.now(),pseudo:pseudoDe(UTIL)}),
+      new Promise((_,r)=>setTimeout(()=>r(new Error("délai dépassé")),10000))
+    ]);
+    SYNC="ok";
+  }catch(e){console.warn(e);SYNC="err";}
+  majCompteBar();renderCompte();
+}
+function planifierEnvoi(){clearTimeout(ENVOI_T);SYNC="sync";majCompteBar();ENVOI_T=setTimeout(pousser,1500);}
+/* 🔄 Si tu changes quelque chose sur un autre appareil, ça arrive ici tout seul */
+function ecouter(user){
+  if(DESABO) DESABO();
+  DESABO=DB.collection("comptes").doc(user.uid).onSnapshot(doc=>{
+    if(UTIL!==user||!doc.exists||doc.metadata.hasPendingWrites) return;
+    let d=null;try{d=JSON.parse(doc.data().json||"null");}catch(e){}
+    if(d&&(+d.modif||0)>(+S.modif||0)){appliquer(d);toast("☁️ Données mises à jour depuis ton compte");}
+  },e=>{console.warn(e);SYNC="err";majCompteBar();});
+}
+/* 🧹 Déconnexion : on efface les données du compte de cet appareil */
+function viderAppareil(){
+  const off=S.officiel;
+  try{localStorage.removeItem(CLE);localStorage.removeItem(CLE+"_uid");}catch(e){}
+  S={officiel:off};migrer();ecrire();
+  SEL=vedette().num;SEL_MANUEL=false;
+  if(FICHE){FICHE=null;FICHE_P=null;$("#modal").hidden=true;$("#mbody").innerHTML="";document.body.classList.remove("noscroll");}
+  refresh();
+}
+function msgErreur(e){
+  const c=String((e&&e.code)||"");
+  if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return "❌ Identifiant ou mot de passe incorrect. Pas encore de compte ? Touche « Créer mon compte ».";
+  if(/email-already-in-use/.test(c)) return "😕 Cet identifiant est déjà pris. Choisis-en un autre, ou connecte-toi.";
+  if(/weak-password/.test(c)) return "🔑 Mot de passe trop court (6 caractères minimum).";
+  if(/invalid-email/.test(c)) return "😕 Identifiant pas valide : utilise des lettres et des chiffres.";
+  if(/too-many-requests/.test(c)) return "⏳ Trop d’essais : attends quelques minutes.";
+  if(/network/.test(c)) return "📴 Pas de connexion internet.";
+  if(/operation-not-allowed|configuration-not-found/.test(c)) return "⚙️ La connexion par mot de passe n’est pas activée dans Firebase (Authentication → Mode de connexion).";
+  if(/unauthorized-domain/.test(c)) return "⚙️ Ajoute simocio59-cyber.github.io dans Firebase (Authentication → Paramètres → Domaines autorisés).";
+  return "😕 Erreur : "+(c||(e&&e.message)||e);
+}
+function msgCompte(t,err){CMSG=t;CMSG_ERR=!!err;renderCompte();}
+async function actionCompte(creer){
+  if(!fbActif()||OCCUPE_C) return;
+  const id=(($("#cId")||{}).value||"").trim(),mdp=($("#cMdp")||{}).value||"";
+  const mail=emailDe(id);
+  if(!mail){msgCompte("✍️ Écris ton identifiant (au moins 2 lettres ou chiffres)",true);return;}
+  if(mdp.length<6){msgCompte("🔑 Le mot de passe doit faire au moins 6 caractères",true);return;}
+  OCCUPE_C=true;msgCompte(creer?"⏳ Création du compte…":"⏳ Connexion…",false);
+  try{
+    if(creer) await AUTH.createUserWithEmailAndPassword(mail,mdp);
+    else await AUTH.signInWithEmailAndPassword(mail,mdp);
+    OCCUPE_C=false;
+    if(!PRET) msgCompte("⏳ Récupération de tes données…",false);
+  }catch(e){OCCUPE_C=false;msgCompte(msgErreur(e),true);}
+}
+function connexion(){actionCompte(false);}
+function creerCompte(){actionCompte(true);}
+async function deconnexion(){
+  if(!UTIL||!AUTH) return;
+  if(!confirm("🚪 Se déconnecter ?\n\nTes données restent sauvegardées dans ton compte, mais elles vont disparaître de cet appareil.")) return;
+  if(PRET) await pousser();
+  if(SYNC==="err"&&!confirm("⚠️ Tes dernières modifs n’ont pas pu être envoyées dans ton compte (pas de connexion ?). Elles seront perdues. Se déconnecter quand même ?")) return;
+  if(DESABO){DESABO();DESABO=null;}
+  PRET=false;
+  try{await AUTH.signOut();}catch(e){}
+  viderAppareil();
+  UTIL=null;SYNC="off";majCompteBar();
+  fermerCompte();
+  toast("👋 Déconnecté : les données du compte ne sont plus sur cet appareil");
+}
+function etatSync(){return {sync:"⏳ synchro…",ok:"☁️ sauvegardé",err:"📴 pas synchronisé",off:""}[SYNC]||"";}
+function majCompteBar(){
+  const el=$("#compteBar"); if(!el) return;
+  el.innerHTML=UTIL
+    ?`<button class="chip on" onclick="ouvrirCompte()">👤 ${esc(pseudoDe(UTIL))} · ${etatSync()}</button>`
+    :`<button class="chip" onclick="ouvrirCompte()">👤 Se connecter</button>`;
+}
+function ouvrirCompte(){
+  COMPTE_OUVERT=true;$("#compte").hidden=false;document.body.classList.add("noscroll");
+  renderCompte();
+  const i=$("#cId");if(i)i.focus();
+}
+function fermerCompte(){
+  COMPTE_OUVERT=false;$("#compte").hidden=true;CMSG="";CMSG_ERR=false;
+  if(!FICHE) document.body.classList.remove("noscroll");
+}
+function renderCompte(){
+  if(!COMPTE_OUVERT) return;
+  const vId=(($("#cId")||{}).value)||"",vMdp=(($("#cMdp")||{}).value)||"";
+  let h=`<h2 style="margin-top:0">👤 Mon compte</h2>`;
+  if(!fbActif()){
+    h+=`<p>🔒 Les comptes ne sont pas encore activés sur ce site.</p><p class="mut sm">Il faut coller la configuration Firebase dans index.html (le bloc FIREBASE_CONFIG en haut du code).</p>`;
+  }else if(UTIL){
+    h+=`<p>Connecté(e) en tant que <b>${esc(pseudoDe(UTIL))}</b></p>
+      <p class="sm">${PRET?etatSync():"⏳ Récupération de tes données…"}</p>
+      <p class="mut sm">📱 Tes notes, commentaires, préférés, classement, avis et photos sont sauvegardés dans ton compte. Connecte-toi avec le même identifiant sur un autre appareil pour tout retrouver.</p>
+      <div class="row2"><button class="btn sec" onclick="pousser()" ${PRET?"":"disabled"}>🔄 Sauvegarder maintenant</button><button class="btn" onclick="deconnexion()">🚪 Se déconnecter</button></div>`;
+  }else{
+    h+=`<p class="mut sm">Connecte-toi pour retrouver toutes tes données sur n’importe quel appareil 📱💻</p>
+      <form class="cform" onsubmit="event.preventDefault();connexion()">
+        <label class="sm">Identifiant<input id="cId" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ex : simo59"></label>
+        <label class="sm">Mot de passe<input id="cMdp" type="password" autocomplete="current-password" placeholder="6 caractères minimum"></label>
+        <button class="btn" type="submit" ${OCCUPE_C?"disabled":""}>🔓 Se connecter</button>
+        <button class="btn sec" type="button" onclick="creerCompte()" ${OCCUPE_C?"disabled":""}>✨ Créer mon compte</button>
+      </form>
+      <div class="cmsg${CMSG_ERR?" err":""}">${esc(CMSG)}</div>
+      <p class="sm">💡 Ce que tu as déjà noté sur cet appareil sera <b>ajouté</b> à ton compte.</p>
+      <p class="sm mut">⚠️ Retiens bien ton mot de passe : sans adresse e-mail, il ne peut pas être récupéré.</p>`;
+  }
+  $("#cbody").innerHTML=h;
+  const a=$("#cId"),b=$("#cMdp");if(a)a.value=vId;if(b)b.value=vMdp;
+}
 
 /* ===================== 💬 COMMENTAIRES ===================== */
 function getComs(key){
@@ -1003,13 +1286,14 @@ function choisirPhoto(nom,inp){
 }
 function supprPhoto(nom){if(!confirm("Retirer ta photo de "+nom+" ?"))return;delete S.photos[nom];delete PHOTO_KO["u:"+nom];save();refresh();}
 function allerOnglet(o){ONGLET=o;try{history.replaceState(null,"","#"+o);}catch(e){}refresh();window.scrollTo(0,0);}
-let TT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(TT);TT=setTimeout(()=>t.classList.remove("on"),2200);}
+let TT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(TT);TT=setTimeout(()=>t.classList.remove("on"),2600);}
 
 /* ===================== 🔁 AFFICHAGE (garde le texte en cours) ===================== */
 function render(){
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.o===ONGLET));
   $("#main").innerHTML=ONGLET==="primes"?pagePrimes():ONGLET==="quotidienne"?pageQuotidienne():ONGLET==="classement"?pageClassement():ONGLET==="profs"?pageProfs():pageEleves();
   majInfo();
+  majCompteBar();
 }
 function refresh(){
   const keep={};
@@ -1050,7 +1334,7 @@ async function majAuto(){
       ETAT_MAJ="ok";
       const premier=!S.officiel||!Object.keys(S.officiel).length;
       const change=sansMaj(S.officiel)!==sansMaj(d);
-      S.officiel=d;save();
+      S.officiel=d;ecrire();
       if(change){if(!SEL_MANUEL)SEL=vedette().num;refresh();if(!premier)toast("🔄 Nouvelles infos officielles !");}
       else majInfo();
       return;
@@ -1082,9 +1366,10 @@ async function majQuot(){
 
 /* ===================== 🚀 DÉMARRAGE ===================== */
 try{S=JSON.parse(localStorage.getItem(CLE)||"null");}catch(e){S=null;}
-migrer();save();
+migrer();ecrire();
 SEL=vedette().num;
 render();
+demarrerComptes();
 majAuto();
 majQuot();
 setInterval(majAuto,5*60*1000);
@@ -1097,10 +1382,15 @@ function auRetour(){
   if(t-DERNIER_RETOUR<30*1000) return;
   DERNIER_RETOUR=t;
   majAuto();majQuot();
+  if(UTIL&&PRET&&SYNC==="err") pousser();
 }
-document.addEventListener("visibilitychange",auRetour);
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){if(ENVOI_T&&UTIL&&PRET)pousser();}
+  else auRetour();
+});
 window.addEventListener("focus",auRetour);
 window.addEventListener("pageshow",e=>{if(e.persisted)auRetour();});
+window.addEventListener("pagehide",()=>{if(ENVOI_T&&UTIL&&PRET)pousser();});
 setInterval(()=>{
   if(!SEL_MANUEL) SEL=vedette().num;
   const a=document.activeElement;
@@ -1110,6 +1400,7 @@ setInterval(()=>{
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape") return;
   if(!$("#zoom").hidden){fermerZoom();return;}
+  if(COMPTE_OUVERT){fermerCompte();return;}
   if(FICHE) fermerFiche();
 });
 </script>
