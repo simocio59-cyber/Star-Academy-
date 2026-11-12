@@ -84,10 +84,32 @@
    ],
    "wiki": [],
    "invites": []
+  },
+  {
+   "num": 6,
+   "nomines": [],
+   "sauve": [],
+   "elimine": [],
+   "abandon": [],
+   "immunise": [],
+   "top3": [],
+   "finalistes": [],
+   "gagnant": [],
+   "chansons": [
+    {
+     "eleves": [
+      "Cameron"
+     ],
+     "titre": "Mad World – Tears for Fears",
+     "artiste": ""
+    }
+   ],
+   "wiki": [],
+   "invites": []
   }
  ],
  "calendrier": [],
  "actusAuto": [],
  "source": "https://fr.wikipedia.org/wiki/Saison_14_de_Star_Academy",
- "maj": "2026-11-07T18:29:43+00:00"
+ "maj": "2026-11-12T02:43:28+00:00"
 }
