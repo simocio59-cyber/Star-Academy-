@@ -2,18 +2,18 @@
  "statuts": {
   "Amel": "En compétition",
   "Brieuc": "En compétition",
-  "Cameron": "En compétition",
+  "Cameron": "Non qualifié",
   "Félix": "En compétition",
   "Isabella": "En compétition",
   "Kylian": "En compétition",
-  "Leeloo": "En compétition",
-  "Maud": "En compétition",
-  "Mélina": "En compétition",
+  "Leeloo": "À venir",
+  "Maud": "Non qualifiée",
+  "Mélina": "Non qualifiée",
   "Noémie": "En compétition",
   "Ydriss": "En compétition",
   "Zoé": "En compétition",
   "Tracy": "Éliminée le 14 novembre 2026",
-  "Morgan": "Éliminé le 6 novembre 2026",
+  "Morgan": "Non qualifié",
   "Antoine": "Éliminé le 31 octobre 2026",
   "Elija": "Éliminée le 24 octobre 2026",
   "Khalil": "Abandon le 14 octobre 2026"
@@ -106,10 +106,32 @@
    ],
    "wiki": [],
    "invites": []
+  },
+  {
+   "num": 7,
+   "nomines": [],
+   "sauve": [],
+   "elimine": [],
+   "abandon": [],
+   "immunise": [],
+   "top3": [],
+   "finalistes": [],
+   "gagnant": [],
+   "chansons": [
+    {
+     "eleves": [
+      "Leeloo"
+     ],
+     "titre": "Believe – Cher",
+     "artiste": ""
+    }
+   ],
+   "wiki": [],
+   "invites": []
   }
  ],
  "calendrier": [],
  "actusAuto": [],
  "source": "https://fr.wikipedia.org/wiki/Saison_14_de_Star_Academy",
- "maj": "2026-11-15T00:59:43+00:00"
+ "maj": "2026-11-18T00:38:42+00:00"
 }
