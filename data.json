@@ -11,7 +11,7 @@
   "Mélina": "Non qualifiée",
   "Noémie": "En compétition",
   "Ydriss": "En compétition",
-  "Zoé": "Qualifiée",
+  "Zoé": "En compétition",
   "Tracy": "Éliminée le 14 novembre 2026",
   "Morgan": "Non qualifié",
   "Antoine": "Éliminé le 31 octobre 2026",
@@ -19,28 +19,6 @@
   "Khalil": "Abandon le 14 octobre 2026"
  },
  "primes": [
-  {
-   "num": 2,
-   "nomines": [],
-   "sauve": [],
-   "elimine": [],
-   "abandon": [],
-   "immunise": [],
-   "top3": [],
-   "finalistes": [],
-   "gagnant": [],
-   "chansons": [
-    {
-     "eleves": [
-      "Zoé"
-     ],
-     "titre": "Bring Me to Life – Evanescence",
-     "artiste": ""
-    }
-   ],
-   "wiki": [],
-   "invites": []
-  },
   {
    "num": 3,
    "nomines": [],
@@ -155,5 +133,5 @@
  "calendrier": [],
  "actusAuto": [],
  "source": "https://fr.wikipedia.org/wiki/Saison_14_de_Star_Academy",
- "maj": "2026-11-20T01:40:45+00:00"
+ "maj": "2026-11-20T18:22:18+00:00"
 }
