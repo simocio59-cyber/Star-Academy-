@@ -1,17 +1,17 @@
 {
  "statuts": {
-  "Amel": "En compétition",
   "Brieuc": "En compétition",
   "Cameron": "Non qualifié",
   "Félix": "En compétition",
   "Isabella": "En compétition",
   "Kylian": "En compétition",
-  "Leeloo": "À venir",
+  "Leeloo": "Qualifiée",
   "Maud": "Non qualifiée",
   "Mélina": "Non qualifiée",
   "Noémie": "En compétition",
   "Ydriss": "En compétition",
   "Zoé": "En compétition",
+  "Amel": "Éliminée le 20 novembre 2026",
   "Tracy": "Éliminée le 14 novembre 2026",
   "Morgan": "Non qualifié",
   "Antoine": "Éliminé le 31 octobre 2026",
@@ -133,5 +133,5 @@
  "calendrier": [],
  "actusAuto": [],
  "source": "https://fr.wikipedia.org/wiki/Saison_14_de_Star_Academy",
- "maj": "2026-11-20T18:22:18+00:00"
+ "maj": "2026-11-21T01:07:54+00:00"
 }
