@@ -2,7 +2,7 @@
  "statuts": {
   "Brieuc": "En compétition",
   "Cameron": "Non qualifié",
-  "Félix": "En compétition",
+  "Félix": "À venir",
   "Isabella": "En compétition",
   "Kylian": "En compétition",
   "Leeloo": "Qualifiée",
@@ -128,10 +128,32 @@
    ],
    "wiki": [],
    "invites": []
+  },
+  {
+   "num": 8,
+   "nomines": [],
+   "sauve": [],
+   "elimine": [],
+   "abandon": [],
+   "immunise": [],
+   "top3": [],
+   "finalistes": [],
+   "gagnant": [],
+   "chansons": [
+    {
+     "eleves": [
+      "Félix"
+     ],
+     "titre": "À venir",
+     "artiste": ""
+    }
+   ],
+   "wiki": [],
+   "invites": []
   }
  ],
  "calendrier": [],
  "actusAuto": [],
  "source": "https://fr.wikipedia.org/wiki/Saison_14_de_Star_Academy",
- "maj": "2026-11-21T01:07:54+00:00"
+ "maj": "2026-11-25T00:24:25+00:00"
 }
